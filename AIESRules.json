@@ -1,0 +1,163 @@
+{
+	"name": "AIES: Validation",
+	"attributes": [
+		{
+			"name": "Fact1",
+			"type": "number"
+		},
+		{
+			"name": "INCOM_LOAN_GOV_TOT_PCT",
+			"type": "number"
+		},
+		{
+			"name": "INCOM_LOAN_NFBUS_INT_PCT",
+			"type": "number"
+		},
+		{
+			"name": "INCOM_LOAN_NFBUS_ORI_PCT",
+			"type": "number"
+		},
+		{
+			"name": "INCOM_LOAN_NFBUS_OTH_PCT",
+			"type": "number"
+		},
+		{
+			"name": "INCOM_LOAN_NFBUS_TOT_PCT",
+			"type": "number"
+		}
+	],
+	"decisions": [
+		{
+			"conditions": {
+				"all": [
+					{
+						"fact": "Fact1",
+						"operator": "lessThan",
+						"value": 0
+					}
+				]
+			},
+			"event": {
+				"type": "NAVRULE",
+				"params": {
+					"message": "Rule Fired"
+				}
+			}
+		},
+		{
+			"event": {
+				"name": "RULE 1",
+				"type": "51",
+				"params": {
+					"rvs": "[\"COST_FUEL\"]",
+					"message": "COST_FUEL greater than 1000000"
+				}
+			},
+			"conditions": {
+				"all": [
+					{
+						"id": 1,
+						"fact": "COST_FUEL",
+						"value": 1000000,
+						"operator": ">="
+					}
+				]
+			}
+		},
+		{
+			"event": {
+				"name": "PAY_ANN > 10000",
+				"type": "63",
+				"params": {
+					"rvs": "[\"PAY_ANN\"]",
+					"action": "[ { \"NEW_RCPT_TOT\":  \"PAY_QTR1\" *4\" } ]",
+					"message": "PAY_ANN must be greater than $10,000"
+				}
+			},
+			"conditions": {
+				"all": [
+					{
+						"id": 1,
+						"fact": "PAY_ANN",
+						"value": 10000,
+						"operator": ">"
+					}
+				]
+			}
+		},
+		{
+			"event": {
+				"name": "RCPT_TOT > 0",
+				"type": "100",
+				"params": {
+					"rvs": "[\"RCPT_TOT\"]",
+					"message": "RCPT_TOT must be greater than 0"
+				}
+			},
+			"conditions": {
+				"all": [
+					{
+						"id": 1,
+						"fact": "RCPT_TOT",
+						"value": 0,
+						"operator": ">"
+					}
+				]
+			}
+		},
+		{
+			"conditions": {
+				"all": [
+					{
+						"fact": "INCOME_LOAN",
+						"operator": ">=",
+						"value": 10
+					},
+					{
+						"all": [
+							{
+								"fact": "INCOME_LOAN_SURPLUS",
+								"operator": "=",
+								"value": 0
+							},
+							{
+								"fact": "INCOME_LOAN_TEST",
+								"operator": "=",
+								"value": 0
+							}
+						]
+					}
+				]
+			},
+			"event": {
+				"type": "61",
+				"params": {
+					"rvs": "[\"RCPT_TOT\", \"PAY_ANN\"]",
+					"action": "[ { \"TOTAL_INCOME_BONUS\":  \"INCOME_LOAN\" +100 }, { \"TOTAL_INCOME_BONUS2\":  \"INCOME_LOAN\" * \"BASE_LOAN\" } ]",
+					"message": "RCPT_TOT is greater than 100"
+				}
+			}
+		},
+		{
+			"event": {
+				"name": "Price change check",
+				"type": "1",
+				"params": {
+					"rvs": "[\"COMP1\"]",
+					"action": "[ { \"COMPUTE-ON-COMPUTED-VAR\":  \"INCOME_LOAN\" +100000 }, { \"TOTAL_INCOME_BONUS2\":  \"INCOME_LOAN\" * \"BASE_LOAN\" } ]",
+					"message": " COMP1 >=10 CHAINED RULE VIA COMP1 WHICH IS COMPUTED EARLIER"
+				}
+			},
+			"conditions": {
+				"all": [
+					{
+						"id": 1,
+						"fact": "COMP1",
+						"value": 10,
+						"operator": ">="
+					}
+				]
+			}
+		}
+	]
+}

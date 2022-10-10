@@ -1,0 +1,31 @@
+{
+	"name": "System Rules",
+	"attributes": [
+		{
+			"name": "START_MACRO",
+			"type": "boolean"
+		}
+	],
+	"decisions": [
+		{
+			"conditions": {
+				"all": [
+					{
+						"fact": "Fact1",
+						"operator": "lessThan",
+						"value": 0
+					}
+				]
+			},
+			"event": {
+				"type": "NAVRULE",
+				"params": {
+					"message": "Rule Fired"
+				}
+			}
+		}
+		
+	]
+}
+
+

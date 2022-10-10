@@ -5,7 +5,7 @@
   "homepage": "https://github.com/vinzdeveloper/json-rule-editor",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --hot",
+    "start": "webpack-dev-server --openssl-legacy-provider start",
     "lint": "eslint 'src/**/*.js' -f table --max-warnings 0",
     "build": "webpack --mode=production"
   },
@@ -41,7 +41,6 @@
     "json-rules-engine": "5.0.3",
     "lodash": "4.17.15",
     "mini-css-extract-plugin": "0.9.0",
-    "node-sass": "4.13.1",
     "postcss-loader": "3.0.0",
     "react": "16.12.0",
     "react-bootstrap-sweetalert": "5.1.9",
@@ -53,6 +52,7 @@
     "react-spinners": "0.8.1",
     "redux": "4.0.5",
     "redux-thunk": "2.3.0",
+    "sass": "^1.55.0",
     "sass-loader": "8.0.2",
     "selectn": "1.1.2",
     "style-loader": "1.1.2",
