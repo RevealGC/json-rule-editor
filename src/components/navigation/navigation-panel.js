@@ -47,7 +47,15 @@ class NavigationPanel extends Component {
                        <a href="" onClick={(e) => { e.preventDefault();  this.props.updateState(sideNav)}}> <span className="close-icon fa fa-reorder" ></span></a>
                 </div>
                 {!closedState && <div className="links-section">
+   
+              
+
                     <div>
+
+                  
+
+
+
                         <NavLinks links={rulesetLink} onConfirm={this.handleNavLink} activeIndex={this.props.activeIndex}/>
                     </div>
                     <div className="footer-container sidenav">

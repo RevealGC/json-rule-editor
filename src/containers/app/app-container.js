@@ -40,7 +40,7 @@ class ApplicationContainer extends Component {
         return(
             <React.Fragment>
               <ApperanceContext.Provider value={this.state.theme}>
-                <Title title={'Json Rule Editor'} />
+                <Title title={'QBES: Rule Editor'} />
                 <NavigationPanel closedState={closednav} updateState={this.props.updateState} activeIndex={this.props.activeIndex}
                         rulenames={this.props.rulenames} setActiveRulesetIndex={this.props.setActiveRulesetIndex} loggedIn={this.props.loggedIn}/>
                 <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />

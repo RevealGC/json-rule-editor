@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { login } from '../../actions/app';
 import { uploadRuleset } from '../../actions/ruleset';
+// uploadDBRuleset UPLOAD_DBRULESET 'UPLOAD_DBRULESET'
+import {uploadDBRuleset} from '../../actions/ruleset';
 import { TitlePanel } from '../../components/panel/panel';
 import Button from '../../components/button/button';
 import { createHashHistory } from 'history';
@@ -12,6 +14,7 @@ import { includes } from 'lodash/collection';
 import Notification from '../../components/notification/notification';
 import { RULE_AVAILABLE_UPLOAD, RULE_UPLOAD_ERROR } from '../../constants/messages';
 import ApperanceContext from '../../context/apperance-context';
+import ruleset from '../../reducers/ruleset-reducer';
 
 
 function readFile(file, cb) {
@@ -27,15 +30,47 @@ function readFile(file, cb) {
   return reader.readAsText(file);
 }
 
+
+const rulesetDefault = [{
+	"name": "System Rules",
+	"attributes": [
+		{
+			"name": "START_MACRO",
+			"type": "boolean"
+		}
+	],
+	"decisions": [
+		{
+			"conditions": {
+				"all": [
+					{
+						"fact": "Fact1",
+						"operator": "lessThan",
+						"value": 0
+					}
+				]
+			},
+			"event": {
+				"type": "NAVRULE",
+				"params": {
+					"message": "Rule Fired"
+				}
+			}
+		}
+		
+	]
+}]
+
 class HomeContainer extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { uploadedFilesCount: 0, files: [], ruleset: [], uploadError: false, fileExist: false, message: {}};
+        this.state = { uploadedFilesCount: 0, files: [], ruleset: rulesetDefault, uploadError: false, fileExist: true, message: {}};
         this.drop = this.drop.bind(this);
         this.allowDrop = this.allowDrop.bind(this);
         this.printFile = this.printFile.bind(this);
         this.handleUpload = this.handleUpload.bind(this);
+        this.handleDBRules = this.handleDBRules.bind(this);
         this.chooseDirectory = this.chooseDirectory.bind(this);
     }
 
@@ -122,7 +157,12 @@ class HomeContainer extends Component {
         this.navigate('./ruleset');
       }
     }
-
+    handleDBRules(){
+      if( this.state.ruleset.length > 0){
+        this.props.uploadDBRuleset(this.state.ruleset)
+        this.navigate('./ruleset');
+      }
+    }
     navigate(location)  {
       const history = createHashHistory();
       this.props.login();
@@ -133,6 +173,8 @@ class HomeContainer extends Component {
       const { fileExist, uploadError, message } = this.state;
       const title = this.props.loggedIn ? "Upload Rules" : "Create / Upload Rules";
       const appctx = this.context;
+
+     
 
       return <div className="home-container">
         <div className="single-panel-container">
@@ -145,9 +187,12 @@ class HomeContainer extends Component {
               </div>
             </div>
             <div className="btn-group">
-              <Button label={"Upload"} onConfirm={this.handleUpload} classname="primary-btn" type="button" />
+              <Button label={"AIES"} onConfirm={this.handleDBRules} classname="primary-btn" type="button" />
               {!this.props.loggedIn && <Button label={"Create"} onConfirm={() => this.navigate('./create-ruleset')} classname="primary-btn" type="button" disabled={this.state.files.length > 0} />}
-            </div>
+              {/* <Button label={"AIES"} onConfirm={this.handleDBRules} classname="primary-btn" type="button" /> */}
+            </div>  
+
+
           </TitlePanel>
         </div>
         {!this.props.loggedIn && <div className='footer-container home-page'>
@@ -162,6 +207,7 @@ HomeContainer.contextType = ApperanceContext;
 HomeContainer.propTypes = {
   ruleset: PropTypes.array,
   uploadRuleset: PropTypes.func,
+  uploadDBRuleset: PropTypes.func,
   login: PropTypes.func,
   loggedIn: PropTypes.bool,
   rulenames: PropTypes.array,
@@ -171,6 +217,7 @@ HomeContainer.defaultProps = {
   rulenames: [],
   ruleset: [],
   uploadRuleset: () => false,
+  uploadDBRuleset: () => false,
   login: () => false,
   loggedIn: false,
 }
@@ -184,6 +231,7 @@ const mapDispatchToProps = (dispatch) => ({
 
   login: () => dispatch(login()),
   uploadRuleset: (ruleset) =>  dispatch(uploadRuleset(ruleset)),
+  uploadDBRuleset : (ruleset) => dispatch(uploadDBRuleset(ruleset))
 
 });
 
