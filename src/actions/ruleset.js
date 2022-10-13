@@ -1,5 +1,5 @@
 
-import ruleset from '../reducers/ruleset-reducer';
+// import ruleset from '../reducers/ruleset-reducer';
 import * as ActionTypes from './action-types';
 import { updateState } from './app';
 

@@ -14,7 +14,6 @@ import { includes } from 'lodash/collection';
 import Notification from '../../components/notification/notification';
 import { RULE_AVAILABLE_UPLOAD, RULE_UPLOAD_ERROR } from '../../constants/messages';
 import ApperanceContext from '../../context/apperance-context';
-import ruleset from '../../reducers/ruleset-reducer';
 
 
 function readFile(file, cb) {
