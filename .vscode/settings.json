@@ -1,0 +1,7 @@
+{
+    "search.exclude": {
+        "": true
+    },
+    "search.useIgnoreFiles": false,
+    "workbench.colorTheme": "GitHub Dark Colorblind (Beta)"
+}

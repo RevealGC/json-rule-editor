@@ -17,10 +17,7 @@ const Search = ({onChange}) => {
 
 Search.defaultProps = ({
     value: '',
-    onChange: () =>{
-        alert("HELLO line 21 in search.js")
-    }
-    // onChange: () => false,
+    onChange: () => false,
 });
 
 Search.propTypes = ({

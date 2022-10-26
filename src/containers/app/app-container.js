@@ -5,7 +5,7 @@ import NavigationPanel from '../../components/navigation/navigation-panel';
 import AppRoutes from '../../routes/app-routes';
 import PropTypes from 'prop-types';
 import { updateRulesetIndex } from '../../actions/ruleset';
-import { updateState } from '../../actions/app';
+import { setsearchRIDText, updateState } from '../../actions/app';
 import { createHashHistory } from 'history';
 import ApperanceContext from '../../context/apperance-context';
 
@@ -14,6 +14,7 @@ class ApplicationContainer extends Component {
     constructor(props){
         super(props);
         const history = createHashHistory();
+        this.setsearchRIDText = this.setsearchRIDText.bind(this)
         if (!this.props.loggedIn) {
             history.push('./home');
         }
@@ -22,7 +23,7 @@ class ApplicationContainer extends Component {
             document.body.className = value;
             this.setState({ theme });
         }
-        this.state = {theme: { background: 'md-blue', toggleBackground: this.toggleBackground }};
+        this.state = {theme: { background: 'light', toggleBackground: this.toggleBackground }};
     }
 
     componentDidMount() {
@@ -35,13 +36,27 @@ class ApplicationContainer extends Component {
         }
     }
 
+
+    setsearchRIDText(e){
+       
+    }
+
     render() {
         const closednav = this.props.navState !== 'open';
         return(
+
+
+         
+
             <React.Fragment>
               <ApperanceContext.Provider value={this.state.theme}>
                 <Title title={'QBES: Rule Editor'} />
-                <NavigationPanel closedState={closednav} updateState={this.props.updateState} activeIndex={this.props.activeIndex}
+   
+
+                <NavigationPanel closedState={closednav} 
+                updateState={this.props.updateState}
+                setsearchRIDText={this.props.setsearchRIDText}
+                 activeIndex={this.props.activeIndex}
                         rulenames={this.props.rulenames} setActiveRulesetIndex={this.props.setActiveRulesetIndex} loggedIn={this.props.loggedIn}/>
                 <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />
               </ApperanceContext.Provider>
@@ -57,6 +72,7 @@ ApplicationContainer.defaultProps = {
     activeIndex: 0,
     loggedIn: false,
     updateState: () => false,
+    setsearchRIDText: () => false,
 };
 
 ApplicationContainer.propTypes = {
@@ -66,6 +82,7 @@ ApplicationContainer.propTypes = {
     loggedIn: PropTypes.bool,
     updateState: PropTypes.func,
     activeIndex: PropTypes.number,
+    setsearchRIDText: PropTypes.func
 }
 
 
@@ -83,6 +100,7 @@ const mapDispatchToProps = (dispatch) => ({
     },
     setActiveRulesetIndex: (name) => dispatch(updateRulesetIndex(name)),
     updateState: (val) => dispatch(updateState(val)),
+    setsearchRIDText: (val) => dispatch(setsearchRIDText(val))
 
 });
 

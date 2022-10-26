@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { login } from '../../actions/app';
-import { uploadRuleset } from '../../actions/ruleset';
+import { uploadRuleset, uploadDBRuleset } from '../../actions/ruleset';
 // uploadDBRuleset UPLOAD_DBRULESET 'UPLOAD_DBRULESET'
-import {uploadDBRuleset} from '../../actions/ruleset';
 import { TitlePanel } from '../../components/panel/panel';
 import Button from '../../components/button/button';
 import { createHashHistory } from 'history';
@@ -14,7 +13,6 @@ import { includes } from 'lodash/collection';
 import Notification from '../../components/notification/notification';
 import { RULE_AVAILABLE_UPLOAD, RULE_UPLOAD_ERROR } from '../../constants/messages';
 import ApperanceContext from '../../context/apperance-context';
-
 
 function readFile(file, cb) {
   // eslint-disable-next-line no-undef
@@ -34,8 +32,8 @@ const rulesetDefault = [{
 	"name": "System Rules",
 	"attributes": [
 		{
-			"name": "START_MACRO",
-			"type": "boolean"
+			"name": "FACT1",
+			"type": "number"
 		}
 	],
 	"decisions": [
@@ -50,6 +48,15 @@ const rulesetDefault = [{
 				]
 			},
 			"event": {
+        "rvs": "[\"COMP1\"]",
+            "action": [
+                {
+                    "COMPUTE-ON-COMPUTED-VAR": " \"INCOME_LOAN\" +100000"
+                },
+                {
+                    "TOTAL_INCOME_BONUS2": " \"INCOME_LOAN\" * \"BASE_LOAN\" "
+                }
+            ],
 				"type": "NAVRULE",
 				"params": {
 					"message": "Rule Fired"

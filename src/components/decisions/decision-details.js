@@ -138,7 +138,7 @@ class DecisionDetails extends Component {
                     <Tree treeData={data.node} count={data.depthCount}/>
                     { data.event.params && <div className="view-params-container">
                             <h4>Params  </h4>
-                            <ViewAttribute  items={data.event.params}/>
+                            {/* <ViewAttribute  items={data.event.params}/> */}
                         </div> }
                  </div>))}
             </div>)

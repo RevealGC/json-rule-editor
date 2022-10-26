@@ -133,7 +133,7 @@
 				"type": "61",
 				"params": {
 					"rvs": "[\"RCPT_TOT\", \"PAY_ANN\"]",
-					"action": "[ { \"TOTAL_INCOME_BONUS\":  \"INCOME_LOAN\" +100 }, { \"TOTAL_INCOME_BONUS2\":  \"INCOME_LOAN\" * \"BASE_LOAN\" } ]",
+					"action": [ { "TOTAL_INCOME_BONUS":  "\"INCOME_LOAN\" +100" }, { TOTAL_INCOME_BONUS2:  "\"INCOME_LOAN\" * \"BASE_LOAN\"" } ],
 					"message": "RCPT_TOT is greater than 100"
 				}
 			}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import Search from '../search/search';
+import DBSearch from '../search/dbSearch';
 import ApperanceContext from '../../context/apperance-context';
 
 class ToolBar extends Component {
@@ -66,14 +66,14 @@ class ToolBar extends Component {
     render() {
         const { background } = this.context;
         return (<div className={`attributes-header ${background}`}>
-            {this.alert()}
+          
             <div className="attr-link" onClick={this.props.handleAdd}>
                 <span className="plus-icon" /><span className="text">Add</span> 
             </div>
             <div className="attr-link" onClick={this.handleReset}>
                  <span className="reset-icon" /><span className="text">Reset</span> 
             </div>
-            <div><Search onConfirm={this.handleSearch} onChange={this.handleSearch}/></div>
+            <div><DBSearch onConfirm={this.handleSearch} onChange={this.handleSearch}/></div>
         </div>)
     }
 }
