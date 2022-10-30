@@ -113,11 +113,14 @@ class AddDecision extends Component {
         
 
 
-        const outcome = props.editDecision ? props.outcome : ({ value: '', error: {}, params: [{ message: 'Please update this message' }] });
+        const outcome = props.editDecision ? props.outcome : {value: 'New', params:[] };
 
         const addAttribute = { error: {}, name: '', operator: '', value: '' };
         const node = props.editDecision ? props.editCondition.node : {};
         const activeNode = { index: 0, depth: 0 };
+        const ruleName = (props.editDecision && props.editCondition.event.name) ? props.editCondition.event.name :''
+        const ruleId = (props.editDecision && props.editCondition.event.type) ? props.editCondition.event.type : 'NEW'
+        const ruleMessage = props.editDecision && props.editCondition.event.params.message ? props.editCondition.event.params.message :''
 
 
         // nk
@@ -139,8 +142,12 @@ class AddDecision extends Component {
         const actionString = props.editDecision && props.editCondition.event.params.action ? props.editCondition.event.params.action : [{name:''}];
        
        const action =  actionString
+
+
+        
         const responseVariables = props.editDecision && props.editCondition.event.params.rvs ? JSON.parse(props.editCondition.event.params.rvs) : [];
         
+
         const apiSource = props.editDecision && props.editCondition.event.apiSource 
             ? props.editCondition.event.apiSource 
             :   {
@@ -165,6 +172,7 @@ class AddDecision extends Component {
             enableTreeView: props.editDecision,
             enableFieldView: false,
             enableOutcomeView: false,
+            ruleId, ruleName,ruleMessage,
             rowData : [
                 {name: "X-JBID", value: "kapoo"},
                 {name: "X-API", value: "23482394729387498234"},
@@ -210,6 +218,9 @@ class AddDecision extends Component {
         this.handleServiceGUPDRadioGroup = this.handleServiceGUPDRadioGroup.bind(this);
         this.gupHeaderTable = this.gupHeaderTable.bind(this);
 
+        this.handleChangeRuleMessage = this.handleChangeRuleMessage.bind(this)
+        this.handleChangeRuleName = this.handleChangeRuleName.bind(this)
+
         this.handleChangeActionOptions = this.handleChangeActionOptions.bind(this);
         this.addActions = this.addActions.bind(this);
         this.deleteActions = this.deleteActions.bind(this);
@@ -235,8 +246,18 @@ class AddDecision extends Component {
             this.state.outcome.params.forEach(param => {
                 outcomeParams[param.pkey] = param.pvalue;
             })
+
+            // let params = {rvs: this.state.responseVariables, action:this.state.action, name: this.state.ruleName, message: this.state.ruleMessage}
             const condition = transformTreeToRule(this.state.node, this.state.outcome, outcomeParams);
-            this.props.addCondition(condition);
+        
+            condition.event.name = this.state.ruleName
+            condition.event.params.message = this.state.ruleMessage
+            condition.event.params.rvs = JSON.stringify(this.state.responseVariables)
+            condition.event.params.action = this.state.action
+            condition.event.params.actionType = this.state.actionType
+            condition.event.type = this.state.ruleId
+        
+             this.props.addCondition(condition);    
         }
     }
 
@@ -288,6 +309,9 @@ class AddDecision extends Component {
 
         this.setState(responseVariables);
     }
+
+
+
     addPath() {
         this.setState({ addPathflag: true });
     }
@@ -306,6 +330,18 @@ class AddDecision extends Component {
             return param;
         });
         this.setState({ outcome: { ...outcome, params: newParams } });
+    }
+
+    handleChangeRuleName(event){
+        let {outcome} = this.state
+        let value = event.target.value
+        this.setState({ruleName:value})
+  
+    }
+    handleChangeRuleMessage(event){
+        let {outcome} = this.state
+        let value = event.target.value
+        this.setState({ruleMessage:value})
     }
 
     handleChangeActionOptions(event) {
@@ -713,7 +749,7 @@ class AddDecision extends Component {
 
 
     outputPanel() {
-        const { outcome, action, responseVariables, actionType } = this.state;
+        const { outcome, action,ruleId, ruleName,ruleMessage, responseVariables, actionType } = this.state;
         const { editDecision } = this.props;
         const { background } = this.context;
         // messages and rule name panel NK EDIT
@@ -726,16 +762,24 @@ class AddDecision extends Component {
                 <div className="add-field-panel ">
                     <div>
                         <InputField onChange={(value) => this.onChangeOutcomeValue(value, 'value')}
-                            value={outcome.value}
+                            value={ruleId}
+                            error={outcome.error && outcome.error.value} label="Rule ID"
+                            placeholder='Enter a rule name...'
+
+                            readOnly={true} />
+                    </div>
+                    <div>
+                        <InputField onChange={(value) => this.handleChangeRuleName(value)}
+                            value={ruleName}
                             error={outcome.error && outcome.error.value} label="Rule Name"
                             placeholder='Enter a rule name...'
 
-                            readOnly={editDecision} />
+                             />
                     </div>
 
                     <div>
-                        <InputField onChange={(value) => this.handleOutputParams(value, 'pvalue', 0)}
-                            value={outcome.params[0].pvalue}
+                        <InputField onChange={(value) => this.handleChangeRuleMessage(value)}
+                            value={ruleMessage}
                             error={outcome.error && outcome.error.value} label="Message"
                             placeholder='Enter the message to be displayed when rule is fired...'
                         />

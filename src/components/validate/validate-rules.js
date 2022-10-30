@@ -69,6 +69,10 @@ class ValidateRules extends Component {
 
     attributeItems = () => {
         const { conditions, loading, outcomes, result, error, errorMessage } = this.state;
+        console.log("🚀 ~ file: validate-rules.js ~ line 72 ~ ValidateRules ~ conditions", conditions)
+       
+       
+       
         const { attributes } = this.props;
         const options = attributes.map(att => att.name);
 

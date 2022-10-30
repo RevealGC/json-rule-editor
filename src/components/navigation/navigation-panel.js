@@ -59,7 +59,7 @@ class NavigationPanel extends Component {
         let result = await axios.get(url)
         let ruleSet = result.data
         this.props.uploadRuleset(result.data)
-
+console.log(JSON.stringify(result.data))
         }
         catch(e){
             alert(e)

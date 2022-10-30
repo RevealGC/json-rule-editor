@@ -94,7 +94,7 @@ class Decision extends Component {
     render() {
         const { searchCriteria, bannerflag } = this.state;
         const buttonProps = { primaryLabel: 'Add Rulecase', secondaryLabel: 'Cancel'};
-        const editButtonProps = { primaryLabel: 'Edit Rulecase', secondaryLabel: 'Cancel'};
+        const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel'};
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
         const { outcomes } = this.props;
 
