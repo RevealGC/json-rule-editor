@@ -13,7 +13,7 @@ const DBSearch = ({onChange}) => {
     return (<div className="search-container">
         <input type="text" onChange={handleSearch} 
         className="search-field" value={dbSearch} 
-        placeholder="Enter a reporting id..." />
+        placeholder="Search by id..." />
     </div>);
 };
 

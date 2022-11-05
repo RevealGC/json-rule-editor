@@ -50,16 +50,12 @@ class NavigationPanel extends Component {
         
     }
    async loadRuleSet(){
-        alert(this.state.dbSearchText)
-
-        
         // now call axios to get data from  http://localhost/rulesrepo/factsandrules/8771348140?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo
         let url = 'http://localhost/rulesrepo/factsandrules/'+this.state.dbSearchText+'?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'
         try{
         let result = await axios.get(url)
         let ruleSet = result.data
         this.props.uploadRuleset(result.data)
-console.log(JSON.stringify(result.data))
         }
         catch(e){
             alert(e)
