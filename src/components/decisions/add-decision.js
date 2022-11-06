@@ -235,6 +235,12 @@ class AddDecision extends Component {
         this.setState({activeAPITab: tabName});
     }
 
+
+    handleShowRuleJSON(){
+        
+    }
+
+
     handleAdd(e) {
         e.preventDefault();
         const error = decisionValidations(this.state.node, this.state.outcome);
@@ -833,7 +839,11 @@ class AddDecision extends Component {
                     {this.state.formError && <p className="form-error"> {this.state.formError}</p>}
                     <div className="btn-group">
                         <Button label={buttonProps.primaryLabel} onConfirm={this.handleAdd} classname="primary-btn" type="submit" />
+                        <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" type="submit" />
+
                         <Button label={buttonProps.secondaryLabel} onConfirm={this.handleCancel} classname="cancel-btn" />
+
+
                     </div>
 
                 </div>

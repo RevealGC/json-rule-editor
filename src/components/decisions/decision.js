@@ -108,8 +108,7 @@ class Decision extends Component {
                  outcome={this.state.editOutcome} editDecision addCondition={this.updateCondition} cancel={this.cancelAddAttribute} buttonProps={editButtonProps} /> }
             
             <DecisionDetails outcomes={filteredOutcomes} editCondition={this.editCondition} removeCase={this.removeCase} removeDecisions={this.removeDecisions} />
-            
-            { !bannerflag && Object.keys(outcomes).length < 1 && <Banner message={this.state.message} onConfirm={this.handleAdd}/> }
+            { !bannerflag && Object.keys(outcomes).length < 1 && <Banner message={this.props.decisions[this.state.editDecisionIndex].event.params.message } onConfirm={this.handleAdd}/> }
       </div>);
     }
 }
