@@ -2,11 +2,22 @@ import * as ActionTypes from '../actions/action-types';
  import { cloneDeep } from 'lodash/lang';
  import { findIndex } from 'lodash/array';
 
+     
+
+const dateTime = () =>{
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
+    return  dateTime
+}
+var initTime = dateTime()
 const initialState = {
     rulesets: [],
     activeRuleset: 0,
     updatedFlag: false,
     uploadedRules: [],
+    debugData :[{label:initTime, data:{'WELCOME':'Welcome to QBES Editor & Debugger'}}]
 }
 
 
@@ -18,6 +29,21 @@ const replaceRulesetByIndex = (rulesets, targetset, index) => {
 function ruleset(state = initialState, action='') {
 
     switch(action.type) {
+
+
+        case ActionTypes.ADD_DEBUG: {
+            const { debug } = action.payload;
+            debug.label = dateTime()
+
+            const debugData = state.debugData.push(debug)
+             return { ...state,...debugData}
+                     
+         }
+ 
+         case ActionTypes.RESET_DEBUG: {
+            
+             return { ...state, debugData:[]}
+         }
 
         case ActionTypes.UPLOAD_RULESET: {
 

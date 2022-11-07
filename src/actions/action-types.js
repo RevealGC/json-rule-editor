@@ -16,3 +16,9 @@ export const UPDATE_NAV_STATE = 'UPDATE_NAV_STATE';
 export const LOG_IN = 'LOG_IN';
 
 export const SEARCH_RID_DB = 'SEARCH_RID_DB'
+
+export const ADD_DEBUG = 'ADD_DEBUG';
+export const RESET_DEBUG = 'RESET_DEBUG';
+export const REMOVE_DEBUG = 'REMOVE_DEBUG';
+export const UPDATE_DEBUG = 'UPDATE_DEBUG';
+

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { SplitPane } from "react-collapse-pane";
 import { connect } from 'react-redux';
 import Title from '../../components/title/title';
@@ -11,9 +11,12 @@ import { createHashHistory } from 'history';
 import ApperanceContext from '../../context/apperance-context';
 import Button from "../../components/button/button"
 
+import Panel from '../../components/panel/panel';
+import ReactJson from 'react-json-view'
+
 class ApplicationContainer extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         const history = createHashHistory();
         this.setsearchRIDText = this.setsearchRIDText.bind(this)
@@ -25,7 +28,7 @@ class ApplicationContainer extends Component {
             document.body.className = value;
             this.setState({ theme });
         }
-        this.state = {theme: { background: 'light', toggleBackground: this.toggleBackground }};
+        this.state = { debugPanelDisplay: false, theme: { background: 'light', toggleBackground: this.toggleBackground } };
     }
 
     componentDidMount() {
@@ -33,61 +36,49 @@ class ApplicationContainer extends Component {
     }
 
     componentWillUnmount() {
-        if (this.unlisten){
+        if (this.unlisten) {
             this.unlisten();
         }
     }
 
 
-    setsearchRIDText(e){
-       
+    setsearchRIDText(e) {
+
     }
 
     render() {
         const closednav = this.props.navState !== 'open';
-        return(
+        const {debugPanelDisplay} = this.state
+        const debugData = this.props.debugData
+        return (
 
 
-         
+
 
             <React.Fragment>
-              <ApperanceContext.Provider value={this.state.theme}>
-                <Title title={'QBES: Rule Editor'} />
-                <SplitPane split="vertical"   collapseOptions={{
-    beforeToggleButton: <Button>⬅</Button>,
-    afterToggleButton: <Button>➡</Button>,
-    overlayCss: { backgroundColor: "green" },
-    buttonTransition: "zoom",
-    buttonPositionOffset: -20,
-    collapsedSize: 10,
-    collapseTransitionTimeout: 350,
-  }}    resizerOptions={{
-    css: {
-      width: '1px',
-      background: 'rgba(0, 0, 0, 0.1)',
-    },
-    hoverCss: {
-      width: '3px',
-      background: '1px solid rgba(102, 194, 255, 0.5)',
-    },
-    grabberSize: '1rem',
-  }}>
-  <div>
+                <ApperanceContext.Provider value={this.state.theme}>
+                    <Title title={'QBES: Rule Editor'} />
+                    <SplitPane split="vertical" collapseOptions={{ beforeToggleButton: <Button>⬅</Button>, afterToggleButton: <Button>➡</Button>, overlayCss: { backgroundColor: "green" }, buttonTransition: "zoom", buttonPositionOffset: -20, collapsedSize: 10, collapseTransitionTimeout: 350, }} resizerOptions={{ css: { width: '1px', background: 'rgba(0, 0, 0, 0.1)', }, hoverCss: { width: '3px', background: '1px solid rgba(102, 194, 255, 0.5)', }, grabberSize: '1rem', }}>
+                        <div>
 
-                <NavigationPanel closedState={closednav} 
-                updateState={this.props.updateState}
-                setsearchRIDText={this.props.setsearchRIDText}
-                 activeIndex={this.props.activeIndex}
-                        rulenames={this.props.rulenames} setActiveRulesetIndex={this.props.setActiveRulesetIndex} loggedIn={this.props.loggedIn}/>
-                <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />
+                            <NavigationPanel closedState={closednav}
+                                updateState={this.props.updateState}
+                                setsearchRIDText={this.props.setsearchRIDText}
+                                activeIndex={this.props.activeIndex}
+                                rulenames={this.props.rulenames} setActiveRulesetIndex={this.props.setActiveRulesetIndex} loggedIn={this.props.loggedIn} />
+                            <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />
 
 
-            </div>
-  <div>This is the third div</div>
-</SplitPane>
+                        </div>
+                     <div>{
+                        debugData.map(d=> {return(<div> <Panel title={d.label}>  <ReactJson collapsed={false} src={d.data}  /> </Panel>
+                        
+                        </div>)}) }
+                        </div> 
+                    </SplitPane>
 
 
-              </ApperanceContext.Provider>
+                </ApperanceContext.Provider>
             </React.Fragment>
         )
     }
@@ -95,6 +86,7 @@ class ApplicationContainer extends Component {
 
 ApplicationContainer.defaultProps = {
     rulenames: [],
+    debugData: [],
     setActiveRulesetIndex: () => false,
     navState: undefined,
     activeIndex: 0,
@@ -110,7 +102,8 @@ ApplicationContainer.propTypes = {
     loggedIn: PropTypes.bool,
     updateState: PropTypes.func,
     activeIndex: PropTypes.number,
-    setsearchRIDText: PropTypes.func
+    setsearchRIDText: PropTypes.func,
+    debugData: PropTypes.array
 }
 
 
@@ -119,7 +112,8 @@ const mapStateToProps = (state, ownProps) => ({
     rulenames: state.ruleset.rulesets.map(r => r.name),
     loggedIn: state.app.loggedIn,
     activeIndex: state.ruleset.activeRuleset,
-    ownProps
+    ownProps,
+    debugData: state.ruleset.debugData
 });
 
 const mapDispatchToProps = (dispatch) => ({

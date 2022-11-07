@@ -8,6 +8,10 @@ import * as Message from '../../constants/messages';
 import { transformRuleToTree } from '../../utils/transform';
 import { isContains } from '../../utils/stringutils';
 
+
+import { handleDebug } from '../../actions/debug';
+
+
 class Decision extends Component {
 
     constructor(props){
@@ -28,6 +32,9 @@ class Decision extends Component {
         this.removeDecisions = this.removeDecisions.bind(this);
         this.handleReset = this.handleReset.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
+
+        this.addDebug = this.addDebug.bind(this);
+
     }
 
     handleSearch = (value) => {
@@ -53,6 +60,11 @@ class Decision extends Component {
         this.setState({ editCaseFlag: true, editCondition, 
             editDecisionIndex: decisionIndex, 
             editOutcome: { value: decision.event.type, params: outputParams }});
+    }
+
+    addDebug(debug){
+        this.props.handleDebug('ADD', {debug});
+        
     }
 
     addCondition(condition) {
@@ -102,9 +114,9 @@ class Decision extends Component {
 
             { <ToolBar handleAdd={this.handleAdd} reset={this.handleReset} searchTxt={this.handleSearch} /> }
 
-            { this.state.showAddRuleCase && <AddDecision attributes={this.props.attributes} addCondition={this.addCondition} cancel={this.cancelAddAttribute} buttonProps={buttonProps} /> }
+            { this.state.showAddRuleCase && <AddDecision attributes={this.props.attributes} addCondition={this.addCondition}  addDebug={this.addDebug} cancel={this.cancelAddAttribute} buttonProps={buttonProps} /> }
             
-            { this.state.editCaseFlag && <AddDecision attributes={this.props.attributes} editCondition={this.state.editCondition}
+            { this.state.editCaseFlag && <AddDecision attributes={this.props.attributes} editCondition={this.state.editCondition} addDebug={this.addDebug}
                  outcome={this.state.editOutcome} editDecision addCondition={this.updateCondition} cancel={this.cancelAddAttribute} buttonProps={editButtonProps} /> }
             
             <DecisionDetails outcomes={filteredOutcomes} editCondition={this.editCondition} removeCase={this.removeCase} removeDecisions={this.removeDecisions} />
@@ -120,6 +132,7 @@ Decision.defaultProps = ({
     decisions: [],
     attributes: [],
     outcomes: {},
+    handleDebug: () =>false
 });
 
 Decision.propTypes = ({
@@ -129,6 +142,7 @@ Decision.propTypes = ({
     decisions: PropTypes.array,
     attributes: PropTypes.array,
     outcomes: PropTypes.object,
+    handleDebug: PropTypes.func
 });
 
 export default Decision;

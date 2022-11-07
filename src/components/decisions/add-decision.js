@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Panel from '../panel/panel';
@@ -33,6 +34,7 @@ import { sortBy } from 'lodash/collection';
 import { validateAttribute } from '../../validations/decision-validation';
 import { PLACEHOLDER } from '../../constants/data-types';
 import ApperanceContext from '../../context/apperance-context';
+import { handleDebug } from '../../actions/debug';
 
 
 
@@ -229,15 +231,17 @@ class AddDecision extends Component {
         this.addRadioGroup = this.addRadioGroup.bind(this);
         this.imputeAggregatePanel = this.imputeAggregatePanel.bind(this);
         this.addPath = this.addPath.bind(this);
+
+        this.handleShowRuleJSON = this.handleShowRuleJSON.bind(this)
     }
 
     handleAPITab = (tabName) => {
         this.setState({activeAPITab: tabName});
     }
 
-
+// NK
     handleShowRuleJSON(){
-        
+        this.props.handleDebug('ADD', {label:'time', data:{outcome: this.state.outcome}}, 0)
     }
 
 
@@ -264,6 +268,7 @@ class AddDecision extends Component {
             condition.event.type = this.state.ruleId
         
              this.props.addCondition(condition);    
+             this.props.handleDebug('ADD', {label:'time', data:{condition}}, 0)
         }
     }
 
@@ -839,7 +844,7 @@ class AddDecision extends Component {
                     {this.state.formError && <p className="form-error"> {this.state.formError}</p>}
                     <div className="btn-group">
                         <Button label={buttonProps.primaryLabel} onConfirm={this.handleAdd} classname="primary-btn" type="submit" />
-                        <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" type="submit" />
+                        <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn"  />
 
                         <Button label={buttonProps.secondaryLabel} onConfirm={this.handleCancel} classname="cancel-btn" />
 
@@ -862,7 +867,9 @@ AddDecision.defaultProps = ({
     attributes: [],
     outcome: {},
     editDecision: false,
-    editCondition: {}
+    editCondition: {},
+    addDebug: () => false,
+    resetDebug: () => false
 });
 
 AddDecision.propTypes = ({
@@ -873,8 +880,22 @@ AddDecision.propTypes = ({
     attributes: PropTypes.array,
     outcome: PropTypes.object,
     editDecision: PropTypes.bool,
-    editCondition: PropTypes.object
+    editCondition: PropTypes.object,
+    addDebug: PropTypes.func,
+    resetDebug: PropTypes.func
 });
 
+const mapStateToProps = (state, ownProps) => ({
+  
+    debugData: state.ruleset.debugData
+});
 
-export default AddDecision;
+const mapDispatchToProps = (dispatch) => ({
+    handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))
+    
+  });
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(AddDecision);
+
+
+
