@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SplitPane } from "react-collapse-pane";
+
 import { connect } from 'react-redux';
 import Title from '../../components/title/title';
 import NavigationPanel from '../../components/navigation/navigation-panel';
@@ -11,8 +11,69 @@ import { createHashHistory } from 'history';
 import ApperanceContext from '../../context/apperance-context';
 import Button from "../../components/button/button"
 
+
+
+import { SplitPane } from "react-collapse-pane";
+
+
+import styled from "styled-components";
 import Panel from '../../components/panel/panel';
 import ReactJson from 'react-json-view'
+
+const Wrapper = styled.div`
+  .Resizer {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background: #000;
+    opacity: 0.2;
+    z-index: 1;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding;
+    background-clip: padding-box;
+  }
+
+  .Resizer:hover {
+    -webkit-transition: all 2s ease;
+    transition: all 2s ease;
+  }
+
+  .Resizer.horizontal {
+    height: 11px;
+    margin: -5px 0;
+    border-top: 5px solid rgba(255, 255, 255, 0);
+    border-bottom: 5px solid rgba(255, 255, 255, 0);
+    cursor: row-resize;
+    width: 100%;
+  }
+
+  .Resizer.horizontal:hover {
+    border-top: 5px solid rgba(0, 0, 0, 0.5);
+    border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+  }
+
+  .Resizer.vertical {
+    width: 11px;
+    margin: 0 -5px;
+    border-left: 5px solid rgba(255, 255, 255, 0);
+    border-right: 5px solid rgba(255, 255, 255, 0);
+    cursor: col-resize;
+  }
+
+  .Resizer.vertical:hover {
+    border-left: 5px solid rgba(0, 0, 0, 0.5);
+    border-right: 5px solid rgba(0, 0, 0, 0.5);
+  }
+  .Pane {
+  
+    overflow:auto;
+  }
+ 
+`;
+
+
+
+
 
 class ApplicationContainer extends Component {
 
@@ -57,26 +118,43 @@ class ApplicationContainer extends Component {
 
             <React.Fragment>
                 <ApperanceContext.Provider value={this.state.theme}>
-                    <Title title={'QBES: Rule Editor'} />
-                    <SplitPane split="vertical" collapseOptions={{ beforeToggleButton: <Button>⬅</Button>, afterToggleButton: <Button>➡</Button>, overlayCss: { backgroundColor: "green" }, buttonTransition: "zoom", buttonPositionOffset: -20, collapsedSize: 10, collapseTransitionTimeout: 350, }} resizerOptions={{ css: { width: '1px', background: 'rgba(0, 0, 0, 0.1)', }, hoverCss: { width: '3px', background: '1px solid rgba(102, 194, 255, 0.5)', }, grabberSize: '1rem', }}>
-                        <div>
+                   
 
-                            <NavigationPanel closedState={closednav}
+                   
+            <Wrapper>
+               
+                            <SplitPane split="vertical"   minSize={250}   >
+                       <div style={{overflow:'auto'}} > 
+                       <Title title={'QBES: Rule Editor'} />
+                        <NavigationPanel closedState={closednav}
                                 updateState={this.props.updateState}
                                 setsearchRIDText={this.props.setsearchRIDText}
                                 activeIndex={this.props.activeIndex}
                                 rulenames={this.props.rulenames} setActiveRulesetIndex={this.props.setActiveRulesetIndex} loggedIn={this.props.loggedIn} />
-                            <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />
-
-
-                        </div>
-                     <div>{
-                        debugData.map(d=> {return(<div> <Panel title={d.label}>  <ReactJson collapsed={false} src={d.data}  /> </Panel>
                         
-                        </div>)}) }
-                        </div> 
-                    </SplitPane>
+                        
+                       
+                            <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />
+                            </div>  
 
+                    
+                            <div > 
+                            <div>
+                   
+                        {
+                      
+                        debugData.map(d=> {return( <Panel title={d.label}>  <ReactJson collapsed={false} src={d.data}  /> </Panel>
+                        
+                       )})
+              
+                        }
+                        </div>
+                    
+                        </div> 
+                      
+                    </SplitPane>
+            
+                    </Wrapper>    
 
                 </ApperanceContext.Provider>
             </React.Fragment>
