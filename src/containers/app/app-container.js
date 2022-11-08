@@ -140,6 +140,10 @@ class ApplicationContainer extends Component {
                     
                             <div > 
                             <div>
+                            <Title title={'QBES: Debugger'} />
+                            <div className="attr-link" onClick={this.handleReset}>
+                 <span className="reset-icon" /><span className="text">Reset</span> 
+            </div>
                    
                         {
                       
