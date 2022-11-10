@@ -123,7 +123,7 @@ class ApplicationContainer extends Component {
                    
             <Wrapper>
                
-                            <SplitPane split="vertical"   minSize={250}   >
+                            <SplitPane split="vertical" collapsedSizes={['85%', '15%']}  minSize={250}   >
                        <div style={{overflow:'auto'}} > 
                        <Title title={'QBES: Rule Editor'} />
                         <NavigationPanel closedState={closednav}
@@ -138,9 +138,9 @@ class ApplicationContainer extends Component {
                             </div>  
 
                     
-                            <div > 
+                          
                             <div>
-                            <Title title={'QBES: Debugger'} />
+                            <Title title={'Debugger'} />
                             <div className="attr-link" onClick={this.handleReset}>
                  <span className="reset-icon" /><span className="text">Reset</span> 
             </div>
@@ -154,7 +154,7 @@ class ApplicationContainer extends Component {
                         }
                         </div>
                     
-                        </div> 
+                     
                       
                     </SplitPane>
             
