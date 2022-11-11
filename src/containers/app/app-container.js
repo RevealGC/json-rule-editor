@@ -147,7 +147,9 @@ class ApplicationContainer extends Component {
                    
                         {
                       
-                        debugData.map(d=> {return( <Panel title={d.label}>  <ReactJson collapsed={false} src={d.data}  /> </Panel>
+                        debugData.map(d=> {return( <Panel title={d.label}> 
+                         <ReactJson displayObjectSize ={false} displayDataTypes={false} collapsed={false} 
+                         src={d.data}  /> </Panel>
                         
                        )})
               

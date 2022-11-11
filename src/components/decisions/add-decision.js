@@ -246,6 +246,7 @@ class AddDecision extends Component {
 
 
     handleAdd(e) {
+        let actionType = this.state.actionType
         e.preventDefault();
         const error = decisionValidations(this.state.node, this.state.outcome);
 
@@ -262,13 +263,40 @@ class AddDecision extends Component {
         
             condition.event.name = this.state.ruleName
             condition.event.params.message = this.state.ruleMessage
-            condition.event.params.rvs = JSON.stringify(this.state.responseVariables)
-            condition.event.params.action = this.state.action
+            condition.event.params.rvs = JSON.stringify(this.state.responseVariables) // Version 1: Will be deprecated
+            condition.event.params.rvsJSON = this.state.responseVariables // Version 2
+            
+               
             condition.event.params.actionType = this.state.actionType
-            condition.event.type = this.state.ruleId
+            if(actionType == 'notify'){
+                delete condition.event.params.action
+            }
+            else {
+            condition.event.params.action = this.state.action
+
+            if(actionType == 'impute'){
+                let action = this.state.action // array 
+                condition.event.params.impute = []
+                action.map(a =>{
+                    condition.event.params.impute.push({computedRV: Object.keys(a)[0], expression: a[Object.keys(a)[0]]})
+                })
+       
+            // condition.event.params.impute = this.state.action
+            }
+
+            if(actionType == 'aggregate')
+
+            
+            
+         
+            condition.event.type = this.state.ruleId // Version 1 to be deprecated NK
+            condition.event.ruleId = this.state.ruleId // Version 2 NK
+        }
+            if(actionType == "API")
+                condition.event.apiSource = this.state.apiSource
         
              this.props.addCondition(condition);    
-             this.props.handleDebug('ADD', {label:'time', data:{condition}}, 0)
+             this.props.handleDebug('ADD', {label:'time', data:{rule:condition}}, 0)
         }
     }
 
@@ -653,7 +681,7 @@ class AddDecision extends Component {
         return (actionType == 'API') ?
         (<Panel title='API'>
             <div id="treeWrapper">
-            <ReactJson src={apiSource} 
+            <ReactJson src={apiSource} displayObjectSize ={false} displayDataTypes={false} 
            onEdit={ onEdit
             ? e => {
                   console.log(e);
@@ -843,7 +871,7 @@ class AddDecision extends Component {
                     {this.addPanel()}
                     {this.state.formError && <p className="form-error"> {this.state.formError}</p>}
                     <div className="btn-group">
-                        <Button label={buttonProps.primaryLabel} onConfirm={this.handleAdd} classname="primary-btn" type="submit" />
+                        <Button label={buttonProps.primaryLabel} onConfirm={this.handleAdd} classname="primary-btn" />
                         <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn"  />
 
                         <Button label={buttonProps.secondaryLabel} onConfirm={this.handleCancel} classname="cancel-btn" />
