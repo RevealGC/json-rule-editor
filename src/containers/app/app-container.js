@@ -6,6 +6,7 @@ import NavigationPanel from '../../components/navigation/navigation-panel';
 import AppRoutes from '../../routes/app-routes';
 import PropTypes from 'prop-types';
 import { updateRulesetIndex } from '../../actions/ruleset';
+import { handleDebug} from '../../actions/debug'
 import { setsearchRIDText, updateState } from '../../actions/app';
 import { createHashHistory } from 'history';
 import ApperanceContext from '../../context/apperance-context';
@@ -90,6 +91,7 @@ class ApplicationContainer extends Component {
             this.setState({ theme });
         }
         this.state = { debugPanelDisplay: false, theme: { background: 'light', toggleBackground: this.toggleBackground } };
+        this.handleReset = this.handleReset.bind(this)
     }
 
     componentDidMount() {
@@ -107,9 +109,15 @@ class ApplicationContainer extends Component {
 
     }
 
+
+    handleReset(){
+        // alert("Reset debugger")
+        this.props.resetDebug()
+    }
+
     render() {
         const closednav = this.props.navState !== 'open';
-        const {debugPanelDisplay} = this.state
+        const { debugPanelDisplay } = this.state
         const debugData = this.props.debugData
         return (
 
@@ -118,49 +126,51 @@ class ApplicationContainer extends Component {
 
             <React.Fragment>
                 <ApperanceContext.Provider value={this.state.theme}>
-                   
 
-                   
-            <Wrapper>
-               
-                            <SplitPane split="vertical" collapsedSizes={['85%', '15%']}  minSize={250}   >
-                       <div style={{overflow:'auto'}} > 
-                       <Title title={'QBES: Rule Editor'} />
-                        <NavigationPanel closedState={closednav}
-                                updateState={this.props.updateState}
-                                setsearchRIDText={this.props.setsearchRIDText}
-                                activeIndex={this.props.activeIndex}
-                                rulenames={this.props.rulenames} setActiveRulesetIndex={this.props.setActiveRulesetIndex} loggedIn={this.props.loggedIn} />
-                        
-                        
-                       
-                            <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />
-                            </div>  
 
-                    
-                          
+
+                    <Wrapper>
+
+                        <SplitPane split="vertical" collapsedSizes={['85%', '15%']} minSize={250}   >
+                            <div style={{ overflow: 'auto' }} >
+                                <Title title={'QBES: Rule Editor'} />
+                                <NavigationPanel closedState={closednav}
+                                    updateState={this.props.updateState}
+                                    setsearchRIDText={this.props.setsearchRIDText}
+                                    activeIndex={this.props.activeIndex}
+                                    rulenames={this.props.rulenames} setActiveRulesetIndex={this.props.setActiveRulesetIndex} loggedIn={this.props.loggedIn} />
+
+
+
+                                <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />
+                            </div>
+
+
+
                             <div>
-                            <Title title={'Debugger'} />
-                            <div className="attr-link" onClick={this.handleReset}>
-                 <span className="reset-icon" /><span className="text">Reset</span> 
-            </div>
-                   
-                        {
-                      
-                        debugData.map(d=> {return( <Panel title={d.label}> 
-                         <ReactJson displayObjectSize ={false} displayDataTypes={false} collapsed={false} 
-                         src={d.data}  /> </Panel>
-                        
-                       )})
-              
-                        }
-                        </div>
-                    
-                     
-                      
-                    </SplitPane>
-            
-                    </Wrapper>    
+                                <Title title={'Debugger'} />
+                                <div className="attr-link" onClick={this.handleReset}>
+                                    <span className="reset-icon" /><span className="text">Reset</span>
+                                </div>
+
+                                {
+
+                                    debugData.map(d => {
+                                        return (<Panel title={d.label}>
+                                            <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={false}
+                                                src={d.data} /> </Panel>
+
+                                        )
+                                    })
+
+                                }
+                            </div>
+
+
+
+                        </SplitPane>
+
+                    </Wrapper>
 
                 </ApperanceContext.Provider>
             </React.Fragment>
@@ -177,6 +187,7 @@ ApplicationContainer.defaultProps = {
     loggedIn: false,
     updateState: () => false,
     setsearchRIDText: () => false,
+    resetDebug: ()=>false,
 };
 
 ApplicationContainer.propTypes = {
@@ -187,7 +198,8 @@ ApplicationContainer.propTypes = {
     updateState: PropTypes.func,
     activeIndex: PropTypes.number,
     setsearchRIDText: PropTypes.func,
-    debugData: PropTypes.array
+    debugData: PropTypes.array,
+    resetDebug: PropTypes.func
 }
 
 
@@ -206,7 +218,10 @@ const mapDispatchToProps = (dispatch) => ({
     },
     setActiveRulesetIndex: (name) => dispatch(updateRulesetIndex(name)),
     updateState: (val) => dispatch(updateState(val)),
-    setsearchRIDText: (val) => dispatch(setsearchRIDText(val))
+    setsearchRIDText: (val) => dispatch(setsearchRIDText(val)),
+    resetDebug: () => dispatch(handleDebug("RESET", {}, 0))
+
+    
 
 });
 

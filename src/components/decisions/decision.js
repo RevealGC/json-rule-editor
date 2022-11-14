@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ToolBar from '../toolbar/toolbar';
 import AddDecision from './add-decision';
@@ -63,7 +64,8 @@ class Decision extends Component {
     }
 
     addDebug(debug){
-        this.props.handleDebug('ADD', {debug});
+        // this.props.handleDebug('ADD', {debug});
+        this.props.handleDebug('ADD', {label:'time', data:debug}, 0)
         
     }
 
@@ -89,7 +91,7 @@ class Decision extends Component {
     handleReset() {
         this.props.handleDecisions('RESET');
     }
-
+//NK FILTER
     filterOutcomes = () => {
         const { searchCriteria } = this.state;
         const { outcomes } = this.props;
@@ -119,7 +121,7 @@ class Decision extends Component {
             { this.state.editCaseFlag && <AddDecision attributes={this.props.attributes} editCondition={this.state.editCondition} addDebug={this.addDebug}
                  outcome={this.state.editOutcome} editDecision addCondition={this.updateCondition} cancel={this.cancelAddAttribute} buttonProps={editButtonProps} /> }
             
-            <DecisionDetails outcomes={filteredOutcomes} editCondition={this.editCondition} removeCase={this.removeCase} removeDecisions={this.removeDecisions} />
+            <DecisionDetails addDebug={this.addDebug} outcomes={filteredOutcomes} editCondition={this.editCondition} removeCase={this.removeCase} removeDecisions={this.removeDecisions} />
             { !bannerflag && Object.keys(outcomes).length < 1 && <Banner message={this.props.decisions[this.state.editDecisionIndex].event.params.message } onConfirm={this.handleAdd}/> }
       </div>);
     }
@@ -145,4 +147,15 @@ Decision.propTypes = ({
     handleDebug: PropTypes.func
 });
 
-export default Decision;
+const mapStateToProps = (state, ownProps) => ({
+  
+    // debugData: state.ruleset.debugData
+});
+const mapDispatchToProps = (dispatch) => ({
+    handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))
+    
+  });
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(Decision);
+
+// export default Decision;

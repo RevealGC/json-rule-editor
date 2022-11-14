@@ -29,6 +29,13 @@ class DecisionDetails extends Component {
         this.handleExpand = this.handleExpand.bind(this);
         this.handleRemoveCondition = this.handleRemoveCondition.bind(this);
         this.handleRemoveConditions = this.handleRemoveConditions.bind(this);
+
+//NK
+this.handleViewRule = this.handleViewRule.bind(this)
+this.handleDeployRule = this.handleDeployRule.bind(this)
+this.handleTestRule = this.handleTestRule.bind(this)
+// this.props.addDebug({data:'TEST'})
+
         this.editCondition = this.editCondition.bind(this);
         this.cancelAlert = this.cancelAlert.bind(this);
         this.removeCase = this.removeCase.bind(this);
@@ -54,6 +61,24 @@ class DecisionDetails extends Component {
         cases[index] = { ...updateCase };
         this.setState({ showCase: cases });
     }
+
+
+//NK
+handleViewRule(e, decisionIndex) {
+    e.preventDefault();
+  
+    this.props.addDebug({rule:this.props.outcomes[decisionIndex][0]})
+}
+
+handleTestRule(e, decisionIndex) {
+    e.preventDefault();
+}
+
+handleDeployRule(e, decisionIndex) {
+    e.preventDefault();
+}
+
+
 
     handleRemoveCondition(e, decisionIndex) {
         e.preventDefault();
@@ -157,6 +182,11 @@ class DecisionDetails extends Component {
                     <div className="type">conditions <span className="type-badge">{outcomes[key].length}</span></div>
                     <div className="menu">
                         <a href="" onClick={(e) => this.handleExpand(e, index)}> { showCase[index].case ? 'Collapse' : 'View Conditions' }</a>
+                      
+                        <a href="" onClick={((e) => this.handleViewRule(e, String(key)))}>View Rule</a>
+                        <a href="" onClick={((e) => this.handleTestRule(e, String(key)))}>Test</a>
+                        <a href="" onClick={((e) => this.handleDeployRule(e, String(key)))}>Deploy</a>
+                      
                         <a href="" onClick={((e) => this.handleRemoveConditions(e, String(key)))}>Remove</a>
                     </div>
                  </PanelBox>
@@ -177,6 +207,7 @@ DecisionDetails.defaultProps = ({
     removeCase: () => false,
     removeDecisions: () => false,
     outcomes: {},
+    addDebug: () =>false,
 });
 
 DecisionDetails.propTypes = ({
@@ -185,6 +216,7 @@ DecisionDetails.propTypes = ({
     removeCase: PropTypes.func,
     removeDecisions: PropTypes.func,
     outcomes: PropTypes.object,
+    addDebug: PropTypes.func
 });
 
 export default DecisionDetails;
