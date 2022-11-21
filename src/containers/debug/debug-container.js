@@ -170,7 +170,7 @@ class DebugContainer extends Component {
         return (   
             debugData.map(d => {
                 return (<Panel title={d.label} >
-                    <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={false}
+                    <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={true}
                         src={d.data} onClick={this.handleReset}/> </Panel>
 
                 )
