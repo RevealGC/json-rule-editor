@@ -21,6 +21,9 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 
 
 const tabs = [{name: 'Facts'}, {name: 'Decisions'}, {name: 'Validate'}, {name: 'Generate'}];
+
+
+
 class RulesetContainer extends Component {
 
     constructor(props) {

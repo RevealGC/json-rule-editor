@@ -10,12 +10,19 @@ import { handleDebug} from '../../actions/debug'
 import { setsearchRIDText, updateState } from '../../actions/app';
 import { createHashHistory } from 'history';
 import ApperanceContext from '../../context/apperance-context';
+
+import PageTitle from  '../../components/title/page-title'  // '../../components/title/page-title';
+
+import Tabs from '../../components/tabs/tabs';
+const debugTabs = [{name: 'Debug'}, {name: 'Scratch Pad'}]
+
+
 import Button from "../../components/button/button"
 
 
 
 import { SplitPane } from "react-collapse-pane";
-
+import DebugContainer from  '../debug/debug-container' 
 
 import styled from "styled-components";
 import Panel from '../../components/panel/panel';
@@ -91,7 +98,7 @@ class ApplicationContainer extends Component {
             this.setState({ theme });
         }
         this.state = { debugPanelDisplay: false, theme: { background: 'light', toggleBackground: this.toggleBackground } };
-        this.handleReset = this.handleReset.bind(this)
+        // this.handleReset = this.handleReset.bind(this)
     }
 
     componentDidMount() {
@@ -109,28 +116,15 @@ class ApplicationContainer extends Component {
 
     }
 
-
-    handleReset(){
-        // alert("Reset debugger")
-        this.props.resetDebug()
-    }
-
     render() {
         const closednav = this.props.navState !== 'open';
         const { debugPanelDisplay } = this.state
         const debugData = this.props.debugData
         return (
 
-
-
-
             <React.Fragment>
                 <ApperanceContext.Provider value={this.state.theme}>
-
-
-
                     <Wrapper>
-
                         <SplitPane split="vertical" collapsedSizes={['85%', '15%']} minSize={250}   >
                             <div style={{ overflow: 'auto' }} >
                                 <Title title={'QBES: Rule Editor'} />
@@ -139,39 +133,14 @@ class ApplicationContainer extends Component {
                                     setsearchRIDText={this.props.setsearchRIDText}
                                     activeIndex={this.props.activeIndex}
                                     rulenames={this.props.rulenames} setActiveRulesetIndex={this.props.setActiveRulesetIndex} loggedIn={this.props.loggedIn} />
-
-
-
                                 <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />
                             </div>
-
-
-
                             <div>
-                                <Title title={'Debugger'} />
-                                <div className="attr-link" onClick={this.handleReset}>
-                                    <span className="reset-icon" /><span className="text">Reset</span>
-                                </div>
-
-                                {
-
-                                    debugData.map(d => {
-                                        return (<Panel title={d.label}>
-                                            <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={false}
-                                                src={d.data} /> </Panel>
-
-                                        )
-                                    })
-
-                                }
+                                <Title title={'Output'} />
+                                <DebugContainer debugData={{debugData}}></DebugContainer>
                             </div>
-
-
-
                         </SplitPane>
-
                     </Wrapper>
-
                 </ApperanceContext.Provider>
             </React.Fragment>
         )
