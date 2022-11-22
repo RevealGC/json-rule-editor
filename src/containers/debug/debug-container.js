@@ -50,6 +50,20 @@ const columnDefs = [
 ];
 
 function stringifier(params){
+
+
+//    return params.data.request (
+//         debugData.map(d => {
+//             return (<Panel title={d.label} >
+//                 <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={true}
+//                     src={d.data} onClick={this.handleReset} /> </Panel>
+
+//             )
+//         }))
+
+
+
+
     return JSON.stringify(params.data.request);
 }
 
