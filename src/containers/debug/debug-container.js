@@ -38,18 +38,20 @@ const columnDefs = [
     { field: 'id', headerName: 'Workflow ID', filter: 'agTextColumnFilter', cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true },
     { field: 'reporting_id', headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
     { field: 'status', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'error_message', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'elapsed_time', filter: 'agNumberColumnFilter', sortable: true },
+    { field: 'error_message',headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'elapsed_time', headerName: 'CPU Time(ms)',filter: 'agNumberColumnFilter', sortable: true },
 
 
-    { field: 'request' },
+    { field: 'request' , resizable: true, valueFormatter: stringifier, wrapText: true, autoHeight: true, }  ,
 
     { field: 'created_date', headerName: 'Date Created', filter: 'agTextColumnFilter' },
     { field: 'last_modified_date', headerName: 'Date Modified', filter: 'agTextColumnFilter' },
     // { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
 ];
 
-
+function stringifier(params){
+    return JSON.stringify(params.data.request);
+}
 
 class DebugContainer extends Component {
 
