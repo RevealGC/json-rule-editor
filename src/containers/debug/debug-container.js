@@ -34,14 +34,18 @@ const tabs = [{ name: 'Debug' }, { name: 'Spad' }];
 
 const columnDefs = [
     // group cell renderer needed for expand / collapse icons
- 
+
     { field: 'id', headerName: 'Workflow ID', filter: 'agTextColumnFilter', cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true },
-    { field: 'reporting_id', headerName:'RID', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'reporting_id', headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
     { field: 'status', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'error_message', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'elapsed_time', filter: 'agNumberColumnFilter', sortable: true },
+
+
     { field: 'request' },
 
     { field: 'created_date', headerName: 'Date Created', filter: 'agTextColumnFilter' },
-    { field: 'last_modified_date', headerName: 'Date Modified',  filter: 'agTextColumnFilter' },
+    { field: 'last_modified_date', headerName: 'Date Modified', filter: 'agTextColumnFilter' },
     // { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
 ];
 
@@ -77,7 +81,7 @@ class DebugContainer extends Component {
         };
         this.handleReset = this.handleReset.bind(this)
         this.onGridReady = this.onGridReady.bind(this)
-  
+
 
     }
 
@@ -128,37 +132,36 @@ class DebugContainer extends Component {
 
     spadTables() {
 
-        const { columnDefs, rowData, detailCellRendererParams} = this.state
+        const { background } = this.context;
+        const { columnDefs, rowData, detailCellRendererParams } = this.state
         console.log("🚀 ~ file: debug-container.js ~ line 124 ~ DebugContainer ~ gupHeaderTable ~ rowData", rowData)
 
         return (
-
-
             <div>
-               
-            <div className="ag-theme-alpine" id="myGrid" style={{ height: 300, width: 400 }}>
-                <AgGridReact
-                 onRowSelected={(e) => this.props.handleDebug('ADD', {label:'time', data:{outcome: e.data.spadJobsHasMany}}, 0) }
-                    
-                    
-                    
-                 
-                 onRowClicked= {(e) => this.props.handleDebug('ADD', {label:'time', data:{outcome: e.data.spadJobsHasMany}}, 0) }
-                    
-                    masterDetail={true}
-                    rowData={rowData}
-                    columnDefs={columnDefs}
-                    detailCellRendererParams={detailCellRendererParams}
-                 
-                
-               
-                    animateRows={true}
-                    pagination={true}
-                    paginationPageSize={5}
-                    onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-                />
+                <div className="ag-theme-alpine" id="myGrid" style={{ height: 300, width: 800 }}>
+                    <AgGridReact
+                        onRowSelected={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.spadJobsHasMany } }, 0)}
+
+
+
+
+                        onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.spadJobsHasMany } }, 0)}
+
+                        masterDetail={true}
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        detailCellRendererParams={detailCellRendererParams}
+
+
+
+                        animateRows={true}
+                        pagination={true}
+                        paginationPageSize={50}
+                        onFirstDataRendered={this.onFirstDataRendered.bind(this)}
+                    />
+                </div>
             </div>
-            </div>
+
         );
 
 
@@ -167,11 +170,11 @@ class DebugContainer extends Component {
 
     debugPanel() {
         const debugData = this.props.debugData
-        return (   
+        return (
             debugData.map(d => {
                 return (<Panel title={d.label} >
                     <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={true}
-                        src={d.data} onClick={this.handleReset}/> </Panel>
+                        src={d.data} onClick={this.handleReset} /> </Panel>
 
                 )
             }))
@@ -180,23 +183,38 @@ class DebugContainer extends Component {
     render() {
         const debugData = this.props.debugData
         const { rowData, columnDefs } = this.state
+        const { background } = this.context;
 
         return (
             <div>
                 <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
                 <div className="tab-page-container">
+                <div className={`attributes-header ${background}`}>
+                    <div>
+                        <div className="attr-link" onClick={this.props.resetDebug}>
+                            <span className="reset-icon" /><span className="text">Reset</span>
+                        </div>
+
+                        <div className="attr-link" onClick={this.onGridReady}>
+                            <span className="plus-icon" /><span className="text">Load</span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
                     {this.state.activeTab === 'Debug' &&
                         <div className="attr-link" >
-                            <PageTitle className="reset-icon" name={"Reset"} />
+                           
                             {this.debugPanel()}
                         </div>}
                     {this.state.activeTab === 'Spad' && rowData.length > 0 &&
                         <div>
-                            <Panel>
-                            {this.spadTables()}
-                            {this.debugPanel()}
-                            </Panel>
-                          
+                                {this.spadTables()}
+                                {this.debugPanel()}
+
                         </div>
 
                     }
@@ -213,7 +231,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => ({
     resetDebug: () => dispatch(handleDebug("RESET", {}, 0)),
     handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))
-   
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DebugContainer);
