@@ -5,6 +5,10 @@ import { PanelBox } from '../panel/panel';
 import 'font-awesome/css/font-awesome.min.css';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { transformRuleToTree } from '../../utils/transform';
+
+
+import { processEngine } from '../../validations/rule-validation';
+
 import ViewAttribute from '../attributes/view-attributes';
 
 class DecisionDetails extends Component {
@@ -12,7 +16,7 @@ class DecisionDetails extends Component {
     static getDerivedStateFromProps(props, state) {
         if (Object.keys(props.outcomes).length !== state.showCase.length) {
             const showCase = Object.keys(props.outcomes).map((key, index) => {
-                return ({case: false, edit: false, index });
+                return ({ case: false, edit: false, index });
             });
             return { showCase };
         }
@@ -22,19 +26,19 @@ class DecisionDetails extends Component {
     constructor(props) {
         super(props);
         const showCase = Object.keys(props.outcomes).map((key, index) => {
-            return ({case: false, edit: false, index});
+            return ({ case: false, edit: false, index });
         })
-       
-        this.state = { showCase, submitAlert: false, removeAlert:false, successAlert: false, removeDecisionAlert: false};
+
+        this.state = { showCase, submitAlert: false, removeAlert: false, successAlert: false, removeDecisionAlert: false };
         this.handleExpand = this.handleExpand.bind(this);
         this.handleRemoveCondition = this.handleRemoveCondition.bind(this);
         this.handleRemoveConditions = this.handleRemoveConditions.bind(this);
 
-//NK
-this.handleViewRule = this.handleViewRule.bind(this)
-this.handleDeployRule = this.handleDeployRule.bind(this)
-this.handleTestRule = this.handleTestRule.bind(this)
-// this.props.addDebug({data:'TEST'})
+        //NK
+        this.handleViewRule = this.handleViewRule.bind(this)
+        this.handleDeployRule = this.handleDeployRule.bind(this)
+        this.handleTestRule = this.handleTestRule.bind(this)
+        // this.props.addDebug({data:'TEST'})
 
         this.editCondition = this.editCondition.bind(this);
         this.cancelAlert = this.cancelAlert.bind(this);
@@ -45,7 +49,7 @@ this.handleTestRule = this.handleTestRule.bind(this)
 
     handleEdit(e, val) {
         e.preventDefault();
-        this.setState({showRuleIndex: val});
+        this.setState({ showRuleIndex: val });
     }
 
     editCondition(e, decisionIndex) {
@@ -56,27 +60,35 @@ this.handleTestRule = this.handleTestRule.bind(this)
     handleExpand(e, index) {
         e.preventDefault();
         const cases = [...this.state.showCase];
-        let updateCase  = cases[index];
-        updateCase = { ...updateCase, case: !updateCase.case}
+        let updateCase = cases[index];
+        updateCase = { ...updateCase, case: !updateCase.case }
         cases[index] = { ...updateCase };
         this.setState({ showCase: cases });
     }
 
 
-//NK
-handleViewRule(e, decisionIndex) {
-    e.preventDefault();
-  
-    this.props.addDebug({rule:this.props.outcomes[decisionIndex][0]})
-}
+    //NK
+    handleViewRule(e, decisionIndex) {
+        e.preventDefault();
 
-handleTestRule(e, decisionIndex) {
-    e.preventDefault();
-}
+        this.props.addDebug({ rule: this.props.outcomes[decisionIndex][0] })
+    }
 
-handleDeployRule(e, decisionIndex) {
-    e.preventDefault();
-}
+    handleTestRule(e, decisionIndex) {
+        e.preventDefault();
+
+        const { attributes } = this.props;
+        let facts = {};
+        let rules = this.props.outcomes[decisionIndex][0]
+
+        attributes.forEach(attribute => { facts[attribute.name] = attribute.value; })
+        // call with axios and pass facts and the rule to be tested.
+        processEngine(facts, rules)
+    }
+
+    handleDeployRule(e, decisionIndex) {
+        e.preventDefault();
+    }
 
 
 
@@ -101,7 +113,7 @@ handleDeployRule(e, decisionIndex) {
 
     removeDecisions = () => {
         this.props.removeDecisions(this.state.removeOutcome);
-        this.setState({ removeDecisionAlert: false, successAlert: true, successMsg: 'Selected conditions are removed', removeOutcome: ''});
+        this.setState({ removeDecisionAlert: false, successAlert: true, successMsg: 'Selected conditions are removed', removeOutcome: '' });
     }
 
     removeCaseAlert = () => {
@@ -114,9 +126,9 @@ handleDeployRule(e, decisionIndex) {
             onConfirm={this.removeCase}
             onCancel={this.cancelAlert}
             focusCancelBtn
-          >
+        >
             You will not be able to recover the changes!
-          </SweetAlert>)
+        </SweetAlert>)
     }
 
     removeDecisionAlert = () => {
@@ -129,9 +141,9 @@ handleDeployRule(e, decisionIndex) {
             onConfirm={this.removeDecisions}
             onCancel={this.cancelAlert}
             focusCancelBtn
-          >
+        >
             You will not be able to recover the changes!
-          </SweetAlert>)
+        </SweetAlert>)
     }
 
     successAlert = () => {
@@ -139,64 +151,64 @@ handleDeployRule(e, decisionIndex) {
             success
             title={this.state.successMsg}
             onConfirm={this.cancelAlert}
-          >
-          </SweetAlert>);
+        >
+        </SweetAlert>);
     }
 
     alert = () => {
         return (<div>
-             {this.state.removeAlert && this.removeCaseAlert()}
-             {this.state.removeDecisionAlert && this.removeDecisionAlert()}
-             {this.state.successAlert && this.successAlert()}
-         </div>);
+            {this.state.removeAlert && this.removeCaseAlert()}
+            {this.state.removeDecisionAlert && this.removeDecisionAlert()}
+            {this.state.successAlert && this.successAlert()}
+        </div>);
     }
 
     renderConditions = (conditions, decisionIndex) => {
         const transformedData = transformRuleToTree(conditions);
 
         return (<div className="rule-flex-container">
-                { transformedData && transformedData.map((data, caseIndex) => (<div className="decision-box" key={`case - ${caseIndex} - ${decisionIndex}`}>
-                    <div className="tool-flex">
-                        <div><a href="" onClick={(e) => this.editCondition(e, data.index)}><span className="fa fa-edit" /></a></div>
-                        <div><a href="" onClick={((e) => this.handleRemoveCondition(e, data.index))}><span className="fa fa-trash-o" /></a></div>
-                    </div>
-                    <Tree treeData={data.node} count={data.depthCount}/>
-                    { data.event.params && <div className="view-params-container">
-                            <h4>Params  </h4>
-                            {/* <ViewAttribute  items={data.event.params}/> */}
-                        </div> }
-                 </div>))}
-            </div>)
+            {transformedData && transformedData.map((data, caseIndex) => (<div className="decision-box" key={`case - ${caseIndex} - ${decisionIndex}`}>
+                <div className="tool-flex">
+                    <div><a href="" onClick={(e) => this.editCondition(e, data.index)}><span className="fa fa-edit" /></a></div>
+                    <div><a href="" onClick={((e) => this.handleRemoveCondition(e, data.index))}><span className="fa fa-trash-o" /></a></div>
+                </div>
+                <Tree treeData={data.node} count={data.depthCount} />
+                {data.event.params && <div className="view-params-container">
+                    <h4>Params  </h4>
+                    {/* <ViewAttribute  items={data.event.params}/> */}
+                </div>}
+            </div>))}
+        </div>)
     }
 
     render() {
         const { outcomes } = this.props;
-        const { showCase} = this.state;
+        const { showCase } = this.state;
 
         const conditions = Object.keys(outcomes).map((key, index) =>
-            (<div key={key}>
-                <PanelBox className={'boolean'}>
-                    <div className="index">{index + 1}</div>
-                    <div className="name">{String(key)}</div>
-                    <div className="name">{(outcomes[key][0].event.name)}</div>
-                    <div className="type">conditions <span className="type-badge">{outcomes[key].length}</span></div>
-                    <div className="menu">
-                        <a href="" onClick={(e) => this.handleExpand(e, index)}> { showCase[index].case ? 'Collapse' : 'View Conditions' }</a>
-                      
-                        <a href="" onClick={((e) => this.handleViewRule(e, String(key)))}>View Rule</a>
-                        <a href="" onClick={((e) => this.handleTestRule(e, String(key)))}>Test</a>
-                        <a href="" onClick={((e) => this.handleDeployRule(e, String(key)))}>Deploy</a>
-                      
-                        <a href="" onClick={((e) => this.handleRemoveConditions(e, String(key)))}>Remove</a>
-                    </div>
-                 </PanelBox>
-                 
-                 { showCase[index].case && this.renderConditions(outcomes[key], index)}
-            </div>));
+        (<div key={key}>
+            <PanelBox className={'boolean'}>
+                <div className="index">{index + 1}</div>
+                <div className="name">{String(key)}</div>
+                <div className="name">{(outcomes[key][0].event.name)}</div>
+                <div className="type">conditions <span className="type-badge">{outcomes[key].length}</span></div>
+                <div className="menu">
+                    <a href="" onClick={(e) => this.handleExpand(e, index)}> {showCase[index].case ? 'Collapse' : 'View Conditions'}</a>
+
+                    <a href="" onClick={((e) => this.handleViewRule(e, String(key)))}>View Rule</a>
+                    <a href="" onClick={((e) => this.handleTestRule(e, String(key)))}>Test</a>
+                    <a href="" onClick={((e) => this.handleDeployRule(e, String(key)))}>Deploy</a>
+
+                    <a href="" onClick={((e) => this.handleRemoveConditions(e, String(key)))}>Remove</a>
+                </div>
+            </PanelBox>
+
+            {showCase[index].case && this.renderConditions(outcomes[key], index)}
+        </div>));
 
         return (<div className="">
-            { this.alert() }
-            { conditions }
+            {this.alert()}
+            {conditions}
         </div>);
     }
 }
@@ -207,7 +219,7 @@ DecisionDetails.defaultProps = ({
     removeCase: () => false,
     removeDecisions: () => false,
     outcomes: {},
-    addDebug: () =>false,
+    addDebug: () => false,
 });
 
 DecisionDetails.propTypes = ({
