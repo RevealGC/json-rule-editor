@@ -195,7 +195,6 @@ class DebugContainer extends Component {
     }
 
     render() {
-        const debugData = this.props.debugData
         const { rowData, columnDefs } = this.state
         const { background } = this.context;
 
