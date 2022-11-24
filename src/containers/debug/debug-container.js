@@ -16,11 +16,12 @@ import { AgGridReact } from 'ag-grid-react';
 
 import { handleDebug } from '../../actions/debug';
 
-
+import 'ag-grid-enterprise';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 import axios from 'axios'
+import InputField from '../../components/forms/input-field';
 const tabs = [{ name: 'Debug' }, { name: 'Spad' }];
 
 
@@ -127,12 +128,14 @@ class DebugContainer extends Component {
 
     async onGridReady() {
         // +this.state.dbSearchText
+
+       
         let url = 'http://localhost/spad' + '?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'
         try {
             let result = await axios.get(url)
             let rowData = result.data
-            console.log("🚀 ~ file: debug-container.js ~ line 102 ~ DebugContainer ~ onGridReady ~ rowData", rowData)
             this.setState({ rowData: rowData.data })
+           
 
         }
         catch (e) {
@@ -142,7 +145,9 @@ class DebugContainer extends Component {
 
     onFirstDataRendered = (params) => {
         setTimeout(function () {
-            params.api.getDisplayedRowAtIndex(0).setExpanded(true);
+            // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
+            params.api.columnApi.autoSizeAllColumns(true)
+            // gridRef.current.columnApi.autoSizeAllColumns(true);
         }, 0);
     };
 
@@ -154,22 +159,14 @@ class DebugContainer extends Component {
 
         return (
             <div>
-                <div className="ag-theme-alpine" id="myGrid" style={{ height: 300, width: 800 }}>
+                <div className="ag-theme-alpine" id="myGrid" style={{ height: 500, width: 1200 }}>
                     <AgGridReact
                         onRowSelected={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.spadJobsHasMany } }, 0)}
-
-
-
-
                         onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.spadJobsHasMany } }, 0)}
-
                         masterDetail={true}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         detailCellRendererParams={detailCellRendererParams}
-
-
-
                         animateRows={true}
                         pagination={true}
                         paginationPageSize={50}
@@ -185,13 +182,14 @@ class DebugContainer extends Component {
 
 
     debugPanel() {
-        const debugData = this.props.debugData
+        const debugData = this.props.debugData.reverse()
+        
         return (
-            debugData.map(d => {
+            debugData.map((d,index,debugData) => {
+                let collapsed = (index ===0)  ? false : true
                 return (<Panel title={d.label} >
-                    <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={true}
+                    <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={collapsed}
                         src={d.data} onClick={this.handleReset} /> </Panel>
-
                 )
             }))
     }
