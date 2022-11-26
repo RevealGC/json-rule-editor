@@ -43,7 +43,7 @@ const columnDefs = [
     { field: 'elapsed_time', headerName: 'CPU Time(ms)',filter: 'agNumberColumnFilter', sortable: true },
 
 
-    { field: 'request' , resizable: true, valueFormatter: stringifier, wrapText: true, autoHeight: true, }  ,
+    // { field: 'request' , resizable: true, valueFormatter: stringifier, wrapText: true, autoHeight: true, }  ,
 
     { field: 'created_date', headerName: 'Date Created', filter: 'agTextColumnFilter' },
     { field: 'last_modified_date', headerName: 'Date Modified', filter: 'agTextColumnFilter' },
@@ -51,20 +51,6 @@ const columnDefs = [
 ];
 
 function stringifier(params){
-
-
-//    return params.data.request (
-//         debugData.map(d => {
-//             return (<Panel title={d.label} >
-//                 <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={true}
-//                     src={d.data} onClick={this.handleReset} /> </Panel>
-
-//             )
-//         }))
-
-
-
-
     return JSON.stringify(params.data.request);
 }
 

@@ -74,16 +74,20 @@ class DecisionDetails extends Component {
         this.props.addDebug({ rule: this.props.outcomes[decisionIndex][0] })
     }
 
-    handleTestRule(e, decisionIndex) {
+   async handleTestRule(e, decisionIndex) {
         e.preventDefault();
 
         const { attributes } = this.props;
-        let facts = {};
-        let rules = this.props.outcomes[decisionIndex][0]
+        let f = {};
+        let r = this.props.outcomes[decisionIndex][0]
 
-        attributes.forEach(attribute => { facts[attribute.name] = attribute.value; })
+        attributes.forEach(attribute => { f[attribute.name] = attribute.value; })
         // call with axios and pass facts and the rule to be tested.
-        processEngine(facts, rules)
+        let facts = [f];
+        let rules = [r]
+       let result = await processEngine(facts, rules)
+       this.props.addDebug({ result})
+
     }
 
     handleDeployRule(e, decisionIndex) {

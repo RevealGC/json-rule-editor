@@ -60,6 +60,12 @@ class ValidateRules extends Component {
             facts[condition.name] = condition.value;
            }
         })
+        console.log("🚀 ~ file: validate-rules.js ~ line 64 ~ ValidateRules ~ validateRules ~ facts", facts)
+        
+// update the redux state with attributes
+
+
+
         validateRuleset(facts, decisions).then(outcomes => {
             this.setState({loading: false, outcomes,  result: true, error: false, errorMessage: '',});
         }).catch((e) => {
