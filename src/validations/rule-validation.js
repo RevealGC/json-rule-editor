@@ -2,6 +2,7 @@ import { Engine } from 'json-rules-engine';
 import axios from 'axios'
 import { handleDebug } from '../actions/debug'   
 
+
 export const processEngine = async function(facts, rules) {
   console.log("🚀 ~ file: rule-validation.js ~ line 5 ~ processEngine ~ conditions", rules)
   console.log("🚀 ~ file: rule-validation.js ~ line 5 ~ processEngine ~ fact", facts)
@@ -37,6 +38,8 @@ export const processEngine = async function(facts, rules) {
   
 export const validateRuleset = async (facts, conditions) => {
     console.log("🚀 ~ file: rule-validation.js ~ line 39 ~ validateRuleset ~ facts", facts)
-    const result = await processEngine(facts, conditions);
+  //  const result = await processEngine(facts, conditions);
+  handleAttribute('UPDATE',facts, conditions)
+  
     return result;
 }

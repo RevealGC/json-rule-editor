@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Panel from '../panel/panel';
 import InputField from '../forms/input-field';
@@ -10,6 +11,8 @@ import * as Message from '../../constants/messages';
 import { validateRuleset } from '../../validations/rule-validation';
 import Loader from '../loader/loader';
 import { ViewOutcomes } from '../attributes/view-attributes';
+import {handleAttribute} from '../../actions/attributes'
+
 
 class ValidateRules extends Component {
 
@@ -23,20 +26,25 @@ class ValidateRules extends Component {
              outcomes: [],
              error: false,
             };
-        this.handleAttribute = this.handleAttribute.bind(this);
+        this.handleAttributeLocal = this.handleAttributeLocal.bind(this);
         this.handleValue = this.handleValue.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
         this.validateRules = this.validateRules.bind(this);
     }
 
-    handleAttribute(e, index) {
+    handleAttributeLocal(e, index) {
         const attribute = { ...this.state.conditions[index], name: e.target.value };
         const conditions = [ ...this.state.conditions.slice(0, index), attribute, ...this.state.conditions.slice(index + 1)];
         this.setState({ conditions });
     }
 
     handleValue(e, index) {
-        const attribute = { ...this.state.conditions[index], value: e.target.value };
+        let dataType = this.state.conditions[index].type 
+        let value = (dataType === 'number') ? parseInt(e.target.value, 10) : e.target.value 
+
+        const attribute = { ...this.state.conditions[index], value };
+
+        this.props.handleAttribute('UPDATE',attribute, index);
         const conditions = [ ...this.state.conditions.slice(0, index), attribute, ...this.state.conditions.slice(index + 1)];
         this.setState({ conditions });
     }
@@ -47,6 +55,8 @@ class ValidateRules extends Component {
 
     validateRules(e) {
         e.preventDefault();
+        alert('Testing all rules from the editor: Coming Soon')
+        return;
         let facts = {};
         const { decisions, attributes } = this.props;
         this.setState({loading: true});
@@ -84,7 +94,7 @@ class ValidateRules extends Component {
 
         const formElements = conditions.map((condition, index) =>
             (<tr key={condition.name + index || 'item'+index}>
-                <td><SelectField options={options} onChange={(e) => this.handleAttribute(e, index)}
+                <td><SelectField options={options} onChange={(e) => this.handleAttributeLocal(e, index)}
                      value={condition.name} readOnly/></td>
                 <td colSpan='2'>{<InputField onChange={e => this.handleValue(e, index)} value={condition.value} />}</td>
             </tr>)
@@ -144,4 +154,20 @@ ValidateRules.propTypes = ({
     decisions: PropTypes.array,
 });
 
-export default ValidateRules;
+
+const mapStateToProps = (state) => ({
+    // ruleset: state.ruleset.rulesets[state.ruleset.activeRuleset],
+    // updatedFlag: state.ruleset.updatedFlag,
+  });
+  
+  const mapDispatchToProps = (dispatch) => ({
+    handleAttribute: (operation, attribute, index) => dispatch(handleAttribute(operation, attribute, index)),
+    handleDecisions: (operation, decision) => dispatch(handleDecision(operation, decision)),
+  });
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(ValidateRules);
+
+
+
+
+// export default ValidateRules;

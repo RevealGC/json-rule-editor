@@ -10,6 +10,7 @@ import { transformRuleToTree } from '../../utils/transform';
 import { processEngine } from '../../validations/rule-validation';
 
 import ViewAttribute from '../attributes/view-attributes';
+import { forEach } from 'lodash';
 
 class DecisionDetails extends Component {
 
@@ -80,14 +81,14 @@ class DecisionDetails extends Component {
         const { attributes } = this.props;
         let f = {};
         let r = this.props.outcomes[decisionIndex][0]
-
-        attributes.forEach(attribute => { f[attribute.name] = attribute.value; })
-        // call with axios and pass facts and the rule to be tested.
+        
+        for(var i = 0; i < attributes.length; i++) {    
+            f[attributes[i].name] = attributes[i].value
+        }
         let facts = [f];
         let rules = [r]
        let result = await processEngine(facts, rules)
        this.props.addDebug({ result})
-
     }
 
     handleDeployRule(e, decisionIndex) {
