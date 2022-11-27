@@ -6,8 +6,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { transformRuleToTree } from '../../utils/transform';
 
-
-import { processEngine } from '../../validations/rule-validation';
+import { processEngine, updateParsedRules } from '../../validations/rule-validation';
 
 import ViewAttribute from '../attributes/view-attributes';
 import { forEach } from 'lodash';
@@ -39,6 +38,7 @@ class DecisionDetails extends Component {
         this.handleViewRule = this.handleViewRule.bind(this)
         this.handleDeployRule = this.handleDeployRule.bind(this)
         this.handleTestRule = this.handleTestRule.bind(this)
+        this.handleToggleStatus = this.handleToggleStatus.bind(this)
         // this.props.addDebug({data:'TEST'})
 
         this.editCondition = this.editCondition.bind(this);
@@ -75,26 +75,41 @@ class DecisionDetails extends Component {
         this.props.addDebug({ rule: this.props.outcomes[decisionIndex][0] })
     }
 
-   async handleTestRule(e, decisionIndex) {
+    async handleTestRule(e, decisionIndex) {
         e.preventDefault();
 
         const { attributes } = this.props;
         let f = {};
         let r = this.props.outcomes[decisionIndex][0]
-        
-        for(var i = 0; i < attributes.length; i++) {    
+
+        for (var i = 0; i < attributes.length; i++) {
             f[attributes[i].name] = attributes[i].value
         }
         let facts = [f];
         let rules = [r]
-       let result = await processEngine(facts, rules)
-       this.props.addDebug({ result})
+        let result = await processEngine(facts, rules)
+        this.props.addDebug({ result })
     }
 
-    handleDeployRule(e, decisionIndex) {
+    async handleDeployRule(e, decisionIndex) {
         e.preventDefault();
+
+        // data:{active: true/false,parsed_rule:<json object> }, id, 
+        let r = this.props.outcomes[decisionIndex][0];
+        let id = Number(r.event.type)
+        console.log("🚀 ~ file: decision-details.js ~ line 99 ~ DecisionDetails ~ handleDeployRule ~ r", { r, id })
+        let result = await updateParsedRules({ parsed_rule: r, id: id });
+        console.log("🚀 ~ file: decision-details.js ~ line 102 ~ DecisionDetails ~ handleDeployRule ~ result", result)
+
     }
 
+    async handleToggleStatus(e, decisionIndex) {
+        e.preventDefault();
+
+        let r = this.props.outcomes[decisionIndex][0];
+        let id = Number(r.event.type)
+        alert('Toggling status of rule:' + id);
+    }
 
 
     handleRemoveCondition(e, decisionIndex) {
@@ -193,22 +208,29 @@ class DecisionDetails extends Component {
         const conditions = Object.keys(outcomes).map((key, index) =>
         (<div key={key}>
             <PanelBox className={'boolean'}>
-                <div className="index">{index + 1}</div>
-                <div className="name">{String(key)}</div>
-                <div className="name">{(outcomes[key][0].event.name)}</div>
-                <div className="type">conditions <span className="type-badge">{outcomes[key].length}</span></div>
                 <div className="menu">
                     <a href="" onClick={(e) => this.handleExpand(e, index)}> {showCase[index].case ? 'Collapse' : 'View Conditions'}</a>
 
                     <a href="" onClick={((e) => this.handleViewRule(e, String(key)))}>View Rule</a>
                     <a href="" onClick={((e) => this.handleTestRule(e, String(key)))}>Test</a>
                     <a href="" onClick={((e) => this.handleDeployRule(e, String(key)))}>Deploy</a>
-
+                 
+                    
+                    <a href="" onClick={((e) => this.handleToggleStatus(e, String(key)))}>Toggle Status ({ (outcomes[key][0].event.active) ? outcomes[key][0].event.active : 'true'})</a>
                     <a href="" onClick={((e) => this.handleRemoveConditions(e, String(key)))}>Remove</a>
                 </div>
+           
+  
             </PanelBox>
-
+            <PanelBox >
+            
+                <div className="index">{index + 1}</div>
+                <div className="name">{String(key)}</div>
+                <div className="name">{(outcomes[key][0].event.name)}</div>
+                <div className="type">conditions <span className="type-badge">{outcomes[key].length}</span></div>
+            </PanelBox>
             {showCase[index].case && this.renderConditions(outcomes[key], index)}
+            <p></p>
         </div>));
 
         return (<div className="">
