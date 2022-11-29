@@ -11,6 +11,10 @@ import AppearanceContext from '../../context/apperance-context';
 import axios from 'axios'
 
 
+// const Dotenv = require('dotenv-webpack');
+const HOSTURL='http://localhost'
+// const HOSTURL = 'process.env.HOSTURL
+
 import Search from '../search/dbSearch'
 
 
@@ -51,7 +55,7 @@ class NavigationPanel extends Component {
     }
    async loadRuleSet(){
         // now call axios to get data from  http://localhost/rulesrepo/factsandrules/8771348140?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo
-        let url = 'http://localhost/rulesrepo/factsandrules/'+this.state.dbSearchText+'?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'
+        let url = HOSTURL+'/rulesrepo/factsandrules/'+this.state.dbSearchText+'?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'
         try{
         let result = await axios.get(url)
         let ruleSet = result.data

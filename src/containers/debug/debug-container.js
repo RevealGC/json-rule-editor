@@ -25,6 +25,9 @@ import InputField from '../../components/forms/input-field';
 const tabs = [{ name: 'Debug' }, { name: 'Spad' }];
 
 
+// const Dotenv = require('dotenv-webpack');
+const HOSTURL = 'http://localhost'
+// const HOSTURL = 'process.env.HOSTURL
 
 
 //   const defaultColDef = useMemo(() => {
@@ -36,25 +39,28 @@ const tabs = [{ name: 'Debug' }, { name: 'Spad' }];
 const columnDefs = [
     // group cell renderer needed for expand / collapse icons
 
-    { field: 'id', headerName: 'Workflow ID', filter: 'agTextColumnFilter', 
-    cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true },
+    {
+        field: 'id', headerName: 'Workflow ID', filter: 'agTextColumnFilter',
+        cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true
+    },
     { field: 'reporting_id', headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
     { field: 'status', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'elapsed_time', headerName: 'CPU Time(ms)',filter: 'agNumberColumnFilter', sortable: true },
-    { field: 'error_message',headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'elapsed_time', headerName: 'CPU Time(ms)', filter: 'agNumberColumnFilter', sortable: true },
+    { field: 'error_message', headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
 
 
-    { field: 'merge_status',headerName: 'Merge Status',cellRenderer: function(params, data) {
-        if(params.data.merge_status !== 0) 
-        // return   <button onclick={"return myFunction("+params.data.id+")"}>Merge</button> 
-       return  <a href={"http://localhost/spad/merge/"+params.data.id+'?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo' } target="_blank" rel="noopener"> Merge {params.data.id} </a>
+    {
+        field: 'merge_status', headerName: 'Merge Status', cellRenderer: function (params, data) {
+            if (params.data.merge_status !== 0)
+                // return   <button onclick={"return myFunction("+params.data.id+")"}>Merge</button> 
+                return <a href={HOSTURL + "/spad/merge/" + params.data.id + '?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'} target="_blank" rel="noopener"> Merge {params.data.id} </a>
 
-        // <a href={"http://localhost/spad/merge/"+params.data.id } target="_blank" rel="noopener"> {params.data.id} </a>
-    else return 'N/A'
-    }}
-,
+            else return 'N/A'
+        }
+    }
+    ,
 
-    { field: 'merge_data',headerName: 'Merge Data',valueFormatter: stringifier, filter: 'agTextColumnFilter', sortable: true },
+    { field: 'merge_data', headerName: 'Merge Data', valueFormatter: stringifier, filter: 'agTextColumnFilter', sortable: true },
 
 
     // { field: 'request' , resizable: true, valueFormatter: stringifier, wrapText: true, autoHeight: true, }  ,
@@ -63,17 +69,17 @@ const columnDefs = [
     { field: 'last_modified_date', headerName: 'Date Modified', filter: 'agTextColumnFilter' },
     // { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
 ];
-function myFunction(spadId){
-    alert('Merge spadID '+spadId)
+function myFunction(spadId) {
+    alert('Merge spadID ' + spadId)
 }
-function showMergeLink(params){
+function showMergeLink(params) {
 
-    if(params.data.merge_status === 1)
-    return params.data.id
+    if (params.data.merge_status === 1)
+        return params.data.id
     // return (`<a href="/spad/merge/{params.data.id}">{params.data.id}</a>`)
     else return 'N/A'
 }
-function stringifier(params){
+function stringifier(params) {
     return JSON.stringify(params.data.merge_data);
 }
 
@@ -138,13 +144,13 @@ class DebugContainer extends Component {
     async onGridReady() {
         // +this.state.dbSearchText
 
-       
-        let url = 'http://localhost/spad?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'
+
+        let url = HOSTURL + '/spad?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'
         try {
             let result = await axios.get(url)
             let rowData = result.data
             this.setState({ rowData: rowData.data })
-           
+
 
         }
         catch (e) {
@@ -164,7 +170,6 @@ class DebugContainer extends Component {
 
         const { background } = this.context;
         const { columnDefs, rowData, detailCellRendererParams } = this.state
-        console.log("🚀 ~ file: debug-container.js ~ line 124 ~ DebugContainer ~ gupHeaderTable ~ rowData", rowData)
 
         return (
             <div>
@@ -192,10 +197,10 @@ class DebugContainer extends Component {
 
     debugPanel() {
         const debugData = this.props.debugData.reverse()
-        
+
         return (
-            debugData.map((d,index,debugData) => {
-                let collapsed = (index ===0)  ? false : true
+            debugData.map((d, index, debugData) => {
+                let collapsed = (index === 0) ? false : true
                 return (<Panel title={d.label} >
                     <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={collapsed}
                         src={d.data} onClick={this.handleReset} /> </Panel>
@@ -209,10 +214,8 @@ class DebugContainer extends Component {
 
         return (
             <div>
-                <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
-                <div className="tab-page-container">
                 <div className={`attributes-header ${background}`}>
-                    <div>
+                    <div >
                         <div className="attr-link" onClick={this.props.resetDebug}>
                             <span className="reset-icon" /><span className="text">Reset</span>
                         </div>
@@ -222,20 +225,18 @@ class DebugContainer extends Component {
                         </div>
                     </div>
                 </div>
-
-
-
-
+                <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
+                <div className="tab-page-container">
 
                     {this.state.activeTab === 'Debug' &&
                         <div className="attr-link" >
-                           
+
                             {this.debugPanel()}
                         </div>}
                     {this.state.activeTab === 'Spad' && rowData.length > 0 &&
                         <div>
-                                {this.spadTables()}
-                                {this.debugPanel()}
+                            {this.spadTables()}
+                            {this.debugPanel()}
 
                         </div>
 

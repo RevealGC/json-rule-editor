@@ -97,9 +97,8 @@ class DecisionDetails extends Component {
         // data:{active: true/false,parsed_rule:<json object> }, id, 
         let r = this.props.outcomes[decisionIndex][0];
         let id = Number(r.event.type)
-        console.log("🚀 ~ file: decision-details.js ~ line 99 ~ DecisionDetails ~ handleDeployRule ~ r", { r, id })
         let result = await updateParsedRules({ parsed_rule: r, id: id });
-        console.log("🚀 ~ file: decision-details.js ~ line 102 ~ DecisionDetails ~ handleDeployRule ~ result", result)
+        this.setState({ removeAlert: false, successAlert: true, successMsg: "Rule#"+id+" is saved to the database."});
 
     }
 
@@ -209,7 +208,7 @@ class DecisionDetails extends Component {
         (<div key={key}>
             <PanelBox className={'boolean'}>
                 <div className="menu">
-                    <a href="" onClick={(e) => this.handleExpand(e, index)}> {showCase[index].case ? 'Collapse' : 'View Conditions'}</a>
+                    <a href="" onClick={(e) => this.handleExpand(e, index)}> {showCase[index].case ? 'Collapse' : 'Edit Conditions'}</a>
 
                     <a href="" onClick={((e) => this.handleViewRule(e, String(key)))}>View Rule</a>
                     <a href="" onClick={((e) => this.handleTestRule(e, String(key)))}>Test</a>
