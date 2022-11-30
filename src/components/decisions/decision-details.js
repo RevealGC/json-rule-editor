@@ -96,8 +96,13 @@ class DecisionDetails extends Component {
 
         // data:{active: true/false,parsed_rule:<json object> }, id, 
         let r = this.props.outcomes[decisionIndex][0];
-        let id = Number(r.event.type)
-        let result = await updateParsedRules({ parsed_rule: r, id: id });
+
+        r.event.type==='New'
+        let id = r.event.type==='New' ? 0 : Number(r.event.type)
+
+        // if id is 0 then its an insert otherwise update it.
+        let result = await updateParsedRules({ parsed_rule: r, active: true, data:r, description: r.event.name,data: r,
+            id: id , name: r.event.name, rvs: (r.event.params.rvs)? r.event.params.rvs: '[]', created_by:'qbes', modified_by:'qbes'});
         this.setState({ removeAlert: false, successAlert: true, successMsg: "Rule#"+id+" is saved to the database."});
 
     }
@@ -205,7 +210,9 @@ class DecisionDetails extends Component {
         const { showCase } = this.state;
 
         const conditions = Object.keys(outcomes).map((key, index) =>
-        (<div key={key}>
+        (
+        
+        <div key={key}>
             <PanelBox className={'boolean'}>
                 <div className="menu">
                     <a href="" onClick={(e) => this.handleExpand(e, index)}> {showCase[index].case ? 'Collapse' : 'Edit Conditions'}</a>
