@@ -101,7 +101,7 @@ class DecisionDetails extends Component {
         let id = r.event.type==='New' ? 0 : Number(r.event.type)
 
         // if id is 0 then its an insert otherwise update it.
-        let result = await updateParsedRules({ parsed_rule: r, active: true, data:r, description: r.event.name,data: r,
+        let result = await updateParsedRules({ parsed_rule: r, active: true,type:'validation',active:true, data:r, description: r.event.name,data: r,
             id: id , name: r.event.name, rvs: (r.event.params.rvs)? r.event.params.rvs: '[]', created_by:'qbes', modified_by:'qbes'});
         this.setState({ removeAlert: false, successAlert: true, successMsg: "Rule#"+id+" is saved to the database."});
 

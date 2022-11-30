@@ -65,8 +65,10 @@ class Decision extends Component {
 
     addDebug(debug){
         // this.props.handleDebug('ADD', {debug});
-        this.props.handleDebug('ADD', {label:'time', data:debug}, 0)
         
+
+        this.props.handleDebug('ADD', {label:'time', data:debug}, 0)
+   
     }
 
     addCondition(condition) {
