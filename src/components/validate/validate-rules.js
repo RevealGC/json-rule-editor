@@ -8,10 +8,11 @@ import Button from '../button/button';
 import Table from '../table/table';
 import Banner from '../panel/banner';
 import * as Message from '../../constants/messages';
-import { validateRuleset } from '../../validations/rule-validation';
+import { processEngine,validateRuleset } from '../../validations/rule-validation';
 import Loader from '../loader/loader';
 import { ViewOutcomes } from '../attributes/view-attributes';
 import {handleAttribute} from '../../actions/attributes'
+import { handleDebug } from '../../actions/debug';
 
 
 class ValidateRules extends Component {
@@ -53,10 +54,10 @@ class ValidateRules extends Component {
         this.setState({ conditions: this.state.conditions.concat([{name: ''}])});
     }
 
-    validateRules(e) {
+    async validateRules(e) {
         e.preventDefault();
-        alert('Testing all rules from the editor: Coming Soon')
-        return;
+       
+      
         let facts = {};
         const { decisions, attributes } = this.props;
         this.setState({loading: true});
@@ -70,10 +71,18 @@ class ValidateRules extends Component {
             facts[condition.name] = condition.value;
            }
         })
-        console.log("🚀 ~ file: validate-rules.js ~ line 64 ~ ValidateRules ~ validateRules ~ facts", facts)
         
-// update the redux state with attributes
 
+// update the redux state with attributes
+    
+
+ 
+    let result = await processEngine([facts], decisions)
+  
+    this.props.handleDebug('ADD', {label:'time', data:{result}}, 0)
+    this.setState({loading: false, result,  result: true, error: false, errorMessage: '',});
+    
+return;
 
 
         validateRuleset(facts, decisions).then(outcomes => {
@@ -82,10 +91,12 @@ class ValidateRules extends Component {
             this.setState({loading: false, error: true, errorMessage: e.error, result: true, });
         });
     }
-
+/**
+ * 
+ * @returns 
+ */
     attributeItems = () => {
         const { conditions, loading, outcomes, result, error, errorMessage } = this.state;
-        console.log("🚀 ~ file: validate-rules.js ~ line 72 ~ ValidateRules ~ conditions", conditions)
        
        
        
@@ -105,7 +116,7 @@ class ValidateRules extends Component {
             if (error) {
                 message = <div className="form-error">Problem occured when processing the rules. Reason is {errorMessage}</div>
             } else if (outcomes && outcomes.length < 1) {
-                message = <div>No results found</div>
+                message = <div></div>
             } else if (outcomes && outcomes.length > 0) {
                 message = (<div className="view-params-container">
                                 <h4>Outcomes  </h4>
@@ -163,6 +174,8 @@ const mapStateToProps = (state) => ({
   const mapDispatchToProps = (dispatch) => ({
     handleAttribute: (operation, attribute, index) => dispatch(handleAttribute(operation, attribute, index)),
     handleDecisions: (operation, decision) => dispatch(handleDecision(operation, decision)),
+    handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))
+    
   });
   
   export default connect(mapStateToProps, mapDispatchToProps)(ValidateRules);

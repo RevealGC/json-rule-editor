@@ -13,7 +13,6 @@ export const processEngine = async function(facts, rules) {
   try{
   let result = await axios.post(url, {facts, rules})
   let resultSet = result.data
-  console.log("🚀 ~ file: rule-validation.js ~ line 12 ~ processEngine ~ resultSet", resultSet)
   return resultSet;
   
   }
