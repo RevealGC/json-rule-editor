@@ -40,9 +40,10 @@ const columnDefs = [
     // group cell renderer needed for expand / collapse icons
 
     {
-        field: 'id', headerName: 'Workflow ID', filter: 'agTextColumnFilter',
+        field: 'id', headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
         cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true
     },
+    { field: 'parent_id', headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true },
     { field: 'reporting_id', headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
     { field: 'status', filter: 'agTextColumnFilter', sortable: true },
     { field: 'elapsed_time', headerName: 'CPU Time(ms)', filter: 'agNumberColumnFilter', sortable: true },
@@ -63,7 +64,7 @@ const columnDefs = [
     { field: 'merge_data', headerName: 'Merge Data', valueFormatter: stringifier, filter: 'agTextColumnFilter', sortable: true },
 
 
-    // { field: 'request' , resizable: true, valueFormatter: stringifier, wrapText: true, autoHeight: true, }  ,
+    // { field: 'result' , resizable: true, valueFormatter: stringifier, wrapText: true, autoHeight: true, }  ,
 
     { field: 'created_date', headerName: 'Date Created', filter: 'agTextColumnFilter' },
     { field: 'last_modified_date', headerName: 'Date Modified', filter: 'agTextColumnFilter' },
@@ -82,6 +83,9 @@ function showMergeLink(params) {
 function stringifier(params) {
     return JSON.stringify(params.data.merge_data);
 }
+function alertMe(data) {
+    this.props.handleDebug('ADD', { label: 'time', data }, 0)
+}
 
 class DebugContainer extends Component {
 
@@ -92,20 +96,40 @@ class DebugContainer extends Component {
             activeTab: 'Debug',
             rowData: [],
             columnDefs: columnDefs,
+            internalOnSelectionChanged(params) {
+              console.log("🚀 ~ file: debug-container.js ~ line 100 ~ DebugContainer ~ internalOnSelectionChanged ~ params", params)
+              
+                console.log(this.props.handleDebug);
+            },
             detailCellRendererParams: {
+
+
+
                 detailGridOptions: {
-                    columnDefs: [
-                        { field: 'valid' },
-                        { field: 'invalid' },
-                        { field: 'facts' },
-                        { field: 'debug' }
-                    ],
+                    columnDefs,
+                 
+
+                    // function (params) {
+                    // console.log("🚀 ~ file: debug-container.js ~ line 106 ~ DebugContainer ~ constructor ~ params", params)
+                    //     alertMe(params.data.result)
+                    //     // params.api.forEachNode(detailRowNode => {
+                    //     //   if(detailRowNode.isSelected()) {
+                    //     //     console.log("🚀 ~ file: debug-container.js ~ line 106 ~ DebugContainer ~ constructor ~ detailRowNode", detailRowNode.data.result)
+                    //     //     alertMe(detailRowNode.data.result)
+
+                    //     // //   this.props.handleDebug('ADD', { label: 'time', data: { outcome: detailRowNode.data.result } }, 0)}
+                    //     //   }})
+                    //     },
+
+
+
                     defaultColDef: {
                         flex: 1,
                     },
                 },
                 getDetailRowData: (params) => {
-                    params.successCallback(params.data.spadJobsHasMany);
+                    // params.successCallback(params.data.spadJobsHasMany);
+                    params.successCallback(params.data.spadself);
                 }
             },
 
@@ -113,6 +137,8 @@ class DebugContainer extends Component {
         };
         this.handleReset = this.handleReset.bind(this)
         this.onGridReady = this.onGridReady.bind(this)
+       
+
 
 
     }
@@ -175,9 +201,10 @@ class DebugContainer extends Component {
             <div>
                 <div className="ag-theme-alpine" id="myGrid" style={{ height: 500, width: 1200 }}>
                     <AgGridReact
-                        onRowSelected={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.spadJobsHasMany } }, 0)}
-                        onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.spadJobsHasMany } }, 0)}
+                        onRowSelected={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.result } }, 0)}
+                        onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.result } }, 0)}
                         masterDetail={true}
+                        alertMe={alertMe}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         detailCellRendererParams={detailCellRendererParams}
