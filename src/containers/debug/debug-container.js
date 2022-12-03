@@ -1,6 +1,7 @@
 import React, { Component, useRef, useMemo, useState } from 'react';
 
 import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Title from '../../components/title/title';
 import PropTypes from 'prop-types';
 
@@ -83,43 +84,39 @@ function showMergeLink(params) {
 function stringifier(params) {
     return JSON.stringify(params.data.merge_data);
 }
-function alertMe(data) {
-    this.props.handleDebug('ADD', { label: 'time', data }, 0)
-}
+
 
 class DebugContainer extends Component {
 
     constructor(props) {
+        
         super(props);
 
         this.state = {
             activeTab: 'Debug',
             rowData: [],
             columnDefs: columnDefs,
-            internalOnSelectionChanged(params) {
-              console.log("🚀 ~ file: debug-container.js ~ line 100 ~ DebugContainer ~ internalOnSelectionChanged ~ params", params)
-              
-                console.log(this.props.handleDebug);
-            },
+         
             detailCellRendererParams: {
 
 
 
                 detailGridOptions: {
                     columnDefs,
-                 
+                    onRowSelected:
 
-                    // function (params) {
-                    // console.log("🚀 ~ file: debug-container.js ~ line 106 ~ DebugContainer ~ constructor ~ params", params)
-                    //     alertMe(params.data.result)
-                    //     // params.api.forEachNode(detailRowNode => {
-                    //     //   if(detailRowNode.isSelected()) {
-                    //     //     console.log("🚀 ~ file: debug-container.js ~ line 106 ~ DebugContainer ~ constructor ~ detailRowNode", detailRowNode.data.result)
-                    //     //     alertMe(detailRowNode.data.result)
+                    function (params) {
+                    console.log("🚀 ~ file: debug-container.js ~ line 106 ~ DebugContainer ~ constructor ~ params", params)
+                    // dispatch(handleDebug('ADD', { label: 'time', data: { outcome: detailRowNode.data.result } }, 0))
+                        alertMe(params.data.result)
+                        // params.api.forEachNode(detailRowNode => {
+                        //   if(detailRowNode.isSelected()) {
+                        //     console.log("🚀 ~ file: debug-container.js ~ line 106 ~ DebugContainer ~ constructor ~ detailRowNode", detailRowNode.data.result)
+                        //     alertMe(detailRowNode.data.result)
 
-                    //     // //   this.props.handleDebug('ADD', { label: 'time', data: { outcome: detailRowNode.data.result } }, 0)}
-                    //     //   }})
-                    //     },
+                        // //   this.props.handleDebug('ADD', { label: 'time', data: { outcome: detailRowNode.data.result } }, 0)}
+                        //   }})
+                        },
 
 
 
@@ -192,6 +189,13 @@ class DebugContainer extends Component {
         }, 0);
     };
 
+     alertMe(data) {
+        alert('Data received. Call the Action')
+        // const dispatch = useDispatch();
+        // dispatch(handleDebug('ADD', { label: 'time', data }, 0));
+        
+    }
+
     spadTables() {
 
         const { background } = this.context;
@@ -204,7 +208,7 @@ class DebugContainer extends Component {
                         onRowSelected={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.result } }, 0)}
                         onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.result } }, 0)}
                         masterDetail={true}
-                        alertMe={alertMe}
+                        alertMe={this.alertMe.bind(this)}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         detailCellRendererParams={detailCellRendererParams}
