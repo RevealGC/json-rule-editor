@@ -50,6 +50,7 @@ const columnDefs = [
     { field: 'elapsed_time', headerName: 'CPU Time(ms)', filter: 'agNumberColumnFilter', sortable: true },
     { field: 'error_message', headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
     { field: 'aggregate', headerName: 'Aggregate', filter: 'agTextColumnFilter', valueFormatter: stringifierAggregate, sortable: true },
+    { field: 'facts', headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
 
     {
         field: 'merge_status', headerName: 'Merge Status', cellRenderer: function (params, data) {
@@ -87,7 +88,9 @@ function stringifier(params) {
 function stringifierAggregate(params) {
     return JSON.stringify(params.data.aggregate);
 }
-
+function stringifierFact(params) {
+    return JSON.stringify(params.data.facts);
+}
 
 class DebugContainer extends Component {
 
