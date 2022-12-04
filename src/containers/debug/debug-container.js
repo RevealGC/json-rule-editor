@@ -49,7 +49,7 @@ const columnDefs = [
     { field: 'status', filter: 'agTextColumnFilter', sortable: true },
     { field: 'elapsed_time', headerName: 'CPU Time(ms)', filter: 'agNumberColumnFilter', sortable: true },
     { field: 'error_message', headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
-
+    { field: 'aggregate', headerName: 'Aggregate', filter: 'agTextColumnFilter', valueFormatter: stringifierAggregate, sortable: true },
 
     {
         field: 'merge_status', headerName: 'Merge Status', cellRenderer: function (params, data) {
@@ -83,6 +83,9 @@ function showMergeLink(params) {
 }
 function stringifier(params) {
     return JSON.stringify(params.data.merge_data);
+}
+function stringifierAggregate(params) {
+    return JSON.stringify(params.data.aggregate);
 }
 
 
