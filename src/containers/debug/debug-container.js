@@ -41,16 +41,16 @@ const columnDefs = [
     // group cell renderer needed for expand / collapse icons
 
     {
-        field: 'id', headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
+        field: 'id', width: 100, headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
         cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true
     },
-    { field: 'parent_id', headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'reporting_id', headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'status', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'elapsed_time', headerName: 'CPU Time(ms)', filter: 'agNumberColumnFilter', sortable: true },
-    { field: 'error_message', headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'aggregate', headerName: 'Aggregate', filter: 'agTextColumnFilter', valueFormatter: stringifierAggregate, sortable: true },
-    { field: 'facts', headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
+    { field: 'parent_id', width: 100, headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'reporting_id',width: 100,  headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'status', width: 100, filter: 'agTextColumnFilter', sortable: true },
+    { field: 'elapsed_time', width: 100, headerName: 'CPU Time(ms)', filter: 'agNumberColumnFilter', sortable: true },
+    { field: 'error_message',width: 100,  headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'aggregate',width: 300,  headerName: 'Aggregate', filter: 'agTextColumnFilter', valueFormatter: stringifierAggregate, sortable: true },
+    { field: 'facts',width: 400,  headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
 
     {
         field: 'merge_status', headerName: 'Merge Status', cellRenderer: function (params, data) {
@@ -91,56 +91,54 @@ function stringifierAggregate(params) {
 function stringifierFact(params) {
     return JSON.stringify(params.data.facts);
 }
-
+// this.props.handleDebug('ADD', { label: 'time', data: { facts: e.data.facts, aggregate:e.data.aggregate, valid:e.data.result.rules.valid , invalid:e.data.result.rules.invalid, deltaFacts: e.data.result.rules.deltaFacts } }, 0)},
 class DebugContainer extends Component {
 
     constructor(props) {
-        
+
         super(props);
 
         this.state = {
             activeTab: 'Debug',
             rowData: [],
             columnDefs: columnDefs,
-         
+
             detailCellRendererParams: {
-
-
-
                 detailGridOptions: {
                     columnDefs,
-                    onRowSelected:
+                    masterDetail: true,
 
-                    function (params) {
-                    console.log("🚀 ~ file: debug-container.js ~ line 106 ~ DebugContainer ~ constructor ~ params", params)
-                    // dispatch(handleDebug('ADD', { label: 'time', data: { outcome: detailRowNode.data.result } }, 0))
-                        alertMe(params.data.result)
-                        // params.api.forEachNode(detailRowNode => {
-                        //   if(detailRowNode.isSelected()) {
-                        //     console.log("🚀 ~ file: debug-container.js ~ line 106 ~ DebugContainer ~ constructor ~ detailRowNode", detailRowNode.data.result)
-                        //     alertMe(detailRowNode.data.result)
-
-                        // //   this.props.handleDebug('ADD', { label: 'time', data: { outcome: detailRowNode.data.result } }, 0)}
-                        //   }})
+                    detailCellRendererParams: {
+                        detailGridOptions: {
+                            columnDefs,
+                            masterDetail: true,
+                            onRowClicked: function (e) { console.log(e) },
+                            onRowSelected: function (params) { console.log(params) },
+                            defaultColDef: { flex: 1,resizable: true},
                         },
-
-
-
-                    defaultColDef: {
-                        flex: 1,
+                        getDetailRowData: (params) => {
+                            // params.successCallback(params.data.spadJobsHasMany);
+                            params.successCallback(params.data.spadLevel2);
+                        }
                     },
+
+
+                    onRowClicked: function (e) { console.log(e) },
+                    onRowSelected: function (params) { console.log(params) },
+                    defaultColDef: { flex: 1,resizable: true },
                 },
                 getDetailRowData: (params) => {
                     // params.successCallback(params.data.spadJobsHasMany);
                     params.successCallback(params.data.spadself);
-                }
+                },
+
             },
 
             debugPanelDisplay: false, theme: { background: 'light', toggleBackground: this.toggleBackground }
         };
         this.handleReset = this.handleReset.bind(this)
         this.onGridReady = this.onGridReady.bind(this)
-       
+
 
 
 
@@ -195,11 +193,11 @@ class DebugContainer extends Component {
         }, 0);
     };
 
-     alertMe(data) {
+    alertMe(data) {
         alert('Data received. Call the Action')
         // const dispatch = useDispatch();
         // dispatch(handleDebug('ADD', { label: 'time', data }, 0));
-        
+
     }
 
     spadTables() {
@@ -207,16 +205,19 @@ class DebugContainer extends Component {
         const { background } = this.context;
         const { columnDefs, rowData, detailCellRendererParams } = this.state
 
+        let priorRowIndex = -1;
         return (
             <div>
-                <div className="ag-theme-alpine" id="myGrid" style={{ height: 500, width: 1200 }}>
+                <div className="ag-theme-alpine" id="myGrid" style={{ height:800 }}>
                     <AgGridReact
-                        onRowSelected={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.result } }, 0)}
-                        onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { outcome: e.data.result } }, 0)}
+                        onRowSelected={(e) =>
+                            this.props.handleDebug('ADD', { label: 'time', data: { aggregate: e.data.aggregate } }, 0)}
+                        onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { facts: e.data.facts, aggregate: e.data.aggregate, valid: e.data.result.rules.valid, invalid: e.data.result.rules.invalid, deltaFacts: e.data.result.rules.deltaFacts } }, 0)}
                         masterDetail={true}
                         alertMe={this.alertMe.bind(this)}
                         rowData={rowData}
                         columnDefs={columnDefs}
+                        defaultColDef= {{ flex: 1,resizable: true}}
                         detailCellRendererParams={detailCellRendererParams}
                         animateRows={true}
                         pagination={true}
