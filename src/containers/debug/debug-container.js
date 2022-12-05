@@ -41,14 +41,14 @@ const columnDefs = [
     // group cell renderer needed for expand / collapse icons
 
     {
-        field: 'id', width: 100, headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
+        field: 'id', width: 200, headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
         cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true
     },
-    { field: 'parent_id', width: 100, headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'reporting_id',width: 100,  headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'status', width: 100, filter: 'agTextColumnFilter', sortable: true },
-    { field: 'elapsed_time', width: 100, headerName: 'CPU Time(ms)', filter: 'agNumberColumnFilter', sortable: true },
-    { field: 'error_message',width: 100,  headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'parent_id', width: 200, headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'reporting_id',width: 200,  headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'status', width: 150, filter: 'agTextColumnFilter', sortable: true },
+    { field: 'elapsed_time', width: 150, headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true },
+    { field: 'error_message',width: 150,  headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
     { field: 'aggregate',width: 300,  headerName: 'Aggregate', filter: 'agTextColumnFilter', valueFormatter: stringifierAggregate, sortable: true },
     { field: 'facts',width: 400,  headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
 
