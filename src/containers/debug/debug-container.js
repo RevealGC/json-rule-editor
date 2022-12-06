@@ -117,13 +117,12 @@ class DebugContainer extends Component {
                             columnDefs,
                             masterDetail: true,
                             embedFullWidthRows: true,
-                            
+                            onRowSelected: this.debugPanelAttribute.bind(this),
+                            onRowClicked: this.debugPanelResult.bind(this),
                             defaultColDef: { flex: 1,resizable: true},
                         },
-                        // onRowClicked: this.onRowClicked.bind(this),
-                            // onRowSelected: this.onRowSelected.bind(this),
+                       
                         getDetailRowData: (params) => {
-                            // params.successCallback(params.data.spadJobsHasMany);
                             params.successCallback(params.data.spadLevel2);
                         }
                     },
