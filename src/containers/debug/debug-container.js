@@ -207,7 +207,7 @@ debugPanelAttribute(data) {
     }
 
     debugPanelResult(data) {
-        this.props.handleDebug('ADD', { label: 'time', data: { aggregate: data.data.result  } }, 0)
+        this.props.handleDebug('ADD', { label: 'time', data: { aggregate: data.data.facts  } }, 0)
     }
 
     spadTables() {
