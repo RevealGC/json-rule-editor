@@ -67,7 +67,7 @@ const columnDefs = [
     { field: 'merge_data', headerName: 'Merge Data', valueFormatter: stringifier, filter: 'agTextColumnFilter', sortable: true },
 
 
-    // { field: 'result' , resizable: true, valueFormatter: stringifier, wrapText: true, autoHeight: true, }  ,
+    { field: 'result' , resizable: true, valueFormatter: stringifier, wrapText: true, hidden: true, autoHeight: true, }  ,
 
     { field: 'created_date', headerName: 'Date Created', filter: 'agTextColumnFilter' },
     { field: 'last_modified_date', headerName: 'Date Modified', filter: 'agTextColumnFilter' },
