@@ -105,8 +105,9 @@ class DebugContainer extends Component {
             activeTab: 'Debug',
             rowData: [],
             columnDefs: columnDefs,
-
+            detailRowAutoHeight: true,
             detailCellRendererParams: {
+
                 detailGridOptions: {
                     columnDefs,
                     masterDetail: true,
@@ -116,26 +117,21 @@ class DebugContainer extends Component {
                             columnDefs,
                             masterDetail: true,
                             embedFullWidthRows: true,
-                            onRowClicked: function (e) { console.log(e) },
-                            onRowSelected: function (params) { console.log(params) },
+                            
                             defaultColDef: { flex: 1,resizable: true},
                         },
+                        // onRowClicked: this.onRowClicked.bind(this),
+                            // onRowSelected: this.onRowSelected.bind(this),
                         getDetailRowData: (params) => {
                             // params.successCallback(params.data.spadJobsHasMany);
                             params.successCallback(params.data.spadLevel2);
                         }
                     },
-
-
-                    onRowClicked: function (e) { 
-                        this.alertMe(e.target.value);    
-                        console.log(e) 
-                    },
-                    onRowSelected: function (params) { console.log(params) },
+                    onRowSelected: this.debugPanelAttribute.bind(this),
+                    onRowClicked: this.debugPanelResult.bind(this),
                     defaultColDef: { flex: 1,resizable: true },
                 },
                 getDetailRowData: (params) => {
-                    // params.successCallback(params.data.spadJobsHasMany);
                     params.successCallback(params.data.spadself);
                 }
 
@@ -204,12 +200,15 @@ class DebugContainer extends Component {
             // gridRef.current.columnApi.autoSizeAllColumns(true);
         }, 0);
     };
+// shows aggregates
+debugPanelAttribute(data) {
+    
+        this.props.handleDebug('ADD', { label: 'time', data: { aggregate: data.data.aggregate  } }, 0)
 
-    alertMe(data) {
-        alert('Data received. Call the Action')
-        // const dispatch = useDispatch();
-        // dispatch(handleDebug('ADD', { label: 'time', data }, 0));
+    }
 
+    debugPanelResult(data) {
+        this.props.handleDebug('ADD', { label: 'time', data: { aggregate: data.data.result  } }, 0)
     }
 
     spadTables() {
@@ -226,8 +225,9 @@ class DebugContainer extends Component {
                             this.props.handleDebug('ADD', { label: 'time', data: { aggregate: e.data.aggregate } }, 0)}
                         onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { facts: e.data.facts, aggregate: e.data.aggregate, valid: e.data.result.rules.valid, invalid: e.data.result.rules.invalid, deltaFacts: e.data.result.rules.deltaFacts } }, 0)}
                         masterDetail={true}
+                        detailRowAutoHeight= {true}
                         embedFullWidthRows={true}
-                        alertMe={this.alertMe.bind(this)}
+              
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef= {{ flex: 1,resizable: true}}
