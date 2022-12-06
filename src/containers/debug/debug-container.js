@@ -37,6 +37,7 @@ const HOSTURL = 'http://localhost'
 //     };
 //   }, []);
 
+
 const columnDefs = [
     // group cell renderer needed for expand / collapse icons
 
@@ -91,6 +92,8 @@ function stringifierAggregate(params) {
 function stringifierFact(params) {
     return JSON.stringify(params.data.facts);
 }
+
+
 // this.props.handleDebug('ADD', { label: 'time', data: { facts: e.data.facts, aggregate:e.data.aggregate, valid:e.data.result.rules.valid , invalid:e.data.result.rules.invalid, deltaFacts: e.data.result.rules.deltaFacts } }, 0)},
 class DebugContainer extends Component {
 
@@ -107,11 +110,12 @@ class DebugContainer extends Component {
                 detailGridOptions: {
                     columnDefs,
                     masterDetail: true,
-
+                    embedFullWidthRows: true,
                     detailCellRendererParams: {
                         detailGridOptions: {
                             columnDefs,
                             masterDetail: true,
+                            embedFullWidthRows: true,
                             onRowClicked: function (e) { console.log(e) },
                             onRowSelected: function (params) { console.log(params) },
                             defaultColDef: { flex: 1,resizable: true},
@@ -123,15 +127,23 @@ class DebugContainer extends Component {
                     },
 
 
-                    onRowClicked: function (e) { console.log(e) },
+                    onRowClicked: function (e) { 
+                        this.alertMe(e.target.value);    
+                        console.log(e) 
+                    },
                     onRowSelected: function (params) { console.log(params) },
                     defaultColDef: { flex: 1,resizable: true },
                 },
                 getDetailRowData: (params) => {
                     // params.successCallback(params.data.spadJobsHasMany);
                     params.successCallback(params.data.spadself);
-                },
+                }
 
+            },
+            template: (params) => {
+                let rid = params.data.reporting_id
+                return `
+                    <div style="height:100%; background-color: #EDF6FF; padding:20px; box-sizing:border-box;"> <div style="height:10%;">RID: </div><div style="height:90%;" ref="eDetailGrid"></div></div>`
             },
 
             debugPanelDisplay: false, theme: { background: 'light', toggleBackground: this.toggleBackground }
@@ -188,7 +200,7 @@ class DebugContainer extends Component {
     onFirstDataRendered = (params) => {
         setTimeout(function () {
             // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
-            params.api.columnApi.autoSizeAllColumns(true)
+            params.api.columnModel.autoSizeAllColumns(true)
             // gridRef.current.columnApi.autoSizeAllColumns(true);
         }, 0);
     };
@@ -214,6 +226,7 @@ class DebugContainer extends Component {
                             this.props.handleDebug('ADD', { label: 'time', data: { aggregate: e.data.aggregate } }, 0)}
                         onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { facts: e.data.facts, aggregate: e.data.aggregate, valid: e.data.result.rules.valid, invalid: e.data.result.rules.invalid, deltaFacts: e.data.result.rules.deltaFacts } }, 0)}
                         masterDetail={true}
+                        embedFullWidthRows={true}
                         alertMe={this.alertMe.bind(this)}
                         rowData={rowData}
                         columnDefs={columnDefs}
