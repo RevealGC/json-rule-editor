@@ -67,7 +67,7 @@ const columnDefs = [
     { field: 'merge_data', headerName: 'Merge Data', valueFormatter: stringifier, filter: 'agTextColumnFilter', sortable: true },
 
 
-    { field: 'result' , resizable: true, valueFormatter: stringifier, wrapText: true, hidden: true, autoHeight: true, }  ,
+    { field: 'result' , resizable: true, valueFormatter: stringifier, autoHeight: true, }  ,
 
     { field: 'created_date', headerName: 'Date Created', filter: 'agTextColumnFilter' },
     { field: 'last_modified_date', headerName: 'Date Modified', filter: 'agTextColumnFilter' },
@@ -84,7 +84,7 @@ function showMergeLink(params) {
     else return 'N/A'
 }
 function stringifier(params) {
-    return JSON.stringify(params.data.merge_data);
+    return JSON.stringify(params.data.result);
 }
 function stringifierAggregate(params) {
     return JSON.stringify(params.data.aggregate);
@@ -207,7 +207,7 @@ debugPanelAttribute(data) {
     }
 
     debugPanelResult(data) {
-        this.props.handleDebug('ADD', { label: 'time', data: { aggregate: data.data.facts  } }, 0)
+        this.props.handleDebug('ADD', { label: 'time', data: { aggregate: data.data.result  } }, 0)
     }
 
     spadTables() {
