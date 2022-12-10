@@ -45,12 +45,12 @@ const columnDefs = [
         field: 'id', width: 200, headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
         cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true
     },
-    { field: 'parent_id', width: 200, headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'parent_id', width: 200, headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true , hide: true},
     { field: 'reporting_id',width: 200,  headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
     { field: 'status', width: 150, filter: 'agTextColumnFilter', sortable: true },
-    { field: 'elapsed_time', width: 150, headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true },
-    { field: 'error_message',width: 150,  headerName: 'Error', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'aggregate',width: 300,  headerName: 'Aggregate', filter: 'agTextColumnFilter', valueFormatter: stringifierAggregate, sortable: true },
+    { field: 'elapsed_time', width: 150, headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: true },
+    { field: 'error_message',width: 150,  headerName: 'Error', filter: 'agTextColumnFilter', sortable: true, hide: true },
+    { field: 'valid',width: 600,  headerName: 'Valid Rules', filter: 'agTextColumnFilter', valueFormatter: stringifierAggregateRules, sortable: true },
     { field: 'facts',width: 400,  headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
 
     {
@@ -68,9 +68,9 @@ const columnDefs = [
 
 
     { field: 'result' , resizable: true, valueFormatter: stringifier, autoHeight: true, }  ,
-
-    { field: 'created_date', headerName: 'Date Created', filter: 'agTextColumnFilter' },
-    { field: 'last_modified_date', headerName: 'Date Modified', filter: 'agTextColumnFilter' },
+ { field: 'last_modified_date', headerName: 'Modified', filter: 'agTextColumnFilter' },
+    { field: 'created_date', headerName: 'Created', filter: 'agTextColumnFilter' },
+   
     // { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
 ];
 function myFunction(spadId) {
@@ -86,7 +86,14 @@ function showMergeLink(params) {
 function stringifier(params) {
     return JSON.stringify(params.data.result);
 }
-function stringifierAggregate(params) {
+function stringifierAggregateRules(params) {
+    let valids = params.data && params.data.result && params.data.result.rules.valid ? params.data.result.rules.valid: []
+    let rules = []
+   valids.map((valid)=>{
+        rules.push(valid.id +": "+valid.message)
+ 
+   })
+    return JSON.stringify(rules)
     return JSON.stringify(params.data.aggregate);
 }
 function stringifierFact(params) {

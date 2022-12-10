@@ -27,7 +27,7 @@ class NavigationPanel extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {links: [], dbSearchText: '2594421835'};
+        this.state = {links: [], dbSearchText: '8771348140'};
         this.handleNavLink = this.handleNavLink.bind(this);
         this.handleNavBtn = this.handleNavBtn.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
@@ -54,8 +54,7 @@ class NavigationPanel extends Component {
         
     }
    async loadRuleSet(){
-        // now call axios to get data from  http://localhost/rulesrepo/factsandrules/2594421835?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo
-alert(this.state.dbSearchText); 
+        // now call axios to get data from  http://localhost/rulesrepo/factsandrules/8771348140?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo
         let url = HOSTURL+'/rulesrepo/factsandrules/'+this.state.dbSearchText+'?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'
         try{
         let result = await axios.get(url)
@@ -71,7 +70,7 @@ alert(this.state.dbSearchText);
     }
     render() {
         const { closedState, loggedIn } = this.props;
-        const val = this.state.dbSearchText || '2594421835'
+        const val = this.state.dbSearchText || '8771348140'
         
         let rulesetLink = this.props.rulenames.length > 0 ?
          [{ name: 'Ruleset', sublinks: this.props.rulenames, iconClass:"rules-icon", linkClass: 'link-heading'}] : [];
