@@ -5,6 +5,7 @@ import { PanelBox } from '../panel/panel';
 import 'font-awesome/css/font-awesome.min.css';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { transformRuleToTree } from '../../utils/transform';
+import  RuleEditor  from "./ruleeditor"
 
 import { processEngine, updateParsedRules } from '../../validations/rule-validation';
 
@@ -188,9 +189,12 @@ class DecisionDetails extends Component {
     }
 
     renderConditions = (conditions, decisionIndex) => {
+        console.log("🚀 ~ file: decision-details.js ~ line 191 ~ DecisionDetails ~ conditions", conditions)
         const transformedData = transformRuleToTree(conditions);
-
         return (<div className="rule-flex-container">
+            {/* LINE 194 in decision-details: PUT the Tabs for the General/Conditions/Outcome/API Call/Validate */}
+            <RuleEditor conditions={conditions}/>
+           
             {transformedData && transformedData.map((data, caseIndex) => (<div className="decision-box" key={`case - ${caseIndex} - ${decisionIndex}`}>
                 <div className="tool-flex">
                     <div><a href="" onClick={(e) => this.editCondition(e, data.index)}><span className="fa fa-edit" /></a></div>

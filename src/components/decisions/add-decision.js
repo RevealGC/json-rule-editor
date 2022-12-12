@@ -116,6 +116,7 @@ class AddDecision extends Component {
 
 
         const outcome = props.editDecision ? props.outcome : {value: 'New', params:[] };
+        console.log("🚀 ~ file: add-decision.js ~ line 119 ~ AddDecision ~ constructor ~ outcome", outcome)
 
         const addAttribute = { error: {}, name: '', operator: '', value: '' };
         const node = props.editDecision ? props.editCondition.node : {};
