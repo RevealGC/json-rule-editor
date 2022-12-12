@@ -2,8 +2,8 @@ import React from "react";
 import "./ToggleSwitch.css";
 
 
-// https://www.webtips.dev/toggle-buttons-in-react
 const ToggleSwitch = ({ label, value }) => {
+  
     return (
         <div className="container">
             {label}{" "}

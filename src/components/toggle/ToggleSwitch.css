@@ -36,17 +36,17 @@
     box-sizing: border-box;
     }
     .inner:before {
-    content: "Active";
+    content: "Yes";
     padding-left: 10px;
     background-color: #060;
     color: #fff;
     }
     .inner:after {
-    content: "Inactive";
-    padding-right: 10px;
+    content: "No";
+    padding-left: 10px;
     background-color: #bbb;
     color: #fff;
-    text-align: right;
+    text-align: left;
     }
     .switch {
     display: block;

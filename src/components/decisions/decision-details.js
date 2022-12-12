@@ -188,12 +188,20 @@ class DecisionDetails extends Component {
         </div>);
     }
 
+    handleCancel(index) {
+        const cases = [...this.state.showCase];
+        let updateCase = cases[index];
+        updateCase = { ...updateCase, case: !updateCase.case }
+        cases[index] = { ...updateCase };
+        this.setState({ showCase: cases });
+
+    }
+
     renderConditions = (conditions, decisionIndex) => {
         console.log("🚀 ~ file: decision-details.js ~ line 191 ~ DecisionDetails ~ conditions", conditions)
         const transformedData = transformRuleToTree(conditions);
-        return (<div className="rule-flex-container">
-            {/* LINE 194 in decision-details: PUT the Tabs for the General/Conditions/Outcome/API Call/Validate */}
-            <RuleEditor conditions={conditions}/>
+        return (<div className="rule-flex-container_X">
+            <RuleEditor conditions={conditions} decisionIndex={decisionIndex} handleCancel={this.handleCancel.bind(this)}/>
            
             {transformedData && transformedData.map((data, caseIndex) => (<div className="decision-box" key={`case - ${caseIndex} - ${decisionIndex}`}>
                 <div className="tool-flex">
