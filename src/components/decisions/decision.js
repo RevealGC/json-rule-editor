@@ -113,6 +113,7 @@ class Decision extends Component {
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel'};
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
         const { outcomes } = this.props;
+        console.log("🚀 ~ file: decision.js:116 ~ Decision ~ render ~ outcomes", outcomes)
 
         return (<div className="rulecases-container">
 

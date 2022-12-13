@@ -8,7 +8,7 @@ import axios from 'axios'
 // import AddDecision from './add-decision';
 // import DecisionDetails from './decision-details';
 // import Banner from '../panel/banner';
-
+import { processEngine, updateParsedRules } from '../../validations/rule-validation';
 import InputField from '../forms/input-field';
 import SelectField from '../forms/selectmenu-field';
 import Button from '../button/button';
@@ -26,9 +26,48 @@ import ApperanceContext from '../../context/apperance-context';
 
 
 import { handleDebug } from '../../actions/debug';
+import {handleDecision} from '../../actions/decisions'
+
 import { responsiveFontSizes } from '@mui/material';
+import SweetAlert from 'react-bootstrap-sweetalert';
 const tabs = [{ name: 'General' }, { name: 'Condition' }, { name: 'Outcome' }, { name: 'Validate' }];
 const HOSTURL='http://localhost'
+
+const newRuleObject = {
+    "condition": {
+      "event": {
+        "ruleId": "0",
+        "active": true,
+        "name": "Rule Name(edit me)",
+        "actionType": "impute",
+        "validationType": "validation",
+        "rulePriority": "5",
+        "params": {
+          "rvs": "[]",
+          "action": [
+            
+          ],
+          "message": "Enter ",
+          "actionType": "impute"
+        },
+        "type": "0"
+      },
+      "index": 0,
+      "conditions": {
+        "all": [
+          {
+            "fact": "checkCondition",
+            "path": "$.value",
+            "operator": "equal",
+            "value": true,
+            "params": {
+              "conditionstring": "RCPT_TOT > 0"
+            }
+          }
+        ]
+      }
+    }
+  }
 
 class RuleEditor extends Component {
 
@@ -78,7 +117,12 @@ const conditionStringObject = {parseSuccess: true}
 
         const validationType = condition.event && condition.event.params && condition.event.params.validationType ? condition.event.params.validationType : 'validation'
 
+        // Default the ruleId to 0 if its a new record and set rulePriority to 5 by default
         const ruleId = condition.event.ruleId || condition.event.type || 0
+        const rulePriority = condition.event.rulePriority || 5
+
+
+
         const name = condition.event.name || ''
         const message = condition.event.params.message || ''
         const responseVariables = condition.event && condition.event.params && condition.event.params.rvsJSON ? condition.event.params.rvsJSON :
@@ -103,7 +147,7 @@ const conditionStringObject = {parseSuccess: true}
             showAddRuleCase: false,
             conditions: this.props.conditions,
             outcome,
-            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,facts,
+            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,facts,rulePriority,
             activeTab: 'General', generateFlag: false,
 
             searchCriteria: '',
@@ -113,7 +157,7 @@ const conditionStringObject = {parseSuccess: true}
             decisions: props.decisions || [],
             bannerflag: false
         };
-        this.handleAdd = this.handleAdd.bind(this);
+        this.handleUpdateRule = this.handleUpdateRule.bind(this);
         this.updateCondition = this.updateCondition.bind(this);
         this.editCondition = this.editCondition.bind(this);
         this.addCondition = this.addCondition.bind(this);
@@ -130,6 +174,8 @@ const conditionStringObject = {parseSuccess: true}
         this.onToggleActive = this.onToggleActive.bind(this);
 
         this.handleValidationType = this.handleValidationType.bind(this)
+        this.handleRulePriority = this.handleRulePriority.bind(this)
+
         this.addResponseVariables = this.addResponseVariables.bind(this)
         this.deleteRVActions = this.deleteRVActions.bind(this)
         this.handleShowRuleJSON = this.handleShowRuleJSON.bind(this)
@@ -142,6 +188,8 @@ const conditionStringObject = {parseSuccess: true}
 
         this.addActions = this.addActions.bind(this);
         this.deleteActions = this.deleteActions.bind(this);
+        this.handleTestRule = this.handleTestRule.bind(this)
+        this.handleDeployRule = this.handleDeployRule.bind(this)
 
 
 
@@ -151,20 +199,25 @@ const conditionStringObject = {parseSuccess: true}
 
     }
 
-
+    componentDidMount() {
+    this.handleCompileConditionString()
+    }
     handleTab = (tabName) => {
         this.setState({ activeTab: tabName });
     }
 
 
+ 
 
 
     handleSearch = (value) => {
         this.setState({ searchCriteria: value })
     }
 
-    handleAdd = () => {
-        this.setState({ showAddRuleCase: true, bannerflag: true });
+    handleUpdateRule = () => {
+        // this.setState({ showAddRuleCase: true, bannerflag: true });
+
+        this.updateCondition(this.formRule())
     }
 
     cancelAddAttribute = () => {
@@ -195,28 +248,28 @@ const conditionStringObject = {parseSuccess: true}
     }
 
     addCondition(condition) {
-        this.props.handleDecisions('ADD', { condition });
-        this.setState({ showAddRuleCase: false });
+        this.props.handleDecision('ADD', { condition, decisionIndex:0 });
+      
     }
 
     updateCondition(condition) {
-        this.props.handleDecisions('UPDATE', {
+        this.props.handleDecision('UPDATE', {
             condition,
-            decisionIndex: this.state.editDecisionIndex
+            decisionIndex: this.state.decisionIndex
         });
-        this.setState({ editCaseFlag: false });
+     
     }
 
     removeCase(decisionIndex) {
-        this.props.handleDecisions('REMOVECONDITION', { decisionIndex });
+        this.props.handleDecision('REMOVECONDITION', { decisionIndex });
     }
 
     removeDecisions(outcome) {
-        this.props.handleDecisions('REMOVEDECISIONS', { outcome });
+        this.props.handleDecision('REMOVEDECISIONS', { outcome });
     }
 
     handleReset() {
-        this.props.handleDecisions('RESET');
+        this.props.handleDecision('RESET');
     }
     //NK FILTER
     filterOutcomes = () => {
@@ -262,7 +315,9 @@ const conditionStringObject = {parseSuccess: true}
     handleValidationType(event) {
         this.setState({ validationType: event.target.value })
     }
-
+    handleRulePriority(event) {
+        this.setState({ rulePriority: event.target.value})
+    }
 
 
 
@@ -270,7 +325,7 @@ const conditionStringObject = {parseSuccess: true}
     generalPanel() {
         // condition, ruleId, name,message, responseVariables, actionType
 
-        const { conditions, outcome, condition, ruleId, name, message, responseVariables, actionType, validationType } = this.state
+        const { conditions, outcome, condition, ruleId, name, message, responseVariables, actionType, validationType, rulePriority } = this.state
 
         return (<div>
 
@@ -303,8 +358,22 @@ const conditionStringObject = {parseSuccess: true}
                         value={validationType}
                         error={outcome.error && outcome.error.value} label="Rule Category"
                         placeholder='Enter a validation type(For example: "validation")...'
-
                     />
+                </div>
+                <div>
+
+                <SelectField options={[1,2,3,4,5,6,7,8,9,10]} onChange={(e) => 
+
+                this.handleRulePriority(e)
+            }
+                        value={rulePriority} label="Rule Priority" />
+
+
+                    {/* <InputField onChange={(value) => this.handleRulePriority(value)}
+                        value={rulePriority}
+                        error={outcome.error && outcome.error.value} label="Rule Priority (1-10)"
+                        placeholder='Enter a rule priority: 1-10'
+                    /> */}
                 </div>
             </div>
             <div className="add-field-panel ">
@@ -388,15 +457,43 @@ const conditionStringObject = {parseSuccess: true}
     onToggleActive(active) {
         this.setState({ active: !active })
     }
+    cancelAlert = () => {
+        // this.setState({ removeAlert: false, successAlert: false, removeDecisionAlert: false });
+    }
+    async handleTestRule() {
+        const { condition, facts, conditionStringObject } = this.state
+        if(!conditionStringObject.parseSuccess)
+        {
+          
 
-    handleShowRuleJSON() {
-        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action } = this.state
+
+           alert("Error: Test rule "+conditionStringObject)
+
+        }
+        
+        let rules = [this.formRule()]
+        let result = await processEngine(facts, rules)
+
+        this.props.handleDebug('ADD', { label: 'time', data: { result } }, 0)
+    }
+
+    /**
+     * 
+     * @returns the rule object and is not an array. used for display and running the rule
+     */
+    formRule(){
+        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
         let paramsNew = { ...params, ...{ rvsJSON: responseVariables, action, actionType: actionType, message } }
-        const conditionNew = { ...condition, ...{ event: { ruleId, active, name, actionType, validationType, params: paramsNew, type: ruleId + '' } } }
+        const conditionNew = { ...condition, ...{ event: { ruleId, active, name, actionType, validationType,rulePriority, params: paramsNew, type: ruleId + '' } },
+    ...{conditions:conditionStringObject.condition.conditions} }
         // this.state.condition
         this.setState({ condition: conditionNew })
+        return  conditionNew
+    }
 
-        this.props.handleDebug('ADD', { label: 'time', data: { condition: conditionNew } }, 0)
+    handleShowRuleJSON() {
+        const condition = this.formRule()
+        this.props.handleDebug('ADD', { label: 'time', data: { condition } }, 0)
     }
     handleCancel() {
         this.props.handleCancel(this.state.decisionIndex)
@@ -570,8 +667,10 @@ const conditionStringObject = {parseSuccess: true}
 
     conditionPanel() {
         const { conditionstring, outcome, conditionStringObject } = this.state
-        const hasError = this.state.conditionStringObject.parseSuccess
+        const success = conditionStringObject.parseSuccess
+        const hasError = !success
 
+        
         const { background } = this.context;
 
         return (<Panel >
@@ -586,8 +685,8 @@ const conditionStringObject = {parseSuccess: true}
                         placeholder='Enter the conditions'
 
                         readOnly={false} />
-                       <div> {JSON.stringify(conditionStringObject)}</div>
-                      
+                       <div> Syntax: {success ? 'Correct' : 'Incorrect'}</div>
+                      <div>Result: { hasError ? JSON.stringify(conditionStringObject) : JSON.stringify(conditionStringObject.ruleResult) + JSON.stringify(conditionStringObject.condition)}</div>
                 </div>
             </div>
             <div className="btn-group">
@@ -598,13 +697,25 @@ const conditionStringObject = {parseSuccess: true}
 
     }
 
+    async handleDeployRule() {
+       // e.preventDefault();
+        alert("Workin process to deploy rule in ruleditor")
+        return;
+        // data:{active: true/false,parsed_rule:<json object> }, id, 
+       
+        // let result = await updateParsedRules({ parsed_rule: r, active: true,type:'validation',active:true, data:r, description: r.event.name,data: r,
+        //     id: id , name: r.event.name, rvs: (r.event.params.rvs)? r.event.params.rvs: '[]', created_by:'qbes', modified_by:'qbes'});
+        // this.setState({ removeAlert: false, successAlert: true, successMsg: "Rule#"+id+" is saved to the database."});
+
+    }
 
     render() {
-        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType } = this.state;
+        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority } = this.state;
         const buttonProps = { primaryLabel: ruleId ? 'Update RuleCase' : 'Add Rulecase', secondaryLabel: 'Cancel' };
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel' };
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
         const { conditions } = this.state;
+     
 
         return (<div className="rulecases-container">
             <Panel title={'Edit Rule: ' + name} >
@@ -612,7 +723,7 @@ const conditionStringObject = {parseSuccess: true}
                 <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
                 <div className="tab-page-container">
                     Active <ToggleButton onToggle={this.onToggleActive} value={active} />
-                    Type: {validationType} {actionType}
+                    Type: {validationType} {actionType} {rulePriority}
                     <RadioGroup name="actionType" selectedValue={actionType} onChange={this.handleChangeActionType}>
                         <Radio value="notify" />Notify
                         <Radio value="impute" />Impute
@@ -626,9 +737,12 @@ const conditionStringObject = {parseSuccess: true}
                     {this.state.activeTab === 'Outcome' && <div>{this.imputeAggregatePanel()}</div>}
                     {this.state.activeTab === 'Validate' && <div>Validate</div>}
                     <div className="btn-group">
-                        <Button label={buttonProps.primaryLabel} onConfirm={this.handleAdd} classname="primary-btn" />
+                        <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} classname="primary-btn" />
                         <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
 
+                        <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
+
+                        <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
                         <Button label={buttonProps.secondaryLabel} onConfirm={this.handleCancel} classname="cancel-btn" />
 
 
@@ -642,23 +756,26 @@ const conditionStringObject = {parseSuccess: true}
 }
 RuleEditor.contextType = ApperanceContext;
 RuleEditor.defaultProps = ({
-    handleDecisions: () => false,
     submit: () => false,
     reset: () => false,
     decisions: [],
     attributes: [],
     outcomes: {},
-    handleDebug: () => false
-});
+    handleDebug: () => false,
+    handleDecision: () => false
+}
+
+
+);
 
 RuleEditor.propTypes = ({
-    handleDecisions: PropTypes.func,
     submit: PropTypes.func,
     reset: PropTypes.func,
     decisions: PropTypes.array,
     attributes: PropTypes.array,
     outcomes: PropTypes.object,
-    handleDebug: PropTypes.func
+    handleDebug: PropTypes.func,
+    handleDecision: PropTypes.func,    
 });
 
 const mapStateToProps = (state, ownProps) => ({
@@ -666,7 +783,8 @@ const mapStateToProps = (state, ownProps) => ({
     // debugData: state.ruleset.debugData
 });
 const mapDispatchToProps = (dispatch) => ({
-    handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))
+    handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index)),
+    handleDecision: (operation, decision) => dispatch(handleDecision(operation, decision)),
 
 });
 

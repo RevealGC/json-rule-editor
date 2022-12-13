@@ -225,14 +225,14 @@ getFacts(decisionIndex) {
         return (<div className="rule-flex-container_X">
             <RuleEditor conditions={conditions} facts={facts} decisionIndex={decisionIndex} handleCancel={this.handleCancel.bind(this)}/>
            
-            {transformedData && transformedData.map((data, caseIndex) => (<div className="decision-box" key={`case - ${caseIndex} - ${decisionIndex}`}>
+            {/* {transformedData && transformedData.map((data, caseIndex) => (<div className="decision-box" key={`case - ${caseIndex} - ${decisionIndex}`}>
                 <div className="tool-flex">
                     <div><a href="" onClick={(e) => this.editCondition(e, data.index)}><span className="fa fa-edit" /></a></div>
                     <div><a href="" onClick={((e) => this.handleRemoveCondition(e, data.index))}><span className="fa fa-trash-o" /></a></div>
                 </div>
                 <Tree treeData={data.node} count={data.depthCount} />
                 
-            </div>))}
+            </div>))} */}
         </div>)     
     }
 
