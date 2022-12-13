@@ -524,8 +524,15 @@ const conditionStringObject = {parseSuccess: true}
 
      handleCompileConditionString(){
         const {conditionstring, conditionStringObject, facts} = this.state;
+       
+    
+        // let facts = []
+        
+
         var self = this
+
             let url = HOSTURL+'/rulesrepo/testcondition?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+            
             try{
             let result = axios.post(url, {facts, conditionstring})
                             .then((response)=>{
@@ -538,6 +545,7 @@ const conditionStringObject = {parseSuccess: true}
                                 self.setState({conditionStringObject:error.response.data.error.parent.hint})
                                 console.log(error)
                             })
+          
             
             }
             catch(e){
