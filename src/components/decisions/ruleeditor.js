@@ -42,6 +42,7 @@ class RuleEditor extends Component {
         const decisionIndex = this.props.decisionIndex
         const conditions = this.props.conditions
         const handleCancel = this.props.handleCancel
+        const facts = this.props.facts
 
 
 
@@ -67,7 +68,7 @@ class RuleEditor extends Component {
         const conditionstring = condition.conditions.all && condition.conditions.all[0].params ? condition.conditions.all[0].params.conditionstring : 'RCPT_TOT > 0'  // is an object of all/or array of conditions
 
 
-const conditionStringObject = ''
+const conditionStringObject = {parseSuccess: true}
 
 
 
@@ -102,7 +103,7 @@ const conditionStringObject = ''
             showAddRuleCase: false,
             conditions: this.props.conditions,
             outcome,
-            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,
+            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,facts,
             activeTab: 'General', generateFlag: false,
 
             searchCriteria: '',
@@ -522,16 +523,9 @@ const conditionStringObject = ''
     }
 
      handleCompileConditionString(){
-        const {conditionstring, conditionStringObject} = this.state;
-       
-    
-        let facts = []
-        
-
+        const {conditionstring, conditionStringObject, facts} = this.state;
         var self = this
-
             let url = HOSTURL+'/rulesrepo/testcondition?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
-            
             try{
             let result = axios.post(url, {facts, conditionstring})
                             .then((response)=>{
@@ -544,7 +538,6 @@ const conditionStringObject = ''
                                 self.setState({conditionStringObject:error.response.data.error.parent.hint})
                                 console.log(error)
                             })
-          
             
             }
             catch(e){
@@ -569,19 +562,23 @@ const conditionStringObject = ''
 
     conditionPanel() {
         const { conditionstring, outcome, conditionStringObject } = this.state
+        const hasError = this.state.conditionStringObject.parseSuccess
 
         const { background } = this.context;
 
         return (<Panel >
             <div className="add-condition-panel ">
                 <div>
-                    <InputField onChange={(value) => this.onChangeConditionString(value)}
+
+              
+                    
+                    <textarea   className="ag-theme-alpine" rows="4" cols="50"   onChange={(value) => this.onChangeConditionString(value)}
                         value={conditionstring}
-                        error={outcome.error && outcome.error.value} label="Rule Condition"
+                        error={hasError} label="Rule Condition Error"
                         placeholder='Enter the conditions'
 
                         readOnly={false} />
-                        {JSON.stringify(conditionStringObject)}
+                       <div> {JSON.stringify(conditionStringObject)}</div>
                       
                 </div>
             </div>

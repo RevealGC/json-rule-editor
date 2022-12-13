@@ -76,6 +76,22 @@ class DecisionDetails extends Component {
         this.props.addDebug({ rule: this.props.outcomes[decisionIndex][0] })
     }
 
+
+getFacts(decisionIndex) {
+    const { attributes } = this.props;
+    let f = {};
+
+    for (var i = 0; i < attributes.length; i++) {
+        f[attributes[i].name] = attributes[i].value
+    }
+    let facts = [f];
+    return facts
+
+
+
+}
+
+
     async handleTestRule(e, decisionIndex) {
         e.preventDefault();
 
@@ -198,10 +214,16 @@ class DecisionDetails extends Component {
     }
 
     renderConditions = (conditions, decisionIndex) => {
+
+
+        let facts = this.getFacts(decisionIndex)
+
+
+
         console.log("🚀 ~ file: decision-details.js ~ line 191 ~ DecisionDetails ~ conditions", conditions)
         const transformedData = transformRuleToTree(conditions);
         return (<div className="rule-flex-container_X">
-            <RuleEditor conditions={conditions} decisionIndex={decisionIndex} handleCancel={this.handleCancel.bind(this)}/>
+            <RuleEditor conditions={conditions} facts={facts} decisionIndex={decisionIndex} handleCancel={this.handleCancel.bind(this)}/>
            
             {transformedData && transformedData.map((data, caseIndex) => (<div className="decision-box" key={`case - ${caseIndex} - ${decisionIndex}`}>
                 <div className="tool-flex">
