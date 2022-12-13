@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Panel from '../panel/panel';
+import axios from 'axios'
 
 // import ToolBar from '../toolbar/toolbar';
 // import AddDecision from './add-decision';
@@ -25,7 +26,9 @@ import ApperanceContext from '../../context/apperance-context';
 
 
 import { handleDebug } from '../../actions/debug';
+import { responsiveFontSizes } from '@mui/material';
 const tabs = [{ name: 'General' }, { name: 'Condition' }, { name: 'Outcome' }, { name: 'Validate' }];
+const HOSTURL='http://localhost'
 
 class RuleEditor extends Component {
 
@@ -64,7 +67,7 @@ class RuleEditor extends Component {
         const conditionstring = condition.conditions.all && condition.conditions.all[0].params ? condition.conditions.all[0].params.conditionstring : 'RCPT_TOT > 0'  // is an object of all/or array of conditions
 
 
-
+const conditionStringObject = ''
 
 
 
@@ -99,7 +102,7 @@ class RuleEditor extends Component {
             showAddRuleCase: false,
             conditions: this.props.conditions,
             outcome,
-            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,
+            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,
             activeTab: 'General', generateFlag: false,
 
             searchCriteria: '',
@@ -133,6 +136,7 @@ class RuleEditor extends Component {
         this.handleCancel = this.handleCancel.bind(this)
         this.handleChangeActionType = this.handleChangeActionType.bind(this)
         this.handleActions = this.handleActions.bind(this)
+        this.handleCompileConditionString = this.handleCompileConditionString.bind(this)
 
 
         this.addActions = this.addActions.bind(this);
@@ -517,13 +521,54 @@ class RuleEditor extends Component {
             </Panel>) : ''
     }
 
+     handleCompileConditionString(){
+        const {conditionstring, conditionStringObject} = this.state;
+       
+    
+        let facts = []
+        
 
-    onChangeConditionString(conditionstring){
+        var self = this
+
+            let url = HOSTURL+'/rulesrepo/testcondition?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+            
+            try{
+            let result = axios.post(url, {facts, conditionstring})
+                            .then((response)=>{
+
+                                let conditionStringObject = response.data
+                                self.setState({conditionStringObject})
+                                
+                            })
+                            .catch(function(error) {
+                                self.setState({conditionStringObject:error.response.data.error.parent.hint})
+                                console.log(error)
+                            })
+          
+            
+            }
+            catch(e){
+                alert(e)
+            }
+            return;
+          };
+          
+
+
+
+    onChangeConditionString(event){
+
+
+        const conditionstring = event.target.value 
+   
         // NK Check if string is valid or not by making an axios call. Pass the string and it should return the error if any
-        this.setState(conditionstring)
+        this.setState({conditionstring})
     }
+
+
+
     conditionPanel() {
-        const { conditionstring, outcome } = this.state
+        const { conditionstring, outcome, conditionStringObject } = this.state
 
         const { background } = this.context;
 
@@ -536,8 +581,14 @@ class RuleEditor extends Component {
                         placeholder='Enter the conditions'
 
                         readOnly={false} />
+                        {JSON.stringify(conditionStringObject)}
+                      
                 </div>
             </div>
+            <div className="btn-group">
+                        <Button label="Validate" onConfirm={this.handleCompileConditionString} classname="primary-btn" />
+                       
+                        </div>
         </Panel>)
 
     }

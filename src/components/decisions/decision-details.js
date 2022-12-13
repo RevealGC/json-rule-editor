@@ -209,12 +209,9 @@ class DecisionDetails extends Component {
                     <div><a href="" onClick={((e) => this.handleRemoveCondition(e, data.index))}><span className="fa fa-trash-o" /></a></div>
                 </div>
                 <Tree treeData={data.node} count={data.depthCount} />
-                {data.event.params && <div className="view-params-container">
-                    <h4>Expression  </h4>
-                    {/* <ViewAttribute  items={data.event.params}/> */}
-                </div>}
+                
             </div>))}
-        </div>)
+        </div>)     
     }
 
     render() {
