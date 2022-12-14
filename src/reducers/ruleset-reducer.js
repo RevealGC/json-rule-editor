@@ -75,7 +75,7 @@ function ruleset(state = initialState, action='') {
         
         case ActionTypes.ADD_DECISION: {
 
-           const { condition } = action.payload;
+           const condition  = action.payload;
             const activeRuleSet =  { ...state.rulesets[state.activeRuleset] };
             activeRuleSet.decisions = activeRuleSet.decisions.concat(condition);
 

@@ -248,7 +248,6 @@ class AddDecision extends Component {
 
     handleAdd(e) {
         let actionType = this.state.actionType
-        alert("In add-decision.js line 251")
         e.preventDefault();
         const error = decisionValidations(this.state.node, this.state.outcome);
 
@@ -881,7 +880,7 @@ class AddDecision extends Component {
         if(!this.state.showCase)
         return (<div className="rule-flex-container_X">
             <RuleEditor conditions={[]} facts={[]} decisionIndex={0} 
-            handleCancel={this.handleCancel.bind(this)}/>
+            handleCancel={this.props.cancel.bind(this)}/>
             </div>)
             else return (<div/>);
             

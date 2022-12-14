@@ -74,7 +74,8 @@ class RuleEditor extends Component {
     constructor(props) {
         super(props);
 
-
+        const displayRuleEditor = true;
+   
         const outcome = props.editDecision ? props.outcome : { value: 'New', params: [] };
 
 
@@ -92,7 +93,11 @@ class RuleEditor extends Component {
 
 
 
-        const active = condition.event && condition.event.params && condition.event.params.active ? condition.event.params.active : true
+        const active = condition.event && condition.event.active ? condition.event.active : true
+      
+        console.log("🚀 ~ file: ruleeditor.js:97 ~ RuleEditor ~ constructor ~ active", active)
+    
+    
         const params = condition.event && condition.event.params ? condition.event.params : []
         const action = params.action || [];
 
@@ -128,7 +133,7 @@ class RuleEditor extends Component {
             showAddRuleCase: false,
             conditions: this.props.conditions,
             outcome,
-            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,facts,rulePriority,
+            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,facts,rulePriority,displayRuleEditor,
             activeTab: 'General', generateFlag: false,
 
             searchCriteria: '',
@@ -234,11 +239,14 @@ class RuleEditor extends Component {
     }
 
     updateCondition(condition) {
-        this.props.handleDecision('UPDATE', {
-            condition,
+
+        (!condition.index) ? 'ADD':'UPDATE'
+        this.props.handleDecision( (!condition.index) ? 'ADD':'UPDATE', {
+           condition: (!condition.index) ?  condition : condition,
             decisionIndex: this.state.decisionIndex
         });
-     
+
+        this.setState({displayRuleEditor: !this.state.displayRuleEditor});
     }
 
     removeCase(decisionIndex) {
@@ -449,6 +457,7 @@ class RuleEditor extends Component {
 
 
            alert("Error: Test rule "+conditionStringObject)
+           return;
 
         }
         
@@ -464,7 +473,7 @@ class RuleEditor extends Component {
      */
     formRule(){
         const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
-        let paramsNew = { ...params, ...{ rvsJSON: responseVariables, action, actionType: actionType, message } }
+        let paramsNew = { ...params, ...{ rvsJSON: responseVariables,rvs:JSON.stringify(responseVariables),  action, actionType: actionType, message } }
         const conditionNew = { ...condition, ...{ event: { ruleId, active, name, actionType, validationType,rulePriority, params: paramsNew, type: ruleId + '' } },
     ...{conditions:conditionStringObject.condition.conditions} }
         // this.state.condition
@@ -679,31 +688,48 @@ class RuleEditor extends Component {
     }
 
     async handleDeployRule() {
-       // e.preventDefault();
-        alert("Workin process to deploy rule in ruleditor")
-        return;
+       
+        
+        const r = this.formRule()
+        let data = {
+            parsed_rule: r,
+            active:this.state.active,
+            type: this.state.validationType,
+            data:r,
+            description: this.state.message,
+            name: this.state.name,
+            id: Number(r.event.ruleId)
+           
+        }
+
+
+        let result = await updateParsedRules(data)
+        // console.log("🚀 ~ file: ruleeditor.js:706 ~ RuleEditor ~ handleDeployRule ~ result", result.rows.id)
+        alert('Deployed Rule: '+result[0].id+' successfully')
+        
+
         // data:{active: true/false,parsed_rule:<json object> }, id, 
        
         // let result = await updateParsedRules({ parsed_rule: r, active: true,type:'validation',active:true, data:r, description: r.event.name,data: r,
         //     id: id , name: r.event.name, rvs: (r.event.params.rvs)? r.event.params.rvs: '[]', created_by:'qbes', modified_by:'qbes'});
-        // this.setState({ removeAlert: false, successAlert: true, successMsg: "Rule#"+id+" is saved to the database."});
+        this.setState({ removeAlert: false, successAlert: true, successMsg: "Rule#"+id+" is saved to the database."});
 
     }
 
     render() {
-        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority } = this.state;
+        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority,displayRuleEditor } = this.state;
         const buttonProps = { primaryLabel: ruleId ? 'Update RuleCase' : 'Add Rulecase', secondaryLabel: 'Cancel' };
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel' };
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
         const { conditions } = this.state;
-     
+        return (!displayRuleEditor) ?  (<div><span/></div>) :
 
-        return (<div className="rulecases-container">
+        (<div className="rulecases-container">
             <Panel title={'Edit Rule: ' + name} >
 
                 <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
                 <div className="tab-page-container">
-                    Active <ToggleButton onToggle={this.onToggleActive} value={active} />
+                    Active {active} <ToggleButton onToggle={this.onToggleActive} value={active} />
                     Type: {validationType} {actionType} {rulePriority}
                     <RadioGroup name="actionType" selectedValue={actionType} onChange={this.handleChangeActionType}>
                         <Radio value="notify" />Notify

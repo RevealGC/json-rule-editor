@@ -13,7 +13,7 @@ export const updateDecision = (condition, decisionIndex) => {
 }
 
 export const addDecision = (condition) => {
-    const payload = { condition };
+    const payload = condition;
     return ({ type: ActionTypes.ADD_DECISION, payload});
 }
 

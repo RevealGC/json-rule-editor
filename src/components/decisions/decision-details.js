@@ -114,11 +114,11 @@ getFacts(decisionIndex) {
         // data:{active: true/false,parsed_rule:<json object> }, id, 
         let r = this.props.outcomes[decisionIndex][0];
 
-        r.event.type==='New'
-        let id = r.event.type==='New' ? 0 : Number(r.event.type)
+        r.event.ruleId==='0'
+        let id = r.event.ruleId==='0' ? 0 : Number(r.event.ruleId)
 
         // if id is 0 then its an insert otherwise update it.
-        let result = await updateParsedRules({ parsed_rule: r, active: true,type:'validation',active:true, data:r, description: r.event.name,data: r,
+        let result = await updateParsedRules({ parsed_rule: r, active: r.event.active,type:'validation',active:true, data:r, description: r.event.name,data: r,
             id: id , name: r.event.name, rvs: (r.event.params.rvs)? r.event.params.rvs: '[]', created_by:'qbes', modified_by:'qbes'});
         this.setState({ removeAlert: false, successAlert: true, successMsg: "Rule#"+id+" is saved to the database."});
 
@@ -129,7 +129,6 @@ getFacts(decisionIndex) {
 
         let r = this.props.outcomes[decisionIndex][0];
         let id = Number(r.event.type)
-        alert('Toggling status of rule:' + id);
     }
 
 
@@ -220,7 +219,6 @@ getFacts(decisionIndex) {
 
 
 
-        console.log("🚀 ~ file: decision-details.js ~ line 191 ~ DecisionDetails ~ conditions", conditions)
         const transformedData = transformRuleToTree(conditions);
         return (<div className="rule-flex-container_X">
             <RuleEditor conditions={conditions} facts={facts} decisionIndex={decisionIndex} handleCancel={this.handleCancel.bind(this)}/>
@@ -249,11 +247,11 @@ getFacts(decisionIndex) {
                     <a href="" onClick={(e) => this.handleExpand(e, index)}> {showCase[index].case ? 'Collapse' : 'Edit Conditions'}</a>
 
                     <a href="" onClick={((e) => this.handleViewRule(e, String(key)))}>View Rule</a>
-                    <a href="" onClick={((e) => this.handleTestRule(e, String(key)))}>Test</a>
-                    <a href="" onClick={((e) => this.handleDeployRule(e, String(key)))}>Deploy</a>
+                    <a href="" onClick={((e) => this.handleTestRule(e, String(key)))}>Test Rule</a>
+                    {/* <a href="" onClick={((e) => this.handleDeployRule(e, String(key)))}>Deploy</a> */}
                  
                     
-                    <a href="" onClick={((e) => this.handleToggleStatus(e, String(key)))}>Toggle Status ({ (outcomes[key][0].event.active) ? outcomes[key][0].event.active : 'true'})</a>
+                    {/* <a href="" onClick={((e) => this.handleToggleStatus(e, String(key)))}>Toggle Status ({ (outcomes[key][0].event.active) ? 'Active' : 'Inactive'})</a> */}
                     <a href="" onClick={((e) => this.handleRemoveConditions(e, String(key)))}>Remove</a>
                 </div>
            

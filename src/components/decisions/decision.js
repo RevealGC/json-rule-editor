@@ -12,7 +12,41 @@ import { isContains } from '../../utils/stringutils';
 
 import { handleDebug } from '../../actions/debug';
 
-
+const newRuleObject = {
+    "condition": {
+      "event": {
+        "ruleId": "0",
+        "active": true,
+        "name": "Rule Name(edit me)",
+        "actionType": "impute",
+        "validationType": "validation",
+        "rulePriority": "5",
+        "params": {
+          "rvs": "[]",
+          "action": [
+            
+          ],
+          "message": "Enter the message you want to display...",
+          "actionType": "impute"
+        },
+        "type": "0"
+      },
+      "index": 0,
+      "conditions": {
+        "all": [
+          {
+            "fact": "checkCondition",
+            "path": "$.value",
+            "operator": "equal",
+            "value": true,
+            "params": {
+              "conditionstring": "RCPT_TOT > 0"
+            }
+          }
+        ]
+      }
+    }
+  }
 class Decision extends Component {
 
     constructor(props){
@@ -113,13 +147,16 @@ class Decision extends Component {
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel'};
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
         const { outcomes } = this.props;
-        console.log("🚀 ~ file: decision.js:116 ~ Decision ~ render ~ outcomes", outcomes)
+
+        let newIndex  = outcomes.length+1//for the rule to be added be the length +1
+        // newRuleObject.condition.index = newIndex;
+        newRuleObject.condition.event.type = newIndex;
 
         return (<div className="rulecases-container">
 
             { <ToolBar handleAdd={this.handleAdd} reset={this.handleReset} searchTxt={this.handleSearch} /> }
 
-            { this.state.showAddRuleCase && <AddDecision attributes={this.props.attributes} addCondition={this.addCondition}  addDebug={this.addDebug} cancel={this.cancelAddAttribute} buttonProps={buttonProps} /> }
+            { this.state.showAddRuleCase && <AddDecision attributes={this.props.attributes} editCondition={newRuleObject.condition}  addDebug={this.addDebug} cancel={this.cancelAddAttribute} buttonProps={buttonProps} /> }
             
             { this.state.editCaseFlag && <AddDecision attributes={this.props.attributes} editCondition={this.state.editCondition} addDebug={this.addDebug}
                  outcome={this.state.editOutcome} editDecision addCondition={this.updateCondition} cancel={this.cancelAddAttribute} buttonProps={editButtonProps} /> }
