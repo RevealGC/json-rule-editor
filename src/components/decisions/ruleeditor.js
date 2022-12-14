@@ -47,7 +47,7 @@ const newRuleObject = {
           "action": [
             
           ],
-          "message": "Enter ",
+          "message": "Enter the message you want to display...",
           "actionType": "impute"
         },
         "type": "0"
@@ -82,32 +82,13 @@ class RuleEditor extends Component {
         const conditions = this.props.conditions
         const handleCancel = this.props.handleCancel
         const facts = this.props.facts
-
-
-
-
-        const condition = conditions[0]
-
-
-
-        // "conditions": {
-        //     "all": [
-        //         {
-        //             "fact": "checkCondition",
-        //             "path": "$.value",
-        //             "params": {
-        //                 conditionstring: "substr(reporting_id,0, 2) == \"87\" and substr(street, 0,3) == \"942\""
-        //             },
-        //             "operator": "equal",
-        //             "value": true
-        //         }
-        //     ]
-        // },
+        const condition = (conditions.length) ? conditions[0] : newRuleObject.condition
+        
 
         const conditionstring = condition.conditions.all && condition.conditions.all[0].params ? condition.conditions.all[0].params.conditionstring : 'RCPT_TOT > 0'  // is an object of all/or array of conditions
 
 
-const conditionStringObject = {parseSuccess: true}
+        const conditionStringObject = {parseSuccess: true}
 
 
 
