@@ -273,13 +273,13 @@ debugPanelAttribute(data) {
             <div>
                 <div className={`attributes-header ${background}`}>
                     <div >
-                        <div className="attr-link" onClick={this.props.resetDebug}>
+                        <span className="attr-link" onClick={this.props.resetDebug}>
                             <span className="reset-icon" /><span className="text">Reset</span>
-                        </div>
+                        </span>
 
-                        <div className="attr-link" onClick={this.onGridReady}>
+                        <span className="attr-link" onClick={this.onGridReady}>
                             <span className="plus-icon" /><span className="text">Load</span>
-                        </div>
+                        </span>
                     </div>
                 </div>
                 <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />

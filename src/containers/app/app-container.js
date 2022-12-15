@@ -125,9 +125,9 @@ class ApplicationContainer extends Component {
             <React.Fragment>
                 <ApperanceContext.Provider value={this.state.theme}>
                     <Wrapper>
-                        <SplitPane split="vertical" collapsedSizes={['85%', '15%']} minSize={250}   >
+                        <SplitPane split="vertical" collapsedSizes={['85%', '15%']} minSize={'15%'}   >
                             <div style={{ overflow: 'auto' }} >
-                                <Title title={'QBES: Rule Editor'} />
+                                <Title title={'Q Rule Editor'} />
                                 <NavigationPanel closedState={closednav}
                                     updateState={this.props.updateState}
                                     setsearchRIDText={this.props.setsearchRIDText}
@@ -136,7 +136,7 @@ class ApplicationContainer extends Component {
                                 <AppRoutes closedState={closednav} loggedIn={this.props.loggedIn} appctx={this.state.theme} />
                             </div>
                             <div>
-                                <Title title={'Output'} />
+                                <Title title={'QRE Output'} />
                                 <DebugContainer debugData={{debugData}}></DebugContainer>
                             </div>
                         </SplitPane>
