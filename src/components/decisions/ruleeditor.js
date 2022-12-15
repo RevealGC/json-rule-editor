@@ -30,6 +30,9 @@ import {handleDecision} from '../../actions/decisions'
 
 import { responsiveFontSizes } from '@mui/material';
 import SweetAlert from 'react-bootstrap-sweetalert';
+
+
+
 const tabs = [{ name: 'General' }, { name: 'Condition' }, { name: 'Outcome' }, { name: 'Validate' }];
 const HOSTURL='http://localhost'
 
@@ -134,6 +137,10 @@ class RuleEditor extends Component {
             conditions: this.props.conditions,
             outcome,
             condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,facts,rulePriority,displayRuleEditor,
+
+            removeAlert: false, successAlert: false,
+
+
             activeTab: 'General', generateFlag: false,
 
             searchCriteria: '',
@@ -687,9 +694,60 @@ class RuleEditor extends Component {
 
     }
 
+
+    showAlert(title, message, style) {
+        this.setState({
+            alert: (
+                <SweetAlert 
+                    warning
+                    showCancel
+                    confirmBtnText = "Sí"
+                    cancelBtnText = "No"
+                    confirmBtnBsStyle= {style ? style : "warning"}
+                    cancelBtnBsStyle = "default"
+                    customIcon = "thumbs-up.jpg"
+                    title = {title}
+                    onConfirm = {this.hideAlert()}
+                    onCancel = {this.hideAlert}
+                >
+                    {message}
+                </SweetAlert>
+            )            
+        });
+    }
+    
+    hideAlert = () => {
+        this.setState({
+            alert: null
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+    
+    cancelAlert() {
+        this.setState({ successAlert: false });
+    }
+    
+    // successAlert = () => {
+    //     return (<SweetAlert
+    //         success
+    //         title={"Rule has been deployed successfully!! "}
+    //         onConfirm={this.cancelAlert.bind(this)}
+    //         onCancel={this.cancelAlert.bind(this)}
+    //       >
+    //       </SweetAlert>);
+    // }
+
+
     async handleDeployRule() {
-       
-        
         const r = this.formRule()
         let data = {
             parsed_rule: r,
@@ -701,23 +759,13 @@ class RuleEditor extends Component {
             id: Number(r.event.ruleId)
            
         }
-
-
         let result = await updateParsedRules(data)
-        // console.log("🚀 ~ file: ruleeditor.js:706 ~ RuleEditor ~ handleDeployRule ~ result", result.rows.id)
-        alert('Deployed Rule: '+result[0].id+' successfully')
-        
-
-        // data:{active: true/false,parsed_rule:<json object> }, id, 
-       
-        // let result = await updateParsedRules({ parsed_rule: r, active: true,type:'validation',active:true, data:r, description: r.event.name,data: r,
-        //     id: id , name: r.event.name, rvs: (r.event.params.rvs)? r.event.params.rvs: '[]', created_by:'qbes', modified_by:'qbes'});
-        this.setState({ removeAlert: false, successAlert: true, successMsg: "Rule#"+id+" is saved to the database."});
-
+        console.log("🚀 ~ file: ruleeditor.js:763 ~ RuleEditor ~ handleDeployRule ~ result", result)
+        alert("Rule # "+result[0].id+" was successfully deployed",'')
     }
 
     render() {
-        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority,displayRuleEditor } = this.state;
+        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority,displayRuleEditor, successAlert } = this.state;
         const buttonProps = { primaryLabel: ruleId ? 'Update RuleCase' : 'Add Rulecase', secondaryLabel: 'Cancel' };
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel' };
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
@@ -737,6 +785,13 @@ class RuleEditor extends Component {
                         <Radio value="aggregate" />Aggregate
                         <Radio value="api" />API
                     </RadioGroup>
+
+
+
+                   
+                   
+         
+
 
 
                     {this.state.activeTab === 'General' && <div>{this.generalPanel()}</div>}
