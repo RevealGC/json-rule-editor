@@ -23,7 +23,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 import axios from 'axios'
 import InputField from '../../components/forms/input-field';
-const tabs = [{ name: 'Debug' }, { name: 'Spad' }];
+const tabs = [{ name: 'Debug' }];
 
 
 // const Dotenv = require('dotenv-webpack');
@@ -38,41 +38,7 @@ const HOSTURL = 'http://localhost'
 //   }, []);
 
 
-const columnDefs = [
-    // group cell renderer needed for expand / collapse icons
 
-    {
-        field: 'id', width: 200, headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
-        cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true
-    },
-    { field: 'parent_id', width: 200, headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true , hide: true},
-    { field: 'reporting_id',width: 200,  headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'status', width: 150, filter: 'agTextColumnFilter', sortable: true },
-    { field: 'elapsed_time', width: 150, headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: true },
-    { field: 'error_message',width: 150,  headerName: 'Error', filter: 'agTextColumnFilter', sortable: true, hide: true },
-    { field: 'valid',width: 600,  headerName: 'Valid Rules', filter: 'agTextColumnFilter', valueFormatter: stringifierAggregateRules, sortable: true },
-    { field: 'facts',width: 400,  headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
-
-    {
-        field: 'merge_status', headerName: 'Merge Status', cellRenderer: function (params, data) {
-            if (params.data.merge_status !== 0)
-                // return   <button onclick={"return myFunction("+params.data.id+")"}>Merge</button> 
-                return <a href={HOSTURL + "/spad/merge/" + params.data.id + '?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'} target="_blank" rel="noopener"> Merge {params.data.id} </a>
-
-            else return 'N/A'
-        }
-    }
-    ,
-
-    { field: 'merge_data', headerName: 'Merge Data', valueFormatter: stringifier, filter: 'agTextColumnFilter', sortable: true },
-
-
-    { field: 'result' , resizable: true, valueFormatter: stringifier, autoHeight: true, }  ,
- { field: 'last_modified_date', headerName: 'Modified', filter: 'agTextColumnFilter' },
-    { field: 'created_date', headerName: 'Created', filter: 'agTextColumnFilter' },
-   
-    // { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
-];
 function myFunction(spadId) {
     alert('Merge spadID ' + spadId)
 }
@@ -110,57 +76,16 @@ class DebugContainer extends Component {
 
         this.state = {
             activeTab: 'Debug',
-            rowData: [],
-            columnDefs: columnDefs,
-            detailRowAutoHeight: true,
-            detailCellRendererParams: {
-
-                detailGridOptions: {
-                    columnDefs,
-                    masterDetail: true,
-                    embedFullWidthRows: true,
-                    detailCellRendererParams: {
-                        detailGridOptions: {
-                            columnDefs,
-                            masterDetail: true,
-                            embedFullWidthRows: true,
-                            onRowSelected: this.debugPanelAttribute.bind(this),
-                            onRowClicked: this.debugPanelResult.bind(this),
-                            defaultColDef: { flex: 1,resizable: true},
-                        },
-                       
-                        getDetailRowData: (params) => {
-                            params.successCallback(params.data.spadLevel2);
-                        }
-                    },
-                    onRowSelected: this.debugPanelAttribute.bind(this),
-                    onRowClicked: this.debugPanelResult.bind(this),
-                    defaultColDef: { flex: 1,resizable: true },
-                },
-                getDetailRowData: (params) => {
-                    params.successCallback(params.data.spadself);
-                }
-
-            },
-            template: (params) => {
-                let rid = params.data.reporting_id
-                return `
-                    <div style="height:100%; background-color: #EDF6FF; padding:20px; box-sizing:border-box;"> <div style="height:10%;">RID: </div><div style="height:90%;" ref="eDetailGrid"></div></div>`
-            },
-
+        
+         
             debugPanelDisplay: false, theme: { background: 'light', toggleBackground: this.toggleBackground }
         };
         this.handleReset = this.handleReset.bind(this)
-        this.onGridReady = this.onGridReady.bind(this)
-
-
-
-
     }
 
     componentDidMount() {
         document.body.className = this.state.theme.background;
-        this.onGridReady()
+
     }
 
     componentWillUnmount() {
@@ -182,30 +107,9 @@ class DebugContainer extends Component {
 
 
 
-    async onGridReady() {
-        // +this.state.dbSearchText
+ 
 
 
-        let url = HOSTURL + '/spad?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'
-        try {
-            let result = await axios.get(url)
-            let rowData = result.data
-            this.setState({ rowData: rowData.data })
-
-
-        }
-        catch (e) {
-            alert(e)
-        }
-    }
-
-    onFirstDataRendered = (params) => {
-        setTimeout(function () {
-            // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
-            params.api.columnModel.autoSizeAllColumns(true)
-            // gridRef.current.columnApi.autoSizeAllColumns(true);
-        }, 0);
-    };
 // shows aggregates
 debugPanelAttribute(data) {
     
@@ -217,39 +121,7 @@ debugPanelAttribute(data) {
         this.props.handleDebug('ADD', { label: 'time', data: { aggregate: data.data.result  } }, 0)
     }
 
-    spadTables() {
-
-        const { background } = this.context;
-        const { columnDefs, rowData, detailCellRendererParams } = this.state
-
-        let priorRowIndex = -1;
-        return (
-            <div>
-                <div className="ag-theme-alpine" id="myGrid" style={{ height:800 }}>
-                    <AgGridReact
-                        onRowSelected={(e) =>
-                            this.props.handleDebug('ADD', { label: 'time', data: { aggregate: e.data.aggregate } }, 0)}
-                        onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { facts: e.data.facts, aggregate: e.data.aggregate, valid: e.data.result.rules.valid, invalid: e.data.result.rules.invalid, deltaFacts: e.data.result.rules.deltaFacts } }, 0)}
-                        masterDetail={true}
-                        detailRowAutoHeight= {true}
-                        embedFullWidthRows={true}
-              
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        defaultColDef= {{ flex: 1,resizable: true}}
-                        detailCellRendererParams={detailCellRendererParams}
-                        animateRows={true}
-                        pagination={true}
-                        paginationPageSize={50}
-                        onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-                    />
-                </div>
-            </div>
-
-        );
-
-
-    }
+  
 
 
     debugPanel() {
@@ -266,7 +138,7 @@ debugPanelAttribute(data) {
     }
 
     render() {
-        const { rowData, columnDefs } = this.state
+        
         const { background } = this.context;
 
         return (
@@ -277,9 +149,7 @@ debugPanelAttribute(data) {
                             <span className="reset-icon" /><span className="text">Reset</span>
                         </span>
 
-                        <span className="attr-link" onClick={this.onGridReady}>
-                            <span className="plus-icon" /><span className="text">Load</span>
-                        </span>
+                     
                     </div>
                 </div>
                 <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
@@ -290,14 +160,7 @@ debugPanelAttribute(data) {
 
                             {this.debugPanel()}
                         </div>}
-                    {this.state.activeTab === 'Spad' && rowData.length > 0 &&
-                        <div>
-                            {this.spadTables()}
-                            {this.debugPanel()}
-
-                        </div>
-
-                    }
+                
                 </div></div>)
     }
 }
