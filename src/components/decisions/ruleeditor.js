@@ -676,7 +676,19 @@ class RuleEditor extends Component {
 
               
                     
-                    <textarea   className="ag-theme-alpine" rows="4" cols="50"   onChange={(value) => this.onChangeConditionString(value)}
+                    <textarea  
+                     style={{ width: '100%', height: '150px', padding: '12px 20px 12px 20px',
+                     'box-sizing': 'border-box',
+                     border: '2px solid #ccc',
+                     'border-radius': '4px',
+                     'background-color': '#f8f8f8',
+                     'font-size': '16px',
+                     'resize': 'none' }}
+          
+                    
+                    
+                    
+                    className="ag-theme-alpine"   onChange={(value) => this.onChangeConditionString(value)}
                         value={conditionstring}
                         error={hasError} label="Rule Condition Error"
                         placeholder='Enter the conditions'

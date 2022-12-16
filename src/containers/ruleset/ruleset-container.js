@@ -227,7 +227,7 @@ class RulesetContainer extends Component {
                         </span>
                     </div>
                 </div>
-              <div className="ag-theme-alpine" id="myGrid" style={{ height:800 }}>
+              <div className="ag-theme-alpine" id="myGrid" style={{ height:1200 }}>
                   <AgGridReact
                       onRowSelected={(e) =>
                           this.props.handleDebug('ADD', { label: 'time', data: { aggregate: e.data.aggregate } }, 0)}
