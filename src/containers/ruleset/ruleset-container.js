@@ -24,6 +24,7 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 import axios from 'axios'
+// import { Tabs } from '@mui/material';
 
 const HOSTURL = 'http://localhost'
 // const HOSTURL = 'process.env.HOSTURL
@@ -266,7 +267,7 @@ class RulesetContainer extends Component {
       }
 
       const message = this.props.updatedFlag ? Message.MODIFIED_MSG : Message.NO_CHANGES_MSG;
-  
+
       return <div>
         <RuleErrorBoundary>
           <PageTitle name={name} />

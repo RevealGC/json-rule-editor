@@ -4,10 +4,7 @@ import PropTypes from 'prop-types';
 import Panel from '../panel/panel';
 import axios from 'axios'
 
-// import ToolBar from '../toolbar/toolbar';
-// import AddDecision from './add-decision';
-// import DecisionDetails from './decision-details';
-// import Banner from '../panel/banner';
+
 import { processEngine, updateParsedRules } from '../../validations/rule-validation';
 import InputField from '../forms/input-field';
 import SelectField from '../forms/selectmenu-field';
@@ -15,14 +12,14 @@ import Button from '../button/button';
 import ButtonGroup from '../button/button-groups';
 import operator from '../../data-objects/operator.json';
 import Tabs from '../../components/tabs/tabs'
+import ReactJson from 'react-json-view'
+
 
 import ToggleButton from 'react-toggle-button'
 import { RadioGroup, Radio } from 'react-radio-group'
 
 import * as Message from '../../constants/messages';
 import ApperanceContext from '../../context/apperance-context';
-// import { transformRuleToTree } from '../../utils/transform';
-// import { isContains } from '../../utils/stringutils';
 
 
 import { handleDebug } from '../../actions/debug';
@@ -55,7 +52,7 @@ const newRuleObject = {
         },
         "type": "0"
       },
-      "index": 0,
+      "index": -1,
       "conditions": {
         "all": [
           {
@@ -94,7 +91,7 @@ class RuleEditor extends Component {
 
         const conditionStringObject = {parseSuccess: true}
 
-
+        const apiChecked = condition.event.apiChecked ? condition.event.apiChecked : false
 
         const active = condition.event && condition.event.active ? condition.event.active : true
       
@@ -136,7 +133,7 @@ class RuleEditor extends Component {
             showAddRuleCase: false,
             conditions: this.props.conditions,
             outcome,
-            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,facts,rulePriority,displayRuleEditor,
+            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,facts,rulePriority,displayRuleEditor,apiChecked,
 
             removeAlert: false, successAlert: false,
 
@@ -165,6 +162,7 @@ class RuleEditor extends Component {
         this.handleChangeRuleName = this.handleChangeRuleName.bind(this)
         this.onChangeOutcomeValue = this.onChangeOutcomeValue.bind(this);
         this.onToggleActive = this.onToggleActive.bind(this);
+        this.onToggleAPI = this.onToggleAPI.bind(this);
 
         this.handleValidationType = this.handleValidationType.bind(this)
         this.handleRulePriority = this.handleRulePriority.bind(this)
@@ -247,9 +245,9 @@ class RuleEditor extends Component {
 
     updateCondition(condition) {
 
-        (!condition.index) ? 'ADD':'UPDATE'
-        this.props.handleDecision( (!condition.index) ? 'ADD':'UPDATE', {
-           condition: (!condition.index) ?  condition : condition,
+        (condition.index == -1) ? 'ADD':'UPDATE'
+        this.props.handleDecision( (condition.index == -1) ? 'ADD':'UPDATE', {
+           condition,
             decisionIndex: this.state.decisionIndex
         });
 
@@ -448,7 +446,9 @@ class RuleEditor extends Component {
         </Panel>)
     }
 
-
+    onToggleAPI(apiChecked){
+        this.setState({apiChecked: !apiChecked})
+    }
 
     onToggleActive(active) {
         this.setState({ active: !active })
@@ -541,6 +541,11 @@ class RuleEditor extends Component {
 
         const { background } = this.context;
 
+        if(actionType === 'api'){
+            return this.apiPanel()
+        }
+        else 
+
         return (actionType == 'impute' || actionType == 'aggregate') ?
             (<Panel title='Imputations and Aggregations'>
                 <div className={`attributes-header ${background}`}>
@@ -579,7 +584,7 @@ class RuleEditor extends Component {
     apiPanel() {
         let { actionType, activeAPITab, apiSource } = this.state;
         let onEdit = true, onAdd = true, onDelete = true
-        return (actionType == 'API') ?
+        return (actionType == 'api') ?
             (<Panel title='API'>
                 <div id="treeWrapper">
                     <ReactJson src={apiSource} displayObjectSize={false} displayDataTypes={false}
@@ -778,7 +783,7 @@ class RuleEditor extends Component {
     }
 
     render() {
-        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority,displayRuleEditor, successAlert } = this.state;
+        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority,displayRuleEditor, successAlert, apiChecked } = this.state;
         const buttonProps = { primaryLabel: ruleId ? 'Update RuleCase' : 'Add Rulecase', secondaryLabel: 'Cancel' };
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel' };
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
@@ -799,7 +804,7 @@ class RuleEditor extends Component {
                         <Radio value="api" />API
                     </RadioGroup>
 
-
+                    API Active Status <ToggleButton onToggle={this.onToggleAPI} value={apiChecked} />
 
                    
                    

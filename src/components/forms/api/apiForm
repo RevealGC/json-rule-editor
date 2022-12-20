@@ -1,0 +1,57 @@
+import React, { useState } from 'react';
+
+function APIFormDataCollector() {
+  // Declare state variables to store form data
+  const [workflowID, setworkflowID] = useState('');
+  const [email, setEmail] = useState('');
+  const [url, setUrl] = useState('');
+  const [facts, setFacts] = useState('');
+
+  // Function to handle form submission
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Send form data to backend or perform some other action with it
+    console.log(workflowID, email, url, facts);
+  }
+
+  // Function to handle cancel button click
+  const handleCancel = () => {
+    setworkflowID('');
+    setEmail('');
+    setUrl('');
+    setFacts('');
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Work Flow ID
+        <input type="text" value={workflowID} onChange={(event) => setworkflowID(event.target.value)} />
+      </label>
+      <br />
+      <label>
+        email:
+        <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
+      </label>
+      <br />
+      <label>
+        URL:
+        <input type="url" value={url} onChange={(event) => setUrl(event.target.value)} />
+      </label>
+      <br />
+      <label>
+        facts:
+        <textarea value={facts} onChange={(event) => setFacts(event.target.value)} />
+      </label>
+      <br />
+      <button type="submit">Submit</button>
+      <button type="button" onClick={handleCancel}>Cancel</button>
+    </form>
+  );
+}
+
+export default APIFormDataCollector;
+// In this example, the handleCancel function is called when the cancel button is clicked. It clears the form data by resetting the values of the state variables to empty strings. This will clear the form fields and allow the user to start over. You can modify this function to perform other actions, such as redirecting the user to a different page or displaying a confirmation message before clearing the form data.
+
+
+
