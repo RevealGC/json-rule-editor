@@ -1,7 +1,8 @@
-## QBES Rules Editor: json-rule-editor
 
+export NODE_OPTIONS=--openssl-legacy-provider
 npm start 
 
+## QBES Rules Editor: json-rule-editor
 
 
 
