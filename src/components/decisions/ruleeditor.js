@@ -419,7 +419,7 @@ class RuleEditor extends Component {
 
 
             </div>
-            {this.responseVariablesPanel()}
+           
 
 
         </div>)
@@ -878,7 +878,7 @@ class RuleEditor extends Component {
                             
                             </div>}
                         {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
-                        {this.state.activeTab === 'Outcome' && <div>{this.imputeAggregatePanel()}</div>}
+                        {this.state.activeTab === 'Outcome' && <div> {this.responseVariablesPanel()}{this.imputeAggregatePanel()}</div>}
                         {this.state.activeTab === 'Validate' && <div>Validate</div>}
                    
 
