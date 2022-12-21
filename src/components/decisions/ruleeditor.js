@@ -23,7 +23,7 @@ import ApperanceContext from '../../context/apperance-context';
 
 
 import { handleDebug } from '../../actions/debug';
-import {handleDecision} from '../../actions/decisions'
+import { handleDecision } from '../../actions/decisions'
 
 import { responsiveFontSizes } from '@mui/material';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -31,43 +31,43 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 
 
 const tabs = [{ name: 'General' }, { name: 'Condition' }, { name: 'Outcome' }, { name: 'Validate' }];
-const HOSTURL='http://localhost'
+const HOSTURL = 'http://localhost'
 
 const newRuleObject = {
     "condition": {
-      "event": {
-        "ruleId": "0",
-        "active": true,
-        "name": "Rule Name(edit me)",
-        "actionType": "impute",
-        "validationType": "validation",
-        "rulePriority": "5",
-        "params": {
-          "rvs": "[]",
-          "action": [
-            
-          ],
-          "message": "Enter the message you want to display...",
-          "actionType": "impute"
-        },
-        "type": "0"
-      },
-      "index": -1,
-      "conditions": {
-        "all": [
-          {
-            "fact": "checkCondition",
-            "path": "$.value",
-            "operator": "equal",
-            "value": true,
+        "event": {
+            "ruleId": "0",
+            "active": true,
+            "name": "Rule Name(edit me)",
+            "actionType": "impute",
+            "validationType": "validation",
+            "rulePriority": "5",
             "params": {
-              "conditionstring": "RCPT_TOT > 0"
-            }
-          }
-        ]
-      }
+                "rvs": "[]",
+                "action": [
+
+                ],
+                "message": "Enter the message you want to display...",
+                "actionType": "impute"
+            },
+            "type": "0"
+        },
+        "index": -1,
+        "conditions": {
+            "all": [
+                {
+                    "fact": "checkCondition",
+                    "path": "$.value",
+                    "operator": "equal",
+                    "value": true,
+                    "params": {
+                        "conditionstring": "RCPT_TOT > 0"
+                    }
+                }
+            ]
+        }
     }
-  }
+}
 
 class RuleEditor extends Component {
 
@@ -75,42 +75,43 @@ class RuleEditor extends Component {
         super(props);
 
         const displayRuleEditor = true;
-   
+
         const outcome = props.editDecision ? props.outcome : { value: 'New', params: [] };
 
 
         const decisionIndex = this.props.decisionIndex
+        console.log("🚀 ~ file: ruleeditor.js:83 ~ RuleEditor ~ constructor ~ decisionIndex", decisionIndex)
         const conditions = this.props.conditions
         const handleCancel = this.props.handleCancel
         const facts = this.props.facts
         const condition = (conditions.length) ? conditions[0] : newRuleObject.condition
-        
-
-        const conditionstring = condition.conditions.all && condition.conditions.all[0].params ? condition.conditions.all[0].params.conditionstring : 'RCPT_TOT > 0'  // is an object of all/or array of conditions
 
 
-        const conditionStringObject = {parseSuccess: true}
+        const conditionstring = condition.conditions && condition.conditions.all && condition.conditions.all[0].params ? condition.conditions.all[0].params.conditionstring : 'RCPT_TOT > 0'  // is an object of all/or array of conditions
 
-        const apiChecked = condition.event.apiChecked ? condition.event.apiChecked : false
+
+        const conditionStringObject = { parseSuccess: true }
+
+        const apiChecked = condition.event && condition.event.apiChecked ? condition.event.apiChecked : false
 
         const active = condition.event && condition.event.active ? condition.event.active : true
-      
+
         console.log("🚀 ~ file: ruleeditor.js:97 ~ RuleEditor ~ constructor ~ active", active)
-    
-    
+
+
         const params = condition.event && condition.event.params ? condition.event.params : []
         const action = params.action || [];
 
         const validationType = condition.event && condition.event.params && condition.event.params.validationType ? condition.event.params.validationType : 'validation'
 
         // Default the ruleId to 0 if its a new record and set rulePriority to 5 by default
-        const ruleId = condition.event.ruleId || condition.event.type || 0
-        const rulePriority = condition.event.rulePriority || 5
+        const ruleId = condition.event && condition.event.ruleId ? condition.event.ruleId || condition.event.type : 0
+        const rulePriority = condition.event && condition.event.rulePriority ? condition.event.rulePriority : 5
 
 
 
-        const name = condition.event.name || ''
-        const message = condition.event.params.message || ''
+        const name = condition.event ? condition.event.name : ''
+        const message = condition.event ? condition.event.params.message : ''
         const responseVariables = condition.event && condition.event.params && condition.event.params.rvsJSON ? condition.event.params.rvsJSON :
             (condition.event && condition.event.params && condition.event.params.rvs ? JSON.parse(condition.event.params.rvs) : [])
 
@@ -133,7 +134,7 @@ class RuleEditor extends Component {
             showAddRuleCase: false,
             conditions: this.props.conditions,
             outcome,
-            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring,conditionStringObject,facts,rulePriority,displayRuleEditor,apiChecked,
+            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring, conditionStringObject, facts, rulePriority, displayRuleEditor, apiChecked,
 
             removeAlert: false, successAlert: false,
 
@@ -191,14 +192,14 @@ class RuleEditor extends Component {
     }
 
     componentDidMount() {
-    this.handleCompileConditionString()
+        this.handleCompileConditionString()
     }
     handleTab = (tabName) => {
         this.setState({ activeTab: tabName });
     }
 
 
- 
+
 
 
     handleSearch = (value) => {
@@ -239,19 +240,19 @@ class RuleEditor extends Component {
     }
 
     addCondition(condition) {
-        this.props.handleDecision('ADD', { condition, decisionIndex:0 });
-      
+        this.props.handleDecision('ADD', { condition, decisionIndex: 0 });
+
     }
 
     updateCondition(condition) {
 
-        (condition.index == -1) ? 'ADD':'UPDATE'
-        this.props.handleDecision( (condition.index == -1) ? 'ADD':'UPDATE', {
-           condition,
+        (condition.index == -1) ? 'ADD' : 'UPDATE'
+        this.props.handleDecision((condition.index == -1) ? 'ADD' : 'UPDATE', {
+            condition,
             decisionIndex: this.state.decisionIndex
         });
 
-        this.setState({displayRuleEditor: !this.state.displayRuleEditor});
+        this.setState({ displayRuleEditor: !this.state.displayRuleEditor });
     }
 
     removeCase(decisionIndex) {
@@ -310,7 +311,7 @@ class RuleEditor extends Component {
         this.setState({ validationType: event.target.value })
     }
     handleRulePriority(event) {
-        this.setState({ rulePriority: event.target.value})
+        this.setState({ rulePriority: event.target.value })
     }
 
 
@@ -319,7 +320,9 @@ class RuleEditor extends Component {
     generalPanel() {
         // condition, ruleId, name,message, responseVariables, actionType
 
-        const { conditions, outcome, condition, ruleId, name, message, responseVariables, actionType, validationType, rulePriority } = this.state
+        const { conditions, outcome, condition, ruleId, name, message, responseVariables, actionType, validationType, rulePriority, conditionStringObject } = this.state
+        const success = conditionStringObject.parseSuccess
+        const hasError = !success
 
         return (<div>
 
@@ -330,37 +333,40 @@ class RuleEditor extends Component {
             {responseVariables}
             {actionType} */}
 
-            <div className="add-field-panel ">
-                <div>
-                    <InputField onChange={(value) => this.onChangeOutcomeValue(value, 'value')}
-                        value={ruleId}
-                        error={outcome.error && outcome.error.value} label="Rule ID"
-                        placeholder='Enter a rule name...'
 
-                        readOnly={true} />
-                </div>
-                <div>
-                    <InputField onChange={(value) => this.handleChangeRuleName(value)}
-                        value={name}
-                        error={outcome.error && outcome.error.value} label="Rule Name"
-                        placeholder='Enter a rule name...'
+            {/* <div >
+                <InputField onChange={(value) => this.onChangeOutcomeValue(value, 'value')}
+                    value={ruleId}
+                    error={outcome.error && outcome.error.value} label="    ID"
+                    placeholder='Enter a rule name...'
 
-                    />
-                </div>
-                <div>
-                    <InputField onChange={(value) => this.handleValidationType(value)}
-                        value={validationType}
-                        error={outcome.error && outcome.error.value} label="Rule Category"
-                        placeholder='Enter a validation type(For example: "validation")...'
-                    />
-                </div>
-                <div>
+                    readOnly={true} />
+            </div> */}
 
-                <SelectField options={[1,2,3,4,5,6,7,8,9,10]} onChange={(e) => 
+            <Panel title='Rule Name' >
+                <InputField onChange={(value) => this.handleChangeRuleName(value)}
+                    value={name}
+                    error={outcome.error && outcome.error.value} label="Name"
+                    placeholder='Enter a rule name...'
 
-                this.handleRulePriority(e)
-            }
-                        value={rulePriority} label="Rule Priority" />
+                />
+            </Panel>
+
+            <Panel title='Category and Weights' >
+
+                <InputField onChange={(value) => this.handleValidationType(value)}
+                    value={validationType}
+                    error={outcome.error && outcome.error.value} label="Category"
+                    placeholder='Enter a validation type(For example: "validation")...'
+                />
+
+             
+
+                    <SelectField options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} onChange={(e) =>
+
+                        this.handleRulePriority(e)
+                    }
+                        value={rulePriority} label="Weights" />
 
 
                     {/* <InputField onChange={(value) => this.handleRulePriority(value)}
@@ -368,19 +374,48 @@ class RuleEditor extends Component {
                         error={outcome.error && outcome.error.value} label="Rule Priority (1-10)"
                         placeholder='Enter a rule priority: 1-10'
                     /> */}
-                </div>
-            </div>
-            <div className="add-field-panel ">
+              
+            </Panel>
+            <div className="add-field-panel " >
+
+                <Panel className="add-field-panel" title='Message'>
 
 
-                <div>
-                    <InputField onChange={(value) => this.handleChangeRuleMessage(value)}
+
+                <textarea
+                        style={{
+                            width: '100%', height: '150px', padding: '12px 20px 12px 20px',
+                            'box-sizing': 'border-box',
+                            border: '2px solid #ccc',
+                            'border-radius': '4px',
+                            'background-color': '#f8f8f8',
+                            'font-size': '16px',
+                            'resize': 'none'
+                        }}
+
+
+
+
+                        className="ag-theme-alpine" onChange={(value) => this.handleChangeRuleMessage(value)}
                         value={message}
-                        error={outcome.error && outcome.error.value} label="Message"
-                        placeholder='Enter the message to be displayed when rule is fired...'
-                    />
-                </div>
+                        error={hasError} label="Rule Message"
+                        placeholder='Enter the message'
 
+                        readOnly={false} />
+
+
+
+
+
+
+                    {/* <div >
+                        <InputField onChange={(value) => this.handleChangeRuleMessage(value)}
+                            value={message}
+                            error={outcome.error && outcome.error.value} label=""
+                            placeholder='Enter the message to be displayed when rule is fired...'
+                        />
+                    </div> */}
+                </Panel>
 
 
             </div>
@@ -421,33 +456,38 @@ class RuleEditor extends Component {
         const { outcome, action, responseVariables, actionType } = this.state;
         const { background } = this.context;
 
-        return (<Panel title='Response Variables'>
-            <div className={`attributes-header ${background}`}>
-                <div className="attr-link" onClick={this.addResponseVariables}>
-                    <span className="plus-icon" /><span className="text">Add Response Variables</span>
-                </div>
-                <div className="attr-link" onClick={this.deleteRVActions}>
-                    <span className="plus-icon" /><span className="text">Delete Response Variable</span>
-                </div>
-
-            </div>
+        return (
+            <div >
+                <Panel className="add-field-panel" title='Track Variables'>
 
 
-            {responseVariables && responseVariables.length > 0 && responseVariables.map((param, ind) =>
-            (<div key={ind} className="add-field-panel">
 
-                <InputField onChange={(value) => this.handleResponseVariables(value, 'pvalue', ind)} value={param} label="Value"
-                    placeholder='Enter a response variable to track...' />
-            </div>))
+                    <div className={`attributes-header ${background}`}>
+                        <div className="attr-link" onClick={this.addResponseVariables}>
+                            <span className="plus-icon" /><span className="text">Add Response Variables</span>
+                        </div>
+                        <div className="attr-link" onClick={this.deleteRVActions}>
+                            <span className="plus-icon" /><span className="text">Delete Response Variable</span>
+                        </div>
+
+                    </div>
 
 
-            }
+                    {responseVariables && responseVariables.length > 0 && responseVariables.map((param, ind) =>
+                    (<div key={ind} className="add-field-panel">
 
-        </Panel>)
+                        <InputField onChange={(value) => this.handleResponseVariables(value, 'pvalue', ind)} value={param} label="Value"
+                            placeholder='Enter a response variable to track...' />
+                    </div>))
+
+
+                    }
+
+                </Panel></div>)
     }
 
-    onToggleAPI(apiChecked){
-        this.setState({apiChecked: !apiChecked})
+    onToggleAPI(apiChecked) {
+        this.setState({ apiChecked: !apiChecked })
     }
 
     onToggleActive(active) {
@@ -458,16 +498,15 @@ class RuleEditor extends Component {
     }
     async handleTestRule() {
         const { condition, facts, conditionStringObject } = this.state
-        if(!conditionStringObject.parseSuccess)
-        {
-          
+        if (!conditionStringObject.parseSuccess) {
 
 
-           alert("Error: Test rule "+conditionStringObject)
-           return;
+
+            alert("Error: Test rule " + conditionStringObject)
+            return;
 
         }
-        
+
         let rules = [this.formRule()]
         let result = await processEngine(facts, rules)
 
@@ -478,14 +517,16 @@ class RuleEditor extends Component {
      * 
      * @returns the rule object and is not an array. used for display and running the rule
      */
-    formRule(){
+    formRule() {
         const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
-        let paramsNew = { ...params, ...{ rvsJSON: responseVariables,rvs:JSON.stringify(responseVariables),  action, actionType: actionType, message } }
-        const conditionNew = { ...condition, ...{ event: { ruleId, active, name, actionType, validationType,rulePriority, params: paramsNew, type: ruleId + '' } },
-    ...{conditions:conditionStringObject.condition.conditions} }
+        let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message } }
+        const conditionNew = {
+            ...condition, ...{ event: { ruleId, active, name, actionType, validationType, rulePriority, params: paramsNew, type: ruleId + '' } },
+            ...{ conditions: conditionStringObject.condition.conditions }
+        }
         // this.state.condition
         this.setState({ condition: conditionNew })
-        return  conditionNew
+        return conditionNew
     }
 
     handleShowRuleJSON() {
@@ -536,48 +577,63 @@ class RuleEditor extends Component {
     }
     imputeAggregatePanel() {
 
-        const { params, actionType, action } = this.state;
+        const { params, actionType, action, active, validationType , rulePriority, apiChecked} = this.state;
         // const action = this.state.params.action 
 
         const { background } = this.context;
 
-        if(actionType === 'api'){
+        if (actionType === 'api') {
             return this.apiPanel()
         }
-        else 
+        else
 
-        return (actionType == 'impute' || actionType == 'aggregate') ?
-            (<Panel title='Imputations and Aggregations'>
-                <div className={`attributes-header ${background}`}>
-                    <div className="attr-link" onClick={this.addActions}>
-                        <span className="plus-icon" /><span className="text">Add Action</span>
+            return (actionType == 'impute' || actionType == 'aggregate') ?
+                (<Panel title='Imputations and Aggregations'>
+
+
+                    Active {active} <ToggleButton onToggle={this.onToggleActive} value={active} />
+                    Type: {validationType} {actionType} {rulePriority}
+                    <RadioGroup name="actionType" selectedValue={actionType} onChange={this.handleChangeActionType}>
+                        <Radio value="notify" />Notify
+                        <Radio value="impute" />Impute
+                        <Radio value="aggregate" />Aggregate
+                        <Radio value="api" />API
+                    </RadioGroup>
+
+                    API Active Status <ToggleButton onToggle={this.onToggleAPI} value={apiChecked} />
+
+
+
+                    <div className={`attributes-header ${background}`}>
+                        <div className="attr-link" onClick={this.addActions}>
+                            <span className="plus-icon" /><span className="text">Add Action</span>
+                        </div>
+
+
+                        <div className="attr-link" onClick={this.deleteActions}>
+                            <span className="plus-icon" /><span className="text">Delete Action</span>
+                        </div>
+
                     </div>
 
-
-                    <div className="attr-link" onClick={this.deleteActions}>
-                        <span className="plus-icon" /><span className="text">Delete Action</span>
-                    </div>
-
-                </div>
-
-                {action && action.length > 0 && action.map((param, ind) =>
+                    {action && action.length > 0 && action.map((param, ind) =>
 
 
-                (<div key={ind} className="add-field-panel">
-                    <InputField onChange={(value) => this.handleActions(value, 'pkey', ind)}
-                        label="Actions"
-                        value={Object.keys(param)}
-                        placeholder='Enter a computed variable name...' />
-                    <InputField onChange={(value) => this.handleActions(value, 'pvalue', ind)}
-                        value={Object.values(param)} label="Value"
-                        placeholder='Enter an expression or logical condition to compute...'
-                    />
-                </div>))
+                    (<div key={ind} className="add-field-panel">
+                        <InputField onChange={(value) => this.handleActions(value, 'pkey', ind)}
+                            label="Actions"
+                            value={Object.keys(param)}
+                            placeholder='Enter a computed variable name...' />
+                        <InputField onChange={(value) => this.handleActions(value, 'pvalue', ind)}
+                            value={Object.values(param)} label="Value"
+                            placeholder='Enter an expression or logical condition to compute...'
+                        />
+                    </div>))
 
 
-                }
-                <div>Imputations and Aggregations</div>
-            </Panel>) : ''
+                    }
+                    <div>Imputations and Aggregations</div>
+                </Panel>) : ''
     }
 
 
@@ -621,48 +677,48 @@ class RuleEditor extends Component {
             </Panel>) : ''
     }
 
-     handleCompileConditionString(){
-        const {conditionstring, conditionStringObject, facts} = this.state;
-       
-    
+    handleCompileConditionString() {
+        const { conditionstring, conditionStringObject, facts } = this.state;
+
+
         // let facts = []
-        
+
 
         var self = this
 
-            let url = HOSTURL+'/rulesrepo/testcondition?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
-            
-            try{
-            let result = axios.post(url, {facts, conditionstring})
-                            .then((response)=>{
+        let url = HOSTURL + '/rulesrepo/testcondition?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
 
-                                let conditionStringObject = response.data
-                                self.setState({conditionStringObject})
-                                
-                            })
-                            .catch(function(error) {
-                                self.setState({conditionStringObject:error.response.data.error.parent.hint})
-                                console.log(error)
-                            })
-          
-            
-            }
-            catch(e){
-                alert(e)
-            }
-            return;
-          };
-          
+        try {
+            let result = axios.post(url, { facts, conditionstring })
+                .then((response) => {
+
+                    let conditionStringObject = response.data
+                    self.setState({ conditionStringObject })
+
+                })
+                .catch(function (error) {
+                    self.setState({ conditionStringObject: error.response.data.error.parent.hint })
+                    console.log(error)
+                })
 
 
+        }
+        catch (e) {
+            alert(e)
+        }
+        return;
+    };
 
-    onChangeConditionString(event){
 
 
-        const conditionstring = event.target.value 
-   
+
+    onChangeConditionString(event) {
+
+
+        const conditionstring = event.target.value
+
         // NK Check if string is valid or not by making an axios call. Pass the string and it should return the error if any
-        this.setState({conditionstring})
+        this.setState({ conditionstring })
     }
 
 
@@ -672,42 +728,44 @@ class RuleEditor extends Component {
         const success = conditionStringObject.parseSuccess
         const hasError = !success
 
-        
+
         const { background } = this.context;
 
-        return (<Panel >
+        return (<Panel title='Specify Condition'>
             <div className="add-condition-panel ">
                 <div>
 
-              
-                    
-                    <textarea  
-                     style={{ width: '100%', height: '150px', padding: '12px 20px 12px 20px',
-                     'box-sizing': 'border-box',
-                     border: '2px solid #ccc',
-                     'border-radius': '4px',
-                     'background-color': '#f8f8f8',
-                     'font-size': '16px',
-                     'resize': 'none' }}
-          
-                    
-                    
-                    
-                    className="ag-theme-alpine"   onChange={(value) => this.onChangeConditionString(value)}
+
+
+                    <textarea
+                        style={{
+                            width: '100%', height: '150px', padding: '12px 20px 12px 20px',
+                            'box-sizing': 'border-box',
+                            border: '2px solid #ccc',
+                            'border-radius': '4px',
+                            'background-color': '#f8f8f8',
+                            'font-size': '16px',
+                            'resize': 'none'
+                        }}
+
+
+
+
+                        className="ag-theme-alpine" onChange={(value) => this.onChangeConditionString(value)}
                         value={conditionstring}
                         error={hasError} label="Rule Condition Error"
                         placeholder='Enter the conditions'
 
                         readOnly={false} />
-                       <div> Syntax: {success ? 'Correct' : 'Incorrect'}</div>
-                      <div>Result: { hasError ? JSON.stringify(conditionStringObject) : 
-                            conditionStringObject.ruleResult.propertyName ? conditionStringObject.ruleResult.propertyName + " is unknown at this time." : JSON.stringify(conditionStringObject.ruleResult)}</div>
+                    <div> Syntax: {success ? 'Correct' : 'Incorrect'}</div>
+                    <div>Result: {hasError ? JSON.stringify(conditionStringObject) :
+                        conditionStringObject.ruleResult.propertyName ? conditionStringObject.ruleResult.propertyName + " is unknown at this time." : JSON.stringify(conditionStringObject.ruleResult)}</div>
                 </div>
             </div>
             <div className="btn-group">
-                        <Button label="Validate" onConfirm={this.handleCompileConditionString} classname="primary-btn" />
-                       
-                        </div>
+                <Button label="Validate" onConfirm={this.handleCompileConditionString} classname="primary-btn" />
+
+            </div>
         </Panel>)
 
     }
@@ -716,24 +774,24 @@ class RuleEditor extends Component {
     showAlert(title, message, style) {
         this.setState({
             alert: (
-                <SweetAlert 
+                <SweetAlert
                     warning
                     showCancel
-                    confirmBtnText = "Sí"
-                    cancelBtnText = "No"
-                    confirmBtnBsStyle= {style ? style : "warning"}
-                    cancelBtnBsStyle = "default"
-                    customIcon = "thumbs-up.jpg"
-                    title = {title}
-                    onConfirm = {this.hideAlert()}
-                    onCancel = {this.hideAlert}
+                    confirmBtnText="Sí"
+                    cancelBtnText="No"
+                    confirmBtnBsStyle={style ? style : "warning"}
+                    cancelBtnBsStyle="default"
+                    customIcon="thumbs-up.jpg"
+                    title={title}
+                    onConfirm={this.hideAlert()}
+                    onCancel={this.hideAlert}
                 >
                     {message}
                 </SweetAlert>
-            )            
+            )
         });
     }
-    
+
     hideAlert = () => {
         this.setState({
             alert: null
@@ -749,11 +807,11 @@ class RuleEditor extends Component {
 
 
 
-    
+
     cancelAlert() {
         this.setState({ successAlert: false });
     }
-    
+
     // successAlert = () => {
     //     return (<SweetAlert
     //         success
@@ -769,69 +827,65 @@ class RuleEditor extends Component {
         const r = this.formRule()
         let data = {
             parsed_rule: r,
-            active:this.state.active,
+            active: this.state.active,
             type: this.state.validationType,
-            data:r,
+            data: r,
             description: this.state.message,
             name: this.state.name,
             id: Number(r.event.ruleId)
-           
+
         }
         let result = await updateParsedRules(data)
         console.log("🚀 ~ file: ruleeditor.js:763 ~ RuleEditor ~ handleDeployRule ~ result", result)
-        alert("Rule # "+result[0].id+" was successfully deployed",'')
+        alert("Rule # " + result[0].id + " was successfully deployed", '')
     }
 
     render() {
-        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority,displayRuleEditor, successAlert, apiChecked } = this.state;
+        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority, displayRuleEditor, successAlert, apiChecked } = this.state;
         const buttonProps = { primaryLabel: ruleId ? 'Update RuleCase' : 'Add Rulecase', secondaryLabel: 'Cancel' };
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel' };
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
         const { conditions } = this.state;
-        return (!displayRuleEditor) ?  (<div><span/></div>) :
+        return (!displayRuleEditor) ? (<div><span /></div>) :
 
-        (<div className="rulecases-container">
-            <Panel title={'Edit Rule: ' + name} >
+            (<div  style={{ width: '30%',margin:'40px', 'padding-bottom':'100px' }}>
+                <div title={name} >
 
-                <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
-                <div className="tab-page-container">
-                    Active {active} <ToggleButton onToggle={this.onToggleActive} value={active} />
-                    Type: {validationType} {actionType} {rulePriority}
-                    <RadioGroup name="actionType" selectedValue={actionType} onChange={this.handleChangeActionType}>
-                        <Radio value="notify" />Notify
-                        <Radio value="impute" />Impute
-                        <Radio value="aggregate" />Aggregate
-                        <Radio value="api" />API
-                    </RadioGroup>
+                    <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
+                    <div className="tab-page-container">
 
-                    API Active Status <ToggleButton onToggle={this.onToggleAPI} value={apiChecked} />
 
+
+
+
+
+
+
+                        {this.state.activeTab === 'General' && <div>
+                            
+                        <div className="btn-group">
+                            <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} classname="primary-btn" />
+                            <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
+
+                            <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
+
+                            <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
+                            {/* <Button label={buttonProps.secondaryLabel} onConfirm={this.handleCancel} classname="cancel-btn" /> */}
+                            
+
+                        </div>
+                            {this.generalPanel()}
+                            
+                            </div>}
+                        {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
+                        {this.state.activeTab === 'Outcome' && <div>{this.imputeAggregatePanel()}</div>}
+                        {this.state.activeTab === 'Validate' && <div>Validate</div>}
                    
-                   
-         
-
-
-
-                    {this.state.activeTab === 'General' && <div>{this.generalPanel()}</div>}
-                    {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
-                    {this.state.activeTab === 'Outcome' && <div>{this.imputeAggregatePanel()}</div>}
-                    {this.state.activeTab === 'Validate' && <div>Validate</div>}
-                    <div className="btn-group">
-                        <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} classname="primary-btn" />
-                        <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
-
-                        <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
-
-                        <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
-                        <Button label={buttonProps.secondaryLabel} onConfirm={this.handleCancel} classname="cancel-btn" />
-
 
                     </div>
-
                 </div>
-            </Panel>
 
-        </div>);
+            </div>);
     }
 }
 RuleEditor.contextType = ApperanceContext;
@@ -855,7 +909,7 @@ RuleEditor.propTypes = ({
     attributes: PropTypes.array,
     outcomes: PropTypes.object,
     handleDebug: PropTypes.func,
-    handleDecision: PropTypes.func,    
+    handleDecision: PropTypes.func,
 });
 
 const mapStateToProps = (state, ownProps) => ({

@@ -17,7 +17,7 @@ import { groupBy } from 'lodash/collection';
 import RuleErrorBoundary from '../../components/error/ruleset-error';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { AgGridReact } from 'ag-grid-react';
-
+import RulesGrid from '../../components/decisions/RulesGrid';
 
 import 'ag-grid-enterprise';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -102,7 +102,7 @@ function stringifierFact(params) {
 
 
 
-const tabs = [{name: 'Facts'}, {name: 'Decisions'}, {name: 'Validate'}, {name: 'Generate'},  { name: 'Spad' }];
+const tabs = [{name: 'Rules'},{name: 'Facts'}, {name: 'Decisions'}, {name: 'Validate'}, {name: 'Generate'},  { name: 'Spad' }];
 
 
 
@@ -110,7 +110,7 @@ class RulesetContainer extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {activeTab: 'Facts', generateFlag: false, rowData: [],
+        this.state = {activeTab: 'Rules', generateFlag: false, rowData: [],
         columnDefs: columnDefs,
         detailRowAutoHeight: true,
         detailCellRendererParams: {
@@ -273,6 +273,11 @@ class RulesetContainer extends Component {
           <PageTitle name={name} />
           <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
           <div className="tab-page-container">
+
+      {this.state.activeTab === 'Rules' && <RulesGrid facts={attributes}/>}
+
+
+
               {this.state.activeTab === 'Facts' && <Attributes attributes={attributes} 
                 handleAttribute={this.props.handleAttribute }/>}
               {this.state.activeTab === 'Decisions' && <Decisions decisions={indexedDecisions || []} attributes={attributes}
