@@ -8,7 +8,7 @@ I want to creat an react ag-grid with the following columns name, description, a
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import Button from '../button/button';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -33,113 +33,204 @@ const arrayToString = (arr) => {
 };
 
 
-var facts = {reporting_id:8771348140}
+var facts = { reporting_id: 8771348140 }
 
 
-  class RulesGrid extends React.Component {
-    constructor(props) {
-      super(props);
-      
-      this.state = {
-        selectedCondition:{},
-        columnDefs: [
-          { headerName: 'Active', field: 'active', cellRenderer: 'agGroupCellRenderer', sortable: true ,filter: 'agTextColumnFilter', checkboxSelection: true},
-          { headerName: 'ID', field: 'id', sortable: true , filter: 'agTextColumnFilter', },
-          { headerName: 'Name', field: 'name', sortable: true , filter: 'agTextColumnFilter', },
-        
-          { headerName: 'Rule Condition', field: 'condition' ,valueGetter: this.getConditionString,width: 400, sortable: true ,filter: 'agTextColumnFilter'},
-          { headerName: 'Message', field: 'description', sortable: true ,filter: 'agTextColumnFilter',width: 300, },
-     
-          { headerName: 'Action Type', field: 'actionType' ,valueGetter: this.getActionType,width: 100, sortable: true ,filter: 'agTextColumnFilter', hide: true},
+const newRuleObject = {
+  "condition": {
+      "event": {
+          "ruleId": "0",
+          "active": true,
+          "name": "Rule Name(edit me)",
+          "actionType": "impute",
+          "validationType": "validation",
+          "rulePriority": "5",
+          "params": {
+              "rvs": "[]",
+              "action": [
 
-          { headerName: 'Action', field: 'action' ,valueGetter: this.getAction,width: 400, sortable: true ,filter: 'agTextColumnFilter'},
-
-          { headerName: 'Track', field: 'parsed_rule.event.params.rvs', sortable: true ,filter: 'agTextColumnFilter',},
-          { headerName: 'RefPer Start', field: 'refper_start', sortable: true ,filter: 'agTextColumnFilter',hide: true  },
-          { headerName: 'RefPer End', field: 'refper_end' , sortable: true ,filter: 'agTextColumnFilter',hide: true },
-          { headerName: 'Parsed Rule', field: 'parsed_rule', sortable: true ,filter: 'agTextColumnFilter', hide: true},
-         
-          { headerName: 'Priority', field: 'priority', sortable: true,valueGetter: this.getRulePriority ,filter: 'agTextColumnFilter', },
-         
-          { headerName: 'Created By', field: 'created_by', sortable: true ,filter: 'agTextColumnFilter', },
-          { headerName: 'Modified By', field: 'modified_by', sortable: true ,filter: 'agTextColumnFilter', },
-          { headerName: 'Created At', field: 'created_at', sortable: true ,filter: 'agTextColumnFilter', },
-          { headerName: 'Modified At', field: 'modified_at', sortable: true ,filter: 'agTextColumnFilter', }
-        ],
-        rowData: []
+              ],
+              "message": "Enter the message you want to display...",
+              "actionType": "impute"
+          },
+          "type": "0"
+      },
+      "index": -1,
+      "conditions": {
+          "all": [
+              {
+                  "fact": "checkCondition",
+                  "path": "$.value",
+                  "operator": "equal",
+                  "value": true,
+                  "params": {
+                      "conditionstring": "RCPT_TOT > 0"
+                  }
+              }
+          ]
       }
+  }
+}
+
+
+
+class RulesGrid extends React.Component {
+  constructor(props) {
+    super(props);
+    this.gridApi =''
+    this.state = {
+      selectedCondition: {},
+      rowIndex:0,
+
+      columnDefs: [
+        { headerName: 'Active', field: 'active', cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', checkboxSelection: true },
+        { headerName: 'ID', field: 'id', sortable: true, filter: 'agTextColumnFilter', },
+        { headerName: 'Name', field: 'name', sortable: true, filter: 'agTextColumnFilter', },
+
+        { headerName: 'Rule Condition', field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
+        { headerName: 'Message', field: 'description', sortable: true, filter: 'agTextColumnFilter', width: 300, },
+
+        { headerName: 'Action Type', field: 'actionType', valueGetter: this.getActionType, width: 100, sortable: true, filter: 'agTextColumnFilter', hide: true },
+
+        { headerName: 'Action', field: 'action', valueGetter: this.getAction, width: 400, sortable: true, filter: 'agTextColumnFilter' },
+
+        { headerName: 'Track', field: 'parsed_rule.event.params.rvs', sortable: true, filter: 'agTextColumnFilter', },
+        { headerName: 'RefPer Start', field: 'refper_start', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'RefPer End', field: 'refper_end', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Parsed Rule', field: 'parsed_rule', sortable: true, filter: 'agTextColumnFilter', hide: true },
+
+        { headerName: 'Priority', field: 'priority', sortable: true, valueGetter: this.getRulePriority, filter: 'agTextColumnFilter', },
+
+        { headerName: 'Created By', field: 'created_by', sortable: true, filter: 'agTextColumnFilter', },
+        { headerName: 'Modified By', field: 'modified_by', sortable: true, filter: 'agTextColumnFilter', },
+        { headerName: 'Created At', field: 'created_at', sortable: true, filter: 'agTextColumnFilter', },
+        { headerName: 'Modified At', field: 'modified_at', sortable: true, filter: 'agTextColumnFilter', }
+      ],
+      rowData: []
     }
-    componentDidMount() {
+    this.onGridReady = this.onGridReady.bind(this)
+    this.createNewRow = this.createNewRow.bind(this)
+  }
+  componentDidMount() {
 
-      let url = HOSTURL+'/rulesrepo?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
-      axios.get(url)
-        .then(res => {
-          this.setState({ rowData: res.data.data });
-        });
+    let url = HOSTURL + '/rulesrepo?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+    axios.get(url)
+      .then(res => {
+        this.setState({ rowData: res.data.data });
+      });
+  }
+  detailCellRenderer(params) {
+
+    let rule = [params.data.data]
+
+    return (<div className="rule-flex-container_X">
+      <RuleEditor conditions={rule} facts={facts} decisionIndex={0} /> </div>)
+
+  }
+  getRulePriority(params) {
+    try {
+      let ret = params.data.parsed_rule.event.rulePriority
+      return ret
+    } catch (error) {
+      return ''
     }
-    detailCellRenderer (params) {
-
-      let rule = [params.data.data]
-
-      return (<div className="rule-flex-container_X">
-        <RuleEditor conditions = {rule} facts={facts} decisionIndex={0} /> </div>)
-      
-      }
-getRulePriority(params){
-  try {
-    let ret = params.data.parsed_rule.event.rulePriority
-    return ret
-  } catch (error) {
-    return ''
   }
-}
-getAction(params){
-  try {
-    let ret = params.data.parsed_rule.event.params.action 
+  getAction(params) {
+    try {
+      let ret = params.data.parsed_rule.event.params.action
 
-    return arrayToString(ret)
-   
-  } catch (error) {
-    return ''
+      return arrayToString(ret)
+
+    } catch (error) {
+      return ''
+    }
   }
-}
-getActionType(params){
-  try {
-    let ret = params.data.parsed_rule.event.actionType
-    return ret
-  } catch (error) {
-    return ''
+  getActionType(params) {
+    try {
+      let ret = params.data.parsed_rule.event.actionType
+      return ret
+    } catch (error) {
+      return ''
+    }
   }
+
+  getConditionString(params) {
+    try {
+      let ret = params.data.parsed_rule.conditions.all[0].params.conditionstring
+      return ret
+    } catch (error) {
+      return ''
+    }
+  }
+crudRule(){
+  let {rowIndex} = this.state
+  if(rowIndex) this.createNewRow()
 }
 
-getConditionString(params){
-  try {
-    let ret = params.data.parsed_rule.conditions.all[0].params.conditionstring
-    return ret
-  } catch (error) {
-    return ''
+  performCrudOperations = (operation, rowIndex, rowData) => {
+    // Get a reference to the ag-Grid component
+    const gridApi = this.gridApi;
+  
+    if (operation === 'create') {
+      // Insert a new row
+      gridApi.updateRowData({ add: [rowData] });
+    } else if (operation === 'read') {
+      // Get the row data for a specific row
+      const rowNode = gridApi.getRowNode(rowIndex);
+      const rowData = rowNode.data;
+      console.log(`Row data: ${rowData}`);
+    } else if (operation === 'update') {
+      // Update an existing row
+      gridApi.updateRowData({ update: [{ index: rowIndex, data: rowData }] });
+    } else if (operation === 'delete') {
+      // Delete an existing row
+      gridApi.updateRowData({ remove: [rowData] });
+    }
   }
-}
+  createNewRow(){
+    this.performCrudOperations('create', null, newRuleObject);
+  }
 
-    onFirstDataRendered = (params) => {
-      setTimeout(function () {
-          // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
-          params.api.columnModel.autoSizeAllColumns(true)
-          // gridRef.current.columnApi.autoSizeAllColumns(true);
-      }, 0);
+  onFirstDataRendered = (params) => {
+    setTimeout(function () {
+      // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
+      params.api.columnModel.autoSizeAllColumns(true)
+      // gridRef.current.columnApi.autoSizeAllColumns(true);
+    }, 0);
   }
-    render() {
-      return (
-        <div className="ag-theme-alpine" id="myGrid" style={{ height:1200 }}>
+
+  onGridReady = (params) => {
+    this.gridApi = params.api;
+  }
+  render() {
+    const {rowIndex} = this.state
+
+    const buttonProps = { primaryLabel: 'Add Rule', secondaryLabel: 'Cancel' };
+
+    return (
+      <div>
+        <div className="btn-group">
+                                <Button label={buttonProps.primaryLabel} onConfirm={this.createNewRow} classname="primary-btn" />
+                                <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
+
+                                <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
+
+                                <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
+                 
+
+
+                            </div>
+
+
+      <div className="ag-theme-alpine" id="myGrid" style={{ height: 1200 }}>
         <AgGridReact
 
-onRowClicked={(e) => 
-  {
-  this.setState({selectedCondition:e.data.parsed_rule})
-  this.props.handleDebug('ADD', { label: 'time', data: { rule: e.data.parsed_rule}}, 0)
-  }
-}
-
+          onRowClicked={(e) => {
+            this.setState({ selectedCondition: e.data.parsed_rule, rowIndex: e.rowIndex })
+            this.props.handleDebug('ADD', { label: 'time', data: { rule: e.data.parsed_rule } }, 0)
+          }
+          }
+          onGridReady={this.onGridReady}
 
           columnDefs={this.state.columnDefs}
           rowData={this.state.rowData}
@@ -147,7 +238,7 @@ onRowClicked={(e) =>
           masterDetail={true}
           detailCellRenderer={this.detailCellRenderer.bind(this)}
           detailCellRendererParams={this.state.selectedCondition}
-          detailRowAutoHeight= {true}
+          detailRowAutoHeight={true}
           embedFullWidthRows={true}
           rowSelection={'multiple'}
           pagination={true}
@@ -155,32 +246,33 @@ onRowClicked={(e) =>
           onFirstDataRendered={this.onFirstDataRendered.bind(this)}
           theme="alpine"
         />
-        </div>
-      );
-    }
-
+      </div>
+      </div>
+    );
   }
 
-  RulesGrid.defaultProps = {
-    ruleset: {},
-    handleAttribute: () => false,
-    handleDecisions: () => false,
-    updatedFlag: false,
-  }
-  
-  const mapStateToProps = (state) => ({
-    ruleset: state.ruleset.rulesets[state.ruleset.activeRuleset],
-    updatedFlag: state.ruleset.updatedFlag,
-    facts: state.ruleset.rulesets[state.ruleset.activeRuleset]
-  });
-  
-  const mapDispatchToProps = (dispatch) => ({
-    handleAttribute: (operation, attribute, index) => dispatch(handleAttribute(operation, attribute, index)),
-    handleDecisions: (operation, decision) => dispatch(handleDecision(operation, decision)),
-    handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))
-  });
-  
-  export default connect(mapStateToProps, mapDispatchToProps)(RulesGrid);
+}
+
+RulesGrid.defaultProps = {
+  ruleset: {},
+  handleAttribute: () => false,
+  handleDecisions: () => false,
+  updatedFlag: false,
+}
+
+const mapStateToProps = (state) => ({
+  ruleset: state.ruleset.rulesets[state.ruleset.activeRuleset],
+  updatedFlag: state.ruleset.updatedFlag,
+  facts: state.ruleset.rulesets[state.ruleset.activeRuleset]
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  handleAttribute: (operation, attribute, index) => dispatch(handleAttribute(operation, attribute, index)),
+  handleDecisions: (operation, decision) => dispatch(handleDecision(operation, decision)),
+  handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RulesGrid);
 
 
 

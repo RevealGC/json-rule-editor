@@ -30,7 +30,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 
 
 
-const tabs = [{ name: 'General' }, { name: 'Condition' }, { name: 'Outcome' }, { name: 'Validate' }];
+const tabs = [{ name: 'General' },{ name: 'Outcome' }, { name: 'Settings' }];
 const HOSTURL = 'http://localhost'
 
 const newRuleObject = {
@@ -90,7 +90,7 @@ class RuleEditor extends Component {
         const conditionstring = condition.conditions && condition.conditions.all && condition.conditions.all[0].params ? condition.conditions.all[0].params.conditionstring : 'RCPT_TOT > 0'  // is an object of all/or array of conditions
 
 
-        const conditionStringObject = { parseSuccess: true }
+        const conditionStringObject = { parseSuccess: true, ruleResult: true }
 
         const apiChecked = condition.event && condition.event.apiChecked ? condition.event.apiChecked : false
 
@@ -352,39 +352,30 @@ class RuleEditor extends Component {
                 />
             </Panel>
 
-            <Panel title='Category and Weights' >
-
+            {/* <Panel title='Category and Weights' >
                 <InputField onChange={(value) => this.handleValidationType(value)}
                     value={validationType}
                     error={outcome.error && outcome.error.value} label="Category"
                     placeholder='Enter a validation type(For example: "validation")...'
                 />
-
-             
-
                     <SelectField options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} onChange={(e) =>
-
                         this.handleRulePriority(e)
                     }
                         value={rulePriority} label="Weights" />
+            </Panel> */}
+
+            <div> {this.conditionPanel()} </div>
 
 
-                    {/* <InputField onChange={(value) => this.handleRulePriority(value)}
-                        value={rulePriority}
-                        error={outcome.error && outcome.error.value} label="Rule Priority (1-10)"
-                        placeholder='Enter a rule priority: 1-10'
-                    /> */}
-              
-            </Panel>
             <div className="add-field-panel " >
 
                 <Panel className="add-field-panel" title='Message'>
 
 
 
-                <textarea
+                    <textarea
                         style={{
-                            width: '100%', height: '150px', padding: '12px 20px 12px 20px',
+                            width: '100%', height: '100px', padding: '12px 20px 12px 20px',
                             'box-sizing': 'border-box',
                             border: '2px solid #ccc',
                             'border-radius': '4px',
@@ -419,7 +410,7 @@ class RuleEditor extends Component {
 
 
             </div>
-           
+
 
 
         </div>)
@@ -577,7 +568,7 @@ class RuleEditor extends Component {
     }
     imputeAggregatePanel() {
 
-        const { params, actionType, action, active, validationType , rulePriority, apiChecked} = this.state;
+        const { params, actionType, action, active, validationType, rulePriority, apiChecked } = this.state;
         // const action = this.state.params.action 
 
         const { background } = this.context;
@@ -841,14 +832,14 @@ class RuleEditor extends Component {
     }
 
     render() {
-        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority, displayRuleEditor, successAlert, apiChecked } = this.state;
+        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority, displayRuleEditor, successAlert, apiChecked , outcome} = this.state;
         const buttonProps = { primaryLabel: ruleId ? 'Update RuleCase' : 'Add Rulecase', secondaryLabel: 'Cancel' };
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel' };
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
         const { conditions } = this.state;
         return (!displayRuleEditor) ? (<div><span /></div>) :
 
-            (<div  style={{ width: '30%',margin:'40px', 'padding-bottom':'100px' }}>
+            (<div style={{ width: '30%', margin: '40px', 'padding-bottom': '100px' }}>
                 <div title={name} >
 
                     <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
@@ -862,25 +853,41 @@ class RuleEditor extends Component {
 
 
                         {this.state.activeTab === 'General' && <div>
-                            
-                        <div className="btn-group">
-                            <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} classname="primary-btn" />
-                            <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
+                        {this.generalPanel()}
+                            <div className="btn-group">
+                                <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} classname="primary-btn" />
+                                <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
 
-                            <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
+                                <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
 
-                            <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
-                            {/* <Button label={buttonProps.secondaryLabel} onConfirm={this.handleCancel} classname="cancel-btn" /> */}
-                            
+                                <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
+                 
 
-                        </div>
-                            {this.generalPanel()}
-                            
-                            </div>}
-                        {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
+
+                            </div>
+
+
+
+                          
+
+                        </div>}
                         {this.state.activeTab === 'Outcome' && <div> {this.responseVariablesPanel()}{this.imputeAggregatePanel()}</div>}
-                        {this.state.activeTab === 'Validate' && <div>Validate</div>}
-                   
+                        {this.state.activeTab === 'Settings' &&
+                            <div>
+                                <Panel title='Category and Weights' >
+                                    <InputField onChange={(value) => this.handleValidationType(value)}
+                                        value={validationType}
+                                        error={outcome.error && outcome.error.value} label="Category"
+                                        placeholder='Enter a validation type(For example: "validation")...'
+                                    />
+                                    <SelectField options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} onChange={(e) =>
+                                        this.handleRulePriority(e)
+                                    }
+                                        value={rulePriority} label="Weights" />
+                                </Panel>
+                            </div>}
+                
+
 
                     </div>
                 </div>
