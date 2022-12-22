@@ -833,37 +833,21 @@ class RuleEditor extends Component {
 
     render() {
         const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority, displayRuleEditor, successAlert, apiChecked , outcome} = this.state;
-        const buttonProps = { primaryLabel: ruleId ? 'Update RuleCase' : 'Add Rulecase', secondaryLabel: 'Cancel' };
+        const buttonProps = { primaryLabel: ruleId ? 'Update' : 'Add Rulecase', secondaryLabel: 'Cancel' };
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel' };
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
         const { conditions } = this.state;
         return (!displayRuleEditor) ? (<div><span /></div>) :
 
-            (<div style={{ width: '30%', margin: '40px', 'padding-bottom': '100px' }}>
+            (<div style={{ width: '50%', margin: '40px', 'padding-bottom': '100px' }}>
                 <div title={name} >
 
                     <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
                     <div className="tab-page-container">
-
-
-
-
-
-
-
-
-                        {this.state.activeTab === 'General' && <div>
+                        {this.state.activeTab === 'General' &&
+                         <div>
                         {this.generalPanel()}
-                        <div className="btn-group">
-                            <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} classname="primary-btn" />
-                            <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
-
-                                <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
-
-                                <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
-                 
-
-                        </div>
+                    
                        
                             
                             </div>}
@@ -884,7 +868,16 @@ class RuleEditor extends Component {
                                 </Panel>
                             </div>}
                 
+                            <div className="btn-group">
+                            <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} classname="primary-btn" />
+                            <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
 
+                                <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
+
+                                <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
+                 
+
+                        </div>
 
                     </div>
                 </div>

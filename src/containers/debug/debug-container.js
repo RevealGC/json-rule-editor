@@ -126,6 +126,7 @@ debugPanelAttribute(data) {
 
     debugPanel() {
         const debugData = this.props.debugData.reverse()
+        console.log("🚀 ~ file: debug-container.js:129 ~ DebugContainer ~ debugPanel ~ debugData", debugData)
 
         return (
             debugData.map((d, index, debugData) => {

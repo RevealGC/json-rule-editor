@@ -38,37 +38,37 @@ var facts = { reporting_id: 8771348140 }
 
 const newRuleObject = {
   "condition": {
-      "event": {
-          "ruleId": "0",
-          "active": true,
-          "name": "Rule Name(edit me)",
-          "actionType": "impute",
-          "validationType": "validation",
-          "rulePriority": "5",
-          "params": {
-              "rvs": "[]",
-              "action": [
+    "event": {
+      "ruleId": "0",
+      "active": true,
+      "name": "Rule Name(edit me)",
+      "actionType": "impute",
+      "validationType": "validation",
+      "rulePriority": "5",
+      "params": {
+        "rvs": "[]",
+        "action": [
 
-              ],
-              "message": "Enter the message you want to display...",
-              "actionType": "impute"
-          },
-          "type": "0"
+        ],
+        "message": "Enter the message you want to display...",
+        "actionType": "impute"
       },
-      "index": -1,
-      "conditions": {
-          "all": [
-              {
-                  "fact": "checkCondition",
-                  "path": "$.value",
-                  "operator": "equal",
-                  "value": true,
-                  "params": {
-                      "conditionstring": "RCPT_TOT > 0"
-                  }
-              }
-          ]
-      }
+      "type": "0"
+    },
+    "index": -1,
+    "conditions": {
+      "all": [
+        {
+          "fact": "checkCondition",
+          "path": "$.value",
+          "operator": "equal",
+          "value": true,
+          "params": {
+            "conditionstring": "RCPT_TOT > 0"
+          }
+        }
+      ]
+    }
   }
 }
 
@@ -77,10 +77,12 @@ const newRuleObject = {
 class RulesGrid extends React.Component {
   constructor(props) {
     super(props);
-    this.gridApi =''
+    this.gridApi = ''
     this.state = {
       selectedCondition: {},
-      rowIndex:0,
+      rowIndex: 0,
+      ruleCounts: 0,
+      displayNewRow: false,
 
       columnDefs: [
         { headerName: 'Active', field: 'active', cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', checkboxSelection: true },
@@ -116,7 +118,7 @@ class RulesGrid extends React.Component {
     let url = HOSTURL + '/rulesrepo?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
     axios.get(url)
       .then(res => {
-        this.setState({ rowData: res.data.data });
+        this.setState({ rowData: res.data.data, ruleCounts:res.data.data.length });
       });
   }
   detailCellRenderer(params) {
@@ -162,15 +164,16 @@ class RulesGrid extends React.Component {
       return ''
     }
   }
-crudRule(){
-  let {rowIndex} = this.state
-  if(rowIndex) this.createNewRow()
-}
+  crudRule() {
+    let { rowIndex } = this.state
+    if (rowIndex) this.createNewRow()
+  }
 
   performCrudOperations = (operation, rowIndex, rowData) => {
     // Get a reference to the ag-Grid component
     const gridApi = this.gridApi;
-  
+    console.log("🚀 ~ file: RulesGrid.js:173 ~ RulesGrid ~ rowData", gridApi)
+
     if (operation === 'create') {
       // Insert a new row
       gridApi.updateRowData({ add: [rowData] });
@@ -187,8 +190,9 @@ crudRule(){
       gridApi.updateRowData({ remove: [rowData] });
     }
   }
-  createNewRow(){
-    this.performCrudOperations('create', null, newRuleObject);
+  createNewRow() {
+    this.setState({ displayNewRow: true });
+    // this.performCrudOperations('create', null, newRuleObject);
   }
 
   onFirstDataRendered = (params) => {
@@ -202,51 +206,53 @@ crudRule(){
   onGridReady = (params) => {
     this.gridApi = params.api;
   }
+
+  handleCancelNewRow = (params) => {
+    this.setState({ displayNewRow: !this.state.displayNewRow });
+  }
+
+
   render() {
-    const {rowIndex} = this.state
+    const { rowIndex } = this.state
 
     const buttonProps = { primaryLabel: 'Add Rule', secondaryLabel: 'Cancel' };
 
     return (
       <div>
         <div className="btn-group">
-                                <Button label={buttonProps.primaryLabel} onConfirm={this.createNewRow} classname="primary-btn" />
-                                <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
+          <Button label={buttonProps.primaryLabel} onConfirm={this.createNewRow} classname="primary-btn" />
+          
+          <Button label='Cancel' onConfirm={this.handleCancelNewRow.bind(this)} classname="primary-btn" />
+        </div>
 
-                                <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
+        {this.state.displayNewRow && <div className="rule-flex-container_X">
+          <RuleEditor conditions={[newRuleObject]} facts={facts} handleDebug={this.handleDebug.bind(this)} decisionIndex={this.state.ruleCounts} /> </div>
+        }
+        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1200 }}>
+          <AgGridReact
 
-                                <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
-                 
+            onRowClicked={(e) => {
+              this.setState({ selectedCondition: e.data.parsed_rule, rowIndex: e.rowIndex })
+            
+            }
+            }
+            onGridReady={this.onGridReady}
 
-
-                            </div>
-
-
-      <div className="ag-theme-alpine" id="myGrid" style={{ height: 1200 }}>
-        <AgGridReact
-
-          onRowClicked={(e) => {
-            this.setState({ selectedCondition: e.data.parsed_rule, rowIndex: e.rowIndex })
-            this.props.handleDebug('ADD', { label: 'time', data: { rule: e.data.parsed_rule } }, 0)
-          }
-          }
-          onGridReady={this.onGridReady}
-
-          columnDefs={this.state.columnDefs}
-          rowData={this.state.rowData}
-          animateRows={true}
-          masterDetail={true}
-          detailCellRenderer={this.detailCellRenderer.bind(this)}
-          detailCellRendererParams={this.state.selectedCondition}
-          detailRowAutoHeight={true}
-          embedFullWidthRows={true}
-          rowSelection={'multiple'}
-          pagination={true}
-          paginationPageSize={50}
-          onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-          theme="alpine"
-        />
-      </div>
+            columnDefs={this.state.columnDefs}
+            rowData={this.state.rowData}
+            animateRows={true}
+            masterDetail={true}
+            detailCellRenderer={this.detailCellRenderer.bind(this)}
+            detailCellRendererParams={this.state.selectedCondition}
+            detailRowAutoHeight={true}
+            embedFullWidthRows={true}
+            rowSelection={'multiple'}
+            pagination={true}
+            paginationPageSize={50}
+            onFirstDataRendered={this.onFirstDataRendered.bind(this)}
+            theme="alpine"
+          />
+        </div>
       </div>
     );
   }
