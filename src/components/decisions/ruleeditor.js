@@ -862,7 +862,7 @@ class RuleEditor extends Component {
 
 
                         {this.state.activeTab === 'General' && <div>
-                            
+                        {this.generalPanel()}
                         <div className="btn-group">
                             <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} classname="primary-btn" />
                             <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
@@ -874,7 +874,7 @@ class RuleEditor extends Component {
                             
 
                         </div>
-                            {this.generalPanel()}
+                       
                             
                             </div>}
                         {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
