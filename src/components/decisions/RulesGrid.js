@@ -114,6 +114,8 @@ class RulesGrid extends React.Component {
     }
     this.onGridReady = this.onGridReady.bind(this)
     this.createNewRow = this.createNewRow.bind(this)
+    this.performCrudOperations  = this.performCrudOperations.bind(this)
+    this.getRowId = this.getRowId.bind(this)
   }
   componentDidMount() {
 
@@ -123,12 +125,17 @@ class RulesGrid extends React.Component {
         this.setState({ rowData: res.data.data, ruleCounts:res.data.data.length });
       });
   }
+
   detailCellRenderer(params) {
 
     let rule = [params.data.data]
 
     return (<div className="rule-flex-container_X">
-      <RuleEditor conditions={rule} facts={facts} decisionIndex={0} /> </div>)
+      <RuleEditor conditions={rule} 
+      performCrudOperations ={this.performCrudOperations}
+     
+      
+      facts={facts} decisionIndex={0} /> </div>)
 
   }
   getRulePriority(params) {
@@ -171,10 +178,29 @@ class RulesGrid extends React.Component {
     if (rowIndex) this.createNewRow()
   }
 
+  debug(data){
+    this.props.handleDebug('ADD', { label: 'time', data}, 0)
+  }
+
+
+ 
+
+  getRowId = params => params.data.id;
+
   performCrudOperations = (operation, rowIndex, rowData) => {
+
+  
     // Get a reference to the ag-Grid component
     const gridApi = this.gridApi;
-    console.log("🚀 ~ file: RulesGrid.js:173 ~ RulesGrid ~ rowData", gridApi)
+
+
+    // rowData = newRuleObject // testing
+
+
+
+    this.debug( {rowData, log:'"🚀 ~ file: RulesGrid.js ~ line 193 ~ RulesGrid ~ gridApi", gridApi' })
+    
+ 
 
     if (operation === 'create') {
       // Insert a new row
@@ -186,10 +212,10 @@ class RulesGrid extends React.Component {
       console.log(`Row data: ${rowData}`);
     } else if (operation === 'update') {
       // Update an existing row
-      gridApi.updateRowData({ update: [{ index: rowIndex, data: rowData }] });
+      gridApi.applyTransaction({ update: [{ index: rowIndex, data: rowData }] });
     } else if (operation === 'delete') {
       // Delete an existing row
-      gridApi.updateRowData({ remove: [rowData] });
+      gridApi.applyTransaction({ remove: [rowData] });
     }
   }
   createNewRow() {
