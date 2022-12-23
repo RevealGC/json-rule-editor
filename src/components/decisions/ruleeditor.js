@@ -73,6 +73,8 @@ class RuleEditor extends Component {
 
     constructor(props) {
         super(props);
+      
+        this.getRowId = this.props.getRowId;
 
         const displayRuleEditor = true;
 
@@ -82,6 +84,9 @@ class RuleEditor extends Component {
         const decisionIndex = this.props.decisionIndex
         console.log("🚀 ~ file: ruleeditor.js:83 ~ RuleEditor ~ constructor ~ decisionIndex", decisionIndex)
         const conditions = this.props.conditions
+
+        console.log("🚀 ~ file: ruleeditor.js ~ line 85 ~ RuleEditor ~ constructor ~ conditions", conditions)
+
         const handleCancel = this.props.handleCancel
         const facts = this.props.facts
         const condition = (conditions.length) ? conditions[0] : newRuleObject.condition
@@ -244,15 +249,25 @@ class RuleEditor extends Component {
 
     }
 
-    updateCondition(condition) {
+        updateCondition(condition) {
 
-        (condition.index == -1) ? 'ADD' : 'UPDATE'
-        this.props.handleDecision((condition.index == -1) ? 'ADD' : 'UPDATE', {
-            condition,
-            decisionIndex: this.state.decisionIndex
-        });
+        const {  responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
 
-        this.setState({ displayRuleEditor: !this.state.displayRuleEditor });
+        
+
+
+
+        let rowData = {parsed_rule: condition, id:0, data:condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority} 
+            this.addDebug({rowData, log:'line 261 in ruleeditor'})
+        
+        this.props.performCrudOperations('create', 0, rowData);
+        // (condition.index == -1) ? 'ADD' : 'UPDATE'
+        // this.props.handleDecision((condition.index == -1) ? 'ADD' : 'UPDATE', {
+        //     condition,
+        //     decisionIndex: this.state.decisionIndex
+        // });
+
+        // this.setState({ displayRuleEditor: !this.state.displayRuleEditor });
     }
 
     removeCase(decisionIndex) {
@@ -509,8 +524,30 @@ class RuleEditor extends Component {
      * @returns the rule object and is not an array. used for display and running the rule
      */
     formRule() {
-        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
+        const { condition, responseVariables, name, ruleId, message,
+            conditionstring,
+          
+            
+            actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
+        this.addDebug({log:"🚀 ~ file: ruleeditor.js ~ line 516 ~ RuleEditor ~ formRule ~ condition", condition})
+
+
+        condition.conditions.all[0].params.conditionstring = conditionstring
+        
+
+
+        this.addDebug({
+            condition,
+            conditionStringObject,
+            log:"🚀 ~ file: ruleeditor.js ~ line 516 ~ RuleEditor ~ formRule ~ condition", condition})
+        
+        
+        
         let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message } }
+       
+       
+       
+       
         const conditionNew = {
             ...condition, ...{ event: { ruleId, active, name, actionType, validationType, rulePriority, params: paramsNew, type: ruleId + '' } },
             ...{ conditions: conditionStringObject.condition.conditions }
@@ -839,7 +876,7 @@ class RuleEditor extends Component {
         const { conditions } = this.state;
         return (!displayRuleEditor) ? (<div><span /></div>) :
 
-            (<div style={{ width: '50%', margin: '40px', 'padding-bottom': '100px' }}>
+            (<div style={{ width: '100%', margin: '40px', 'padding-bottom': '100px' }}>
                 <div title={name} >
 
                     <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
@@ -907,6 +944,7 @@ RuleEditor.propTypes = ({
     outcomes: PropTypes.object,
     handleDebug: PropTypes.func,
     handleDecision: PropTypes.func,
+    hello: PropTypes.func
 });
 
 const mapStateToProps = (state, ownProps) => ({
