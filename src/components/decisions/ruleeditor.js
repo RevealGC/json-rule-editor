@@ -507,7 +507,9 @@ class RuleEditor extends Component {
      * @returns the rule object and is not an array. used for display and running the rule
      */
     formRule() {
-        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
+        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject,conditionstring, rulePriority } = this.state
+
+        conditionStringObject.condition.conditions.all[0].params.conditionstring = this.state.conditionstring 
         let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message } }
         const conditionNew = {
             ...condition, ...{ event: { ruleId, active, name, actionType, validationType, rulePriority, params: paramsNew, type: ruleId + '' } },
@@ -705,9 +707,13 @@ class RuleEditor extends Component {
 
 
         const conditionstring = event.target.value
+        const conditionStringObject = this.state.conditionStringObject
 
         // NK Check if string is valid or not by making an axios call. Pass the string and it should return the error if any
-        this.setState({ conditionstring })
+
+        conditionStringObject.condition.conditions.all[0].params.conditionstring = this.state.conditionstring 
+        this.setState({ conditionstring, conditionStringObject })
+      
     }
 
 

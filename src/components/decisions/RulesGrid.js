@@ -84,7 +84,11 @@ class RulesGrid extends React.Component {
 
       columnDefs: [
         { headerName: 'Active', field: 'active', cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', checkboxSelection: true },
-        { headerName: 'ID', field: 'id', sortable: true, filter: 'agNumberColumnFilter', },
+        { headerName: 'ID', field: 'id', sortable: true, filter: 'agTextColumnFilter',
+      
+        comparator: (a,b)=>{return a -b}
+      
+      },
         { headerName: 'Name', field: 'name', sortable: true, filter: 'agTextColumnFilter', },
 
         { headerName: 'Rule Condition', field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
@@ -231,13 +235,10 @@ class RulesGrid extends React.Component {
       <div>
         <div className="btn-group">
           <Button label={buttonProps.primaryLabel} onConfirm={this.createNewRow} classname="primary-btn" />
-          
-          <Button label='Cancel' onConfirm={this.handleCancelNewRow.bind(this)} classname="primary-btn" />
+        
         </div>
 
-        {this.state.displayNewRow && <div className="rule-flex-container_X">
-          <RuleEditor conditions={[newRuleObject]} facts={facts} handleDebug={this.props.handleDebug.bind(this)} decisionIndex={this.state.ruleCounts} /> </div>
-        }
+      
         <div className="ag-theme-alpine" id="myGrid" style={{ height: 1200 }}>
           <AgGridReact
 
