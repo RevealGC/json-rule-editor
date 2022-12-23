@@ -226,7 +226,7 @@ class RulesGrid extends React.Component {
         </div>
 
         {this.state.displayNewRow && <div className="rule-flex-container_X">
-          <RuleEditor conditions={[newRuleObject]} facts={facts} handleDebug={this.handleDebug.bind(this)} decisionIndex={this.state.ruleCounts} /> </div>
+          <RuleEditor conditions={[newRuleObject]} facts={facts} handleDebug={this.props.handleDebug.bind(this)} decisionIndex={this.state.ruleCounts} /> </div>
         }
         <div className="ag-theme-alpine" id="myGrid" style={{ height: 1200 }}>
           <AgGridReact
