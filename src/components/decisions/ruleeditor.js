@@ -526,7 +526,7 @@ class RuleEditor extends Component {
         let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message } }
        
        
-       
+        conditionStringObject.condition.conditions.all[0].params.conditionstring = this.state.conditionstring 
        
         const conditionNew = {
             ...condition, ...{ event: { ruleId, active, name, actionType, validationType, rulePriority, params: paramsNew, type: ruleId + '' } },
