@@ -34,7 +34,6 @@ const tabs = [{ name: 'General' },{ name: 'Outcome' }, { name: 'Settings' }];
 const HOSTURL = 'http://localhost'
 
 const newRuleObject = {
-    "condition": {
         "event": {
             "ruleId": "0",
             "active": true,
@@ -66,7 +65,6 @@ const newRuleObject = {
                 }
             ]
         }
-    }
 }
 
 class RuleEditor extends Component {
@@ -108,7 +106,7 @@ class RuleEditor extends Component {
         const ruleId = condition.event && condition.event.ruleId ? condition.event.ruleId || condition.event.type : 0
         const rulePriority = condition.event && condition.event.rulePriority ? condition.event.rulePriority : 5
 
-
+      
 
         const name = condition.event ? condition.event.name : ''
         const message = condition.event ? condition.event.params.message : ''

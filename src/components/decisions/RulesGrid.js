@@ -37,7 +37,7 @@ var facts = { reporting_id: 8771348140 }
 
 
 const newRuleObject = {
-  "condition": {
+ 
     "event": {
       "ruleId": "0",
       "active": true,
@@ -46,10 +46,9 @@ const newRuleObject = {
       "validationType": "validation",
       "rulePriority": "5",
       "params": {
-        "rvs": "[]",
-        "action": [
-
-        ],
+        "rvs": "['PAY_ANN']",
+        rvsJSON:['PAY_ANN'],
+        "action": [{RCPT_TOT:'RCPT_TOT'}],
         "message": "Enter the message you want to display...",
         "actionType": "impute"
       },
@@ -69,7 +68,6 @@ const newRuleObject = {
         }
       ]
     }
-  }
 }
 
 
@@ -86,7 +84,7 @@ class RulesGrid extends React.Component {
 
       columnDefs: [
         { headerName: 'Active', field: 'active', cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', checkboxSelection: true },
-        { headerName: 'ID', field: 'id', sortable: true, filter: 'agTextColumnFilter', },
+        { headerName: 'ID', field: 'id', sortable: true, filter: 'agNumberColumnFilter', },
         { headerName: 'Name', field: 'name', sortable: true, filter: 'agTextColumnFilter', },
 
         { headerName: 'Rule Condition', field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
@@ -176,7 +174,7 @@ class RulesGrid extends React.Component {
 
     if (operation === 'create') {
       // Insert a new row
-      gridApi.updateRowData({ add: [rowData] });
+      gridApi.updateRowData({ add: [rowData], addIndex: 0 });
     } else if (operation === 'read') {
       // Get the row data for a specific row
       const rowNode = gridApi.getRowNode(rowIndex);
@@ -191,8 +189,20 @@ class RulesGrid extends React.Component {
     }
   }
   createNewRow() {
-    this.setState({ displayNewRow: true });
-    // this.performCrudOperations('create', null, newRuleObject);
+    // this.setState({ displayNewRow: true });
+
+    let data = {
+      parsed_rule: newRuleObject,
+      active: true,
+      type: 'impute',
+      data: newRuleObject,
+      description: 'New Rule',
+      name: newRuleObject.event.name,
+      id: 0
+
+  }
+
+    this.performCrudOperations('create', null, data);
   }
 
   onFirstDataRendered = (params) => {
