@@ -86,7 +86,9 @@ class RuleEditor extends Component {
         console.log("🚀 ~ file: ruleeditor.js ~ line 85 ~ RuleEditor ~ constructor ~ conditions", conditions)
 
         const handleCancel = this.props.handleCancel
-        const facts = this.props.facts
+        const facts =  this.props.facts.facts 
+
+
         const condition = (conditions.length) ? conditions[0] : newRuleObject.condition
 
 
@@ -151,6 +153,7 @@ class RuleEditor extends Component {
             decisions: props.decisions || [],
             bannerflag: false
         };
+            console.log("🚀 ~ file: ruleeditor.js:156 ~ RuleEditor ~ constructor ~ facts", facts)
         this.handleUpdateRule = this.handleUpdateRule.bind(this);
         this.updateCondition = this.updateCondition.bind(this);
         this.editCondition = this.editCondition.bind(this);
@@ -502,6 +505,7 @@ class RuleEditor extends Component {
     }
     async handleTestRule() {
         const { condition, facts, conditionStringObject } = this.state
+        console.log("🚀 ~ file: ruleeditor.js:508 ~ RuleEditor ~ handleTestRule ~ facts", facts)
         if (!conditionStringObject.parseSuccess) {
 
 
@@ -512,7 +516,8 @@ class RuleEditor extends Component {
         }
 
         let rules = [this.formRule()]
-        let result = await processEngine(facts, rules)
+        let result = await processEngine([facts], rules)
+        console.log("🚀 ~ file: ruleeditor.js:520 ~ RuleEditor ~ handleTestRule ~ facts", facts)
 
         this.props.handleDebug('ADD', { label: 'time', data: { result } }, 0)
     }
@@ -701,9 +706,12 @@ class RuleEditor extends Component {
 
     handleCompileConditionString() {
         const { conditionstring, conditionStringObject, facts } = this.state;
+        console.log("🚀 ~ file: ruleeditor.js:709 ~ RuleEditor ~ handleCompileConditionString ~ facts", facts)
 
 
         // let facts = []
+
+        console.log("🚀 ~ file: ruleeditor.js:713 ~ RuleEditor ~ handleCompileConditionString ~ facts", facts)
 
 
         var self = this
@@ -711,7 +719,7 @@ class RuleEditor extends Component {
         let url = HOSTURL + '/rulesrepo/testcondition?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
 
         try {
-            let result = axios.post(url, { facts, conditionstring })
+            let result = axios.post(url, { facts: [facts], conditionstring })
                 .then((response) => {
 
                     let conditionStringObject = response.data
@@ -722,6 +730,7 @@ class RuleEditor extends Component {
                     self.setState({ conditionStringObject: error.response.data.error.parent.hint })
                     console.log(error)
                 })
+            console.log("🚀 ~ file: ruleeditor.js:732 ~ RuleEditor ~ handleCompileConditionString ~ facts", facts)
 
 
         }

@@ -34,7 +34,7 @@ const arrayToString = (arr) => {
 };
 
 
-var facts = { reporting_id: 8771348140 }
+// var facts = { reporting_id: 8771348140 }
 
 
 const newRuleObject = {
@@ -218,7 +218,7 @@ class RulesGrid extends React.Component {
     return (<div >
       <RuleEditor conditions={rule}
         performCrudOperations={this.performCrudOperations}
-        facts={facts} decisionIndex={params.rowIndex} /> </div>)
+        facts={this.props.facts} decisionIndex={params.rowIndex} /> </div>)
 
   }
   getRulePriority(params) {
