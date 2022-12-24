@@ -37,37 +37,37 @@ var facts = { reporting_id: 8771348140 }
 
 
 const newRuleObject = {
- 
-    "event": {
-      "ruleId": "0",
-      "active": true,
-      "name": "Rule Name(edit me)",
-      "actionType": "impute",
-      "validationType": "validation",
-      "rulePriority": "5",
-      "params": {
-        "rvs": "['PAY_ANN']",
-        rvsJSON:['PAY_ANN'],
-        "action": [{RCPT_TOT:'RCPT_TOT'}],
-        "message": "Enter the message you want to display...",
-        "actionType": "impute"
-      },
-      "type": "0"
+
+  "event": {
+    "ruleId": "0",
+    "active": true,
+    "name": "CHANGING and adding a new rule",
+    "actionType": "impute",
+    "validationType": "validation",
+    "rulePriority": "5",
+    "params": {
+      "rvs": "['PAY_ANN']",
+      rvsJSON: ['PAY_ANN'],
+      "action": [{ RCPT_TOT: 'RCPT_TOT' }],
+      "message": "Enter the message you want to display...",
+      "actionType": "impute"
     },
-    "index": -1,
-    "conditions": {
-      "all": [
-        {
-          "fact": "checkCondition",
-          "path": "$.value",
-          "operator": "equal",
-          "value": true,
-          "params": {
-            "conditionstring": "RCPT_TOT > 0"
-          }
+    "type": "0"
+  },
+  "index": -1,
+  "conditions": {
+    "all": [
+      {
+        "fact": "checkCondition",
+        "path": "$.value",
+        "operator": "equal",
+        "value": true,
+        "params": {
+          "conditionstring": "RCPT_TOT > 0"
         }
-      ]
-    }
+      }
+    ]
+  }
 }
 
 
@@ -84,11 +84,12 @@ class RulesGrid extends React.Component {
 
       columnDefs: [
         { headerName: 'Active', field: 'active', cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', checkboxSelection: true },
-        { headerName: 'ID', field: 'id', sortable: true, filter: 'agTextColumnFilter',
-      
-        comparator: (a,b)=>{return a -b}
-      
-      },
+        {
+          headerName: 'ID', field: 'id', sortable: true, filter: 'agTextColumnFilter',
+
+          comparator: (a, b) => { return a - b }
+
+        },
         { headerName: 'Name', field: 'name', sortable: true, filter: 'agTextColumnFilter', },
 
         { headerName: 'Rule Condition', field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
@@ -110,20 +111,103 @@ class RulesGrid extends React.Component {
         { headerName: 'Created At', field: 'created_at', sortable: true, filter: 'agTextColumnFilter', },
         { headerName: 'Modified At', field: 'modified_at', sortable: true, filter: 'agTextColumnFilter', }
       ],
-      rowData: []
+      rowData: [],
+      backupRowData: []
     }
     this.onGridReady = this.onGridReady.bind(this)
     this.createNewRow = this.createNewRow.bind(this)
-    this.performCrudOperations  = this.performCrudOperations.bind(this)
+    this.performCrudOperations = this.performCrudOperations.bind(this)
     this.getRowId = this.getRowId.bind(this)
+    this.loadData = this.loadData.bind(this)
   }
-  componentDidMount() {
 
+  getRowNodeId = data => {
+    return data.key;
+  };
+
+  addRowData = () => {
+    let newRowData = this.state.rowData.slice();
+    let newId =
+      this.state.rowData.length === 0
+        ? 0
+        : this.state.rowData[this.state.rowData.length - 1].id + 1;
+
+
+
+    let newRow  = {
+      parsed_rule: newRuleObject,
+      active: true,
+      type: 'impute',
+      data: newRuleObject,
+      description: 'New Rule',
+      name: newRuleObject.event.name,
+      key: newId
+
+    } 
+
+
+
+    newRowData.push(newRow);
+    this.setState({ rowData: newRowData });
+  };
+
+  removeRowData = () => {
+    let selectedRow = this.gridApi.getSelectedRows()[0];
+    let newRowData = this.state.rowData.filter(row => {
+      return row !== selectedRow;
+    });
+    this.setState({ rowData: newRowData });
+  };
+
+  updateEvenRowData = () => {
+    let newRowData = this.state.rowData.map((row, index) => {
+      if (index % 2 === 0) {
+        return { ...row, athlete: "Even Row" };
+      }
+      return row;
+    });
+    this.setState({ rowData: newRowData });
+  };
+
+  updateOddRowData = () => {
+    let newRowData = this.state.rowData.map((row, index) => {
+      if (index % 2 !== 0) {
+        return { ...row, athlete: "Odd Row" };
+      }
+      return row;
+    });
+    this.setState({ rowData: newRowData });
+  };
+
+  resetRowData = () => {
+    this.setState({ rowData: this.state.backupRowData });
+  };
+
+
+
+
+
+
+
+
+
+  componentDidMount() {
+    this.loadData()
+  }
+  async loadData() {
+    let self = this
     let url = HOSTURL + '/rulesrepo?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
-    axios.get(url)
-      .then(res => {
-        this.setState({ rowData: res.data.data, ruleCounts:res.data.data.length });
-      });
+
+    let ret = await axios.get(url)
+
+    let rowData = ret.data.data
+    rowData = rowData.map((row,index) => {
+      return{...row,key:index+1}
+    })
+    this.debug({rowData, log:'line 207: LOADING DATA FROM DB. check for key in rulesgrid'} )
+    this.setState({ rowData, backupRowData: rowData,  ruleCounts: ret.data.data.length });
+
+
   }
 
   detailCellRenderer(params) {
@@ -131,11 +215,9 @@ class RulesGrid extends React.Component {
     let rule = [params.data.data]
 
     return (<div className="rule-flex-container_X">
-      <RuleEditor conditions={rule} 
-      performCrudOperations ={this.performCrudOperations}
-     
-      
-      facts={facts} decisionIndex={0} /> </div>)
+      <RuleEditor conditions={rule}
+        performCrudOperations={this.performCrudOperations}
+        facts={facts} decisionIndex={params.rowIndex} /> </div>)
 
   }
   getRulePriority(params) {
@@ -178,41 +260,44 @@ class RulesGrid extends React.Component {
     if (rowIndex) this.createNewRow()
   }
 
-  debug(data){
-    this.props.handleDebug('ADD', { label: 'time', data}, 0)
+  debug(data) {
+    this.props.handleDebug('ADD', { label: 'time', data }, 0)
   }
 
 
- 
+
 
   getRowId = params => params.data.id;
 
   performCrudOperations = (operation, rowIndex, rowData) => {
-
-  
     // Get a reference to the ag-Grid component
     const gridApi = this.gridApi;
-
-
-    // rowData = newRuleObject // testing
-
-
-
-    this.debug( {rowData, log:'"🚀 ~ file: RulesGrid.js ~ line 193 ~ RulesGrid ~ gridApi", gridApi' })
     
- 
 
     if (operation === 'create') {
       // Insert a new row
       gridApi.updateRowData({ add: [rowData], addIndex: 0 });
+
+      let allRows = this.state.rowData
+      allRows.push(rowData);
+      this.setState({ rowData: allRows });
     } else if (operation === 'read') {
       // Get the row data for a specific row
       const rowNode = gridApi.getRowNode(rowIndex);
       const rowData = rowNode.data;
-      console.log(`Row data: ${rowData}`);
     } else if (operation === 'update') {
       // Update an existing row
-      gridApi.applyTransaction({ update: [{ index: rowIndex, data: rowData }] });
+
+
+       gridApi.updateRowData({ update: [{ index: rowData.key, data: rowData }] });
+
+      const allRowData = this.state.rowData
+
+     let out = []
+     allRowData.forEach(row => {out.push(row)})
+      out[rowData.key-1] = rowData
+       this.setState({ rowData: out});
+
     } else if (operation === 'delete') {
       // Delete an existing row
       gridApi.applyTransaction({ remove: [rowData] });
@@ -230,9 +315,12 @@ class RulesGrid extends React.Component {
       name: newRuleObject.event.name,
       id: 0
 
-  }
+    }
 
-    this.performCrudOperations('create', null, data);
+
+
+    return data
+    // this.performCrudOperations('create', null, data);
   }
 
   onFirstDataRendered = (params) => {
@@ -243,44 +331,63 @@ class RulesGrid extends React.Component {
     }, 0);
   }
 
+  
+
   onGridReady = (params) => {
     this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+    this.loadData()
   }
 
   handleCancelNewRow = (params) => {
     this.setState({ displayNewRow: !this.state.displayNewRow });
   }
+  deleteSelectedRows = () => {
+    // Get a reference to the ag-Grid component
+    const gridApi = this.gridApi;
 
+    // Get the selected row nodes
+    const selectedRowNodes = gridApi.getSelectedNodes();
+
+    // Get the data for the selected rows
+    const selectedRowData = selectedRowNodes.map(node => node.data);
+
+    // Delete the selected rows
+    gridApi.updateRowData({ remove: selectedRowData });
+  }
 
   render() {
-    const { rowIndex } = this.state
+    const { rowIndex, rowData } = this.state
 
     const buttonProps = { primaryLabel: 'Add Rule', secondaryLabel: 'Cancel' };
 
     return (
       <div>
         <div className="btn-group">
-          <Button label={buttonProps.primaryLabel} onConfirm={this.createNewRow} classname="primary-btn" />
-        
+          <Button label={buttonProps.primaryLabel} onConfirm={this.addRowData} classname="primary-btn" />
+          <Button label="Reload" onConfirm={this.loadData} classname="primary-btn" />
+          <Button label="Delete" onConfirm={this.deleteSelectedRows} classname="primary-btn" />
+          <Button label="Reset" onClick={() => this.resetRowData()}>Reset rows</Button>
         </div>
 
-      
+
         <div className="ag-theme-alpine" id="myGrid" style={{ height: 1200 }}>
           <AgGridReact
 
             onRowClicked={(e) => {
               this.setState({ selectedCondition: e.data.parsed_rule, rowIndex: e.rowIndex })
-            
+
             }
             }
             onGridReady={this.onGridReady}
+            getRowNodeId={this.getRowNodeId}
 
             columnDefs={this.state.columnDefs}
-            rowData={this.state.rowData}
+            rowData={rowData}
             animateRows={true}
             masterDetail={true}
             detailCellRenderer={this.detailCellRenderer.bind(this)}
-            detailCellRendererParams={this.state.selectedCondition}
+            // detailCellRendererParams={this.state.selectedCondition}
             detailRowAutoHeight={true}
             embedFullWidthRows={true}
             rowSelection={'multiple'}

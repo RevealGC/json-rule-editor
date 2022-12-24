@@ -255,10 +255,10 @@ class RuleEditor extends Component {
 
 
 
-        let rowData = {parsed_rule: condition, id:0, data:condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority} 
+        let rowData = {parsed_rule: condition, id:ruleId, data:condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority, key:this.props.decisionIndex} 
             this.addDebug({rowData, log:'line 261 in ruleeditor'})
         
-        this.props.performCrudOperations('create', 0, rowData);
+        this.props.performCrudOperations('update', this.props.decisionIndex, rowData);
         // (condition.index == -1) ? 'ADD' : 'UPDATE'
         // this.props.handleDecision((condition.index == -1) ? 'ADD' : 'UPDATE', {
         //     condition,
