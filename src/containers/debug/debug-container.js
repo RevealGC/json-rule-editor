@@ -143,7 +143,7 @@ debugPanelAttribute(data) {
         const { background } = this.context;
 
         return (
-            <div>
+            <div >
                 <div className={`attributes-header ${background}`}>
                     <div >
                         <span className="attr-link" onClick={this.props.resetDebug}>

@@ -125,7 +125,20 @@ class ApplicationContainer extends Component {
             <React.Fragment>
                 <ApperanceContext.Provider value={this.state.theme}>
                     <Wrapper>
-                        <SplitPane split="vertical" collapsedSizes={['85%', '15%']} minSize={'15%'}   >
+                        <SplitPane split="vertical"    
+                 
+                 initialSizes={[10,1]}
+                        collapseOptions={{
+                            beforeToggleButton: <Button>⬅</Button>,
+                            afterToggleButton: <Button>➡</Button>,
+                            overlayCss: { backgroundColor: "black" },
+                            buttonTransition: "zoom",
+                            buttonPositionOffset: -20,
+                            collapsedSize: 50,
+                            collapseTransitionTimeout: 350,
+                          }}
+                        
+                        >
                             <div style={{ overflow: 'auto' }} >
                                 <Title title={'Q Rule Editor'} />
                                 <NavigationPanel closedState={closednav}
@@ -137,7 +150,7 @@ class ApplicationContainer extends Component {
                             </div>
                             <div>
                                 <Title title={'QRE Output'} />
-                                <DebugContainer debugData={{debugData}}></DebugContainer>
+                                <DebugContainer key='debug' debugData={{debugData}}></DebugContainer>
                             </div>
                         </SplitPane>
                     </Wrapper>

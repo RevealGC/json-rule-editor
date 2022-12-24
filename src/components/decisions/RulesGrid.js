@@ -17,6 +17,7 @@ import axios from 'axios';
 
 import RuleEditor from './ruleeditor'
 
+
 import { handleDebug } from '../../actions/debug';
 
 const HOSTURL = 'http://localhost'
@@ -214,7 +215,7 @@ class RulesGrid extends React.Component {
 
     let rule = [params.data.data]
 
-    return (<div className="rule-flex-container_X">
+    return (<div >
       <RuleEditor conditions={rule}
         performCrudOperations={this.performCrudOperations}
         facts={facts} decisionIndex={params.rowIndex} /> </div>)
@@ -358,16 +359,40 @@ class RulesGrid extends React.Component {
 
   render() {
     const { rowIndex, rowData } = this.state
+    const { background } = this.context;
 
     const buttonProps = { primaryLabel: 'Add Rule', secondaryLabel: 'Cancel' };
 
     return (
       <div>
+
+
+<div className={`attributes-header ${background}`}>
+          
+          <div className="attr-link" onClick={this.addRowData}>
+              <span className="plus-icon" /><span className="text">Add</span> 
+          </div>
+          <div className="attr-link" onClick={this.deleteSelectedRows}>
+               <span className="delete-icon" /><span className="text">Delete</span> 
+          </div>
+          <div className="attr-link" onClick={this.resetRowData}>
+               <span className="reset-icon" /><span className="text">Reset</span> 
+          </div>
+
+          <div className="attr-link" onClick={this.loadData}>
+               <span className="submit-icon" /><span className="text">Load</span> 
+          </div>
+          
+      </div>
+
+
+
+
         <div className="btn-group">
-          <Button label={buttonProps.primaryLabel} onConfirm={this.addRowData} classname="primary-btn" />
-          <Button label="Reload" onConfirm={this.loadData} classname="primary-btn" />
-          <Button label="Delete" onConfirm={this.deleteSelectedRows} classname="primary-btn" />
-          <Button label="Reset" onClick={() => this.resetRowData()}>Reset rows</Button>
+          {/* <Button label={buttonProps.primaryLabel} onConfirm={this.addRowData} classname="primary-btn" /> */}
+          {/* <Button label="Reload" onConfirm={this.loadData} classname="primary-btn" />
+          <Button label="Delete" onConfirm={this.deleteSelectedRows} classname="primary-btn" /> */}
+          {/* <Button label="Reset" onClick={() => this.resetRowData()}>Reset rows</Button> */}
         </div>
 
 
