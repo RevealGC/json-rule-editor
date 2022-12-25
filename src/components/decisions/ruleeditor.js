@@ -199,6 +199,7 @@ class RuleEditor extends Component {
 
     componentDidMount() {
         this.handleCompileConditionString()
+        this.generateDescription()
     }
     handleTab = (tabName) => {
         this.setState({ activeTab: tabName });
@@ -528,12 +529,25 @@ class RuleEditor extends Component {
         this.props.handleDebug('ADD', { label: 'time', data: { result } }, 0)
     }
 
+
+    generateDescription(){
+        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject,conditionstring, rulePriority } = this.state
+
+        // If: 
+        let description = 'Rule '+name+': If '+conditionstring + ' then send a message: ' + message + ' and track these facts: ' +JSON.stringify(responseVariables) + '. Also perform the following actions:'+JSON.stringify(action)+'. This rule is of type: ' + validationType + '.  It has a rule priority of ' + rulePriority+ ' on a scale of 1-10.'
+        this.setState({description})
+  
+        return description;
+    }
     /**
      * 
      * @returns the rule object and is not an array. used for display and running the rule
+     * added a description field as a state to 
      */
     formRule() {
         const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
+
+
         let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message } }
 
 
@@ -902,9 +916,41 @@ class RuleEditor extends Component {
 
             (<div style={{ width: '800px', margin: '60px', 'padding-bottom': '100px', }}>
                 <div title={name} >
-
+              
                     <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
                     <div className="tab-page-container">
+
+
+
+                    <textarea
+                        style={{
+                            width: '100%', height: '100px', padding: '20px',
+                            'box-sizing': 'border-box',
+                            border: '2px solid #ccc',
+                            'border-radius': '4px',
+                            'background-color': '#f8f8f8',
+                            'font-size': '16px',
+                            'resize': 'none'
+                        }}
+
+
+
+
+                        className="ag-theme-alpine" 
+                        value={this.state.description}
+                        label="Rule Condition Error"
+                        placeholder='Enter the conditions'
+
+                        readOnly={true} />
+
+
+
+
+
+
+
+
+                          
                         {this.state.activeTab === 'If-Then' &&
                             <div>
                                 {this.ifThenPanel()}
@@ -927,6 +973,10 @@ class RuleEditor extends Component {
                                     }
                                         value={rulePriority} label="Weights" />
                                 </Panel>
+                             
+                                     
+
+                             
                             </div>}
 
                         <div className="btn-group">
