@@ -20,6 +20,8 @@ import RuleEditor from './ruleeditor'
 
 import { handleDebug } from '../../actions/debug';
 
+import { addAllRulesRedux } from '../../actions/ruleset';
+
 const HOSTURL = 'http://localhost'
 
 const arrayToString = (arr) => {
@@ -77,9 +79,12 @@ class RulesGrid extends React.Component {
   constructor(props) {
     super(props);
     this.gridApi = ''
+    this.allRulesRedux = this.props.allRulesRedux
+
     this.state = {
       selectedCondition: {},
       rowIndex: 0,
+      allRulesRedux: this.props.allRulesRedux,
       ruleCounts: 0,
       displayNewRow: false,
 
@@ -120,6 +125,7 @@ class RulesGrid extends React.Component {
     this.performCrudOperations = this.performCrudOperations.bind(this)
     this.getRowId = this.getRowId.bind(this)
     this.loadData = this.loadData.bind(this)
+    this.addAllRulesRedux = this.props.addAllRulesRedux.bind(this)
   }
 
   getRowNodeId = data => {
@@ -193,20 +199,32 @@ class RulesGrid extends React.Component {
 
 
   componentDidMount() {
+
+
     this.loadData()
   }
+
+
+
   async loadData() {
-    let self = this
+
+
+    let allRulesRedux = this.props.allRulesRedux
+    if(allRulesRedux.length > 0) {
+      // pull from redux state
+      this.setState({rowData: allRulesRedux})
+      return;
+
+    }
     let url = HOSTURL + '/rulesrepo?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
-
     let ret = await axios.get(url)
-
     let rowData = ret.data.data
     rowData = rowData.map((row,index) => {
       return{...row,key:index+1}
     })
     this.debug({rowData, log:'line 207: LOADING DATA FROM DB. check for key in rulesgrid'} )
     this.setState({ rowData, backupRowData: rowData,  ruleCounts: ret.data.data.length });
+    this.props.addAllRulesRedux(rowData)
 
 
   }
@@ -298,6 +316,7 @@ class RulesGrid extends React.Component {
      allRowData.forEach(row => {out.push(row)})
       out[rowData.key-1] = rowData
        this.setState({ rowData: out});
+       this.props.addAllRulesRedux(out)
 
     } else if (operation === 'delete') {
       // Delete an existing row
@@ -430,6 +449,7 @@ class RulesGrid extends React.Component {
 
 RulesGrid.defaultProps = {
   ruleset: {},
+
   handleAttribute: () => false,
   handleDecisions: () => false,
   updatedFlag: false,
@@ -437,11 +457,13 @@ RulesGrid.defaultProps = {
 
 const mapStateToProps = (state) => ({
   ruleset: state.ruleset.rulesets[state.ruleset.activeRuleset],
+  allRulesRedux : state.ruleset.allRulesRedux, // gets all the rules pulled from the db and not from the ruleset.
   updatedFlag: state.ruleset.updatedFlag,
   facts: state.ruleset.rulesets[state.ruleset.activeRuleset]
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  addAllRulesRedux: ( rules) => dispatch(addAllRulesRedux(rules)),
   handleAttribute: (operation, attribute, index) => dispatch(handleAttribute(operation, attribute, index)),
   handleDecisions: (operation, decision) => dispatch(handleDecision(operation, decision)),
   handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))

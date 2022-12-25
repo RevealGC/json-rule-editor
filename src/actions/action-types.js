@@ -22,3 +22,9 @@ export const RESET_DEBUG = 'RESET_DEBUG';
 export const REMOVE_DEBUG = 'REMOVE_DEBUG';
 export const UPDATE_DEBUG = 'UPDATE_DEBUG';
 
+
+export const ADD_ALLRULES_REDUX = 'ADD_ALLRULES_REDUX';
+
+
+
+

@@ -30,9 +30,21 @@ export const addRuleset = (name) => (dispatch) => {
     });
 }
 
+
+
 export const updateRulesetIndex = (name) => {
     return ({
         type: ActionTypes.UPDATE_RULESET_INDEX,
         payload: { name }
+    })
+}
+
+// Takes an array of rules and is called from rulegrid.js and saves all rules from the db in the redux state
+// the rules are accessed via its property allRulesRedux
+export const addAllRulesRedux = (rules) => (dispatch) => {
+    dispatch(updateState('open'));
+    return dispatch({
+        type: ActionTypes.ADD_ALLRULES_REDUX,
+        payload: rules
     })
 }

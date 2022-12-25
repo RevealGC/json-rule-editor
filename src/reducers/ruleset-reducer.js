@@ -14,6 +14,7 @@ const dateTime = () =>{
 var initTime = dateTime()
 const initialState = {
     rulesets: [],
+    allRulesRedux:[],
     activeRuleset: 0,
     updatedFlag: false,
     uploadedRules: [],
@@ -65,6 +66,16 @@ function ruleset(state = initialState, action='') {
             const count = state.rulesets.length === 0 ? 0 : state.rulesets.length;
              return { ...state, rulesets: state.rulesets.concat(rulset),  activeRuleset: count}
         }
+
+
+        case ActionTypes.ADD_ALLRULES_REDUX: {
+
+            const rules = action.payload;
+      
+             return { ...state, allRulesRedux: rules}
+        }
+
+
 
         case ActionTypes.UPDATE_RULESET_INDEX: {
 
