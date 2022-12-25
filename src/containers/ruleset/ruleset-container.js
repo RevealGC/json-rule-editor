@@ -102,7 +102,7 @@ function stringifierFact(params) {
 
 
 
-const tabs = [{name: 'Rules'},{name: 'Facts'}, {name: 'Decisions'}, {name: 'Validate'}, {name: 'Generate'},  { name: 'Spad' }];
+const tabs = [{name: 'Facts'},{name: 'Rules'},  {name: 'Validate'},  { name: 'Spad' }, {name: 'Generate'}];
 
 
 
@@ -110,7 +110,7 @@ class RulesetContainer extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {activeTab: 'Rules', generateFlag: false, rowData: [],
+        this.state = {activeTab: 'Facts', generateFlag: false, rowData: [],
         columnDefs: columnDefs,
         detailRowAutoHeight: true,
         detailCellRendererParams: {

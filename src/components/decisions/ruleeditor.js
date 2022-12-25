@@ -107,7 +107,7 @@ class RuleEditor extends Component {
         const params = condition.event && condition.event.params ? condition.event.params : []
         const action = params.action || [];
 
-        const validationType = condition.event && condition.event.params && condition.event.params.validationType ? condition.event.params.validationType : 'validation'
+        const validationType = condition.event &&  condition.event.validationType ? condition.event.validationType : 'validation'
 
         // Default the ruleId to 0 if its a new record and set rulePriority to 5 by default
         const ruleId = condition.event && condition.event.ruleId ? condition.event.ruleId || condition.event.type : 0
@@ -302,31 +302,37 @@ class RuleEditor extends Component {
         this.setState({ ruleId });
     }
     handleChangeRuleName(event) {
+        event.preventDefault()
         let { outcome } = this.state
         let value = event.target.value
         this.setState({ name: value })
 
     }
     handleChangeRuleMessage(event) {
+        event.preventDefault()
         let { outcome } = this.state
         let value = event.target.value
         this.setState({ message: value })
     }
 
     handleChangeActionOptions(event) {
+        event.preventDefault()
         let val = event.target.value
         const { actionType } = this.state;
         this.setState({ actionType: event.target.value });
     }
 
     handleServiceGUPDRadioGroup(event) {
+        event.preventDefault()
         const { apiGUPType } = this.state
         this.setState({ apiGUPType: event.target.value })
     }
     handleValidationType(event) {
+        event.preventDefault()
         this.setState({ validationType: event.target.value })
     }
     handleRulePriority(event) {
+        event.preventDefault()
         this.setState({ rulePriority: event.target.value })
     }
 
@@ -745,7 +751,7 @@ class RuleEditor extends Component {
 
     onChangeConditionString(event) {
 
-
+        event.preventDefault()
         const conditionstring = event.target.value
         const conditionStringObject = this.state.conditionStringObject
 

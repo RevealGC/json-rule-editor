@@ -17,6 +17,8 @@ import axios from 'axios';
 
 import RuleEditor from './ruleeditor'
 
+import { stack as Menu } from 'react-burger-menu';
+
 
 import { handleDebug } from '../../actions/debug';
 
@@ -156,6 +158,7 @@ class RulesGrid extends React.Component {
 
     newRowData.push(newRow);
     this.setState({ rowData: newRowData });
+    this.props.addAllRulesRedux(newRowData);
   };
 
   removeRowData = () => {
@@ -191,7 +194,11 @@ class RulesGrid extends React.Component {
   };
 
 
-
+  reloadRulesFromDB = () => {
+    this.setState({ rowData: [] });
+    this.props.addAllRulesRedux([])
+    this.loadData()
+  };
 
 
 
@@ -228,6 +235,11 @@ class RulesGrid extends React.Component {
 
 
   }
+
+
+
+
+
 
   detailCellRenderer(params) {
 
@@ -386,7 +398,7 @@ class RulesGrid extends React.Component {
       <div>
 
 
-<div className={`attributes-header ${background}`}>
+<div className={`attributes-header ${background}`}  >
           
           <div className="attr-link" onClick={this.addRowData}>
               <span className="plus-icon" /><span className="text">Add</span> 
@@ -394,25 +406,24 @@ class RulesGrid extends React.Component {
           <div className="attr-link" onClick={this.deleteSelectedRows}>
                <span className="delete-icon" /><span className="text">Delete</span> 
           </div>
+
+          <div className="attr-link" onClick={this.deleteSelectedRows}>
+               <span className="plus-icon" /><span className="text">Deploy</span> 
+          </div>
+
           <div className="attr-link" onClick={this.resetRowData}>
                <span className="reset-icon" /><span className="text">Reset</span> 
           </div>
-
-          <div className="attr-link" onClick={this.loadData}>
-               <span className="submit-icon" /><span className="text">Load</span> 
+          <div className="attr-link" onClick={this.reloadRulesFromDB}>
+               <span className="reset-icon" /><span className="text">Load from DB</span> 
           </div>
+      
+
+   
+    
           
       </div>
 
-
-
-
-        <div className="btn-group">
-          {/* <Button label={buttonProps.primaryLabel} onConfirm={this.addRowData} classname="primary-btn" /> */}
-          {/* <Button label="Reload" onConfirm={this.loadData} classname="primary-btn" />
-          <Button label="Delete" onConfirm={this.deleteSelectedRows} classname="primary-btn" /> */}
-          {/* <Button label="Reset" onClick={() => this.resetRowData()}>Reset rows</Button> */}
-        </div>
 
 
         <div className="ag-theme-alpine" id="myGrid" style={{ height: 1200 }}>
