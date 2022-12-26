@@ -30,7 +30,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 
 
 
-const tabs = [{ name: 'If-Then' }, { name: 'Action' }, { name: 'Settings' }];
+const tabs = [{ name: 'If-Then' }, { name: 'Action' }, { name: 'API' }, { name: 'Settings' }];
 const HOSTURL = 'http://localhost'
 
 const newRuleObject = {
@@ -86,7 +86,7 @@ class RuleEditor extends Component {
         console.log("🚀 ~ file: ruleeditor.js ~ line 85 ~ RuleEditor ~ constructor ~ conditions", conditions)
 
         const handleCancel = this.props.handleCancel
-        const facts =  this.props.facts.facts 
+        const facts = this.props.facts.facts
 
 
         const condition = (conditions.length) ? conditions[0] : newRuleObject.condition
@@ -97,7 +97,7 @@ class RuleEditor extends Component {
 
         const conditionStringObject = { parseSuccess: true, ruleResult: true }
 
-        const apiChecked = condition.event && condition.event.apiChecked ? condition.event.apiChecked : false
+        const apiChecked = condition.event.params && condition.event.params.apiChecked ? condition.event.params.apiChecked : false
 
         const active = condition.event && condition.event.active ? condition.event.active : false
 
@@ -107,7 +107,7 @@ class RuleEditor extends Component {
         const params = condition.event && condition.event.params ? condition.event.params : []
         const action = params.action || [];
 
-        const validationType = condition.event &&  condition.event.validationType ? condition.event.validationType : 'validation'
+        const validationType = condition.event && condition.event.validationType ? condition.event.validationType : 'validation'
 
         // Default the ruleId to 0 if its a new record and set rulePriority to 5 by default
         const ruleId = condition.event && condition.event.ruleId ? condition.event.ruleId || condition.event.type : 0
@@ -153,7 +153,7 @@ class RuleEditor extends Component {
             decisions: props.decisions || [],
             bannerflag: false
         };
-            console.log("🚀 ~ file: ruleeditor.js:156 ~ RuleEditor ~ constructor ~ facts", facts)
+        console.log("🚀 ~ file: ruleeditor.js:156 ~ RuleEditor ~ constructor ~ facts", facts)
         this.handleUpdateRule = this.handleUpdateRule.bind(this);
         this.updateCondition = this.updateCondition.bind(this);
         this.editCondition = this.editCondition.bind(this);
@@ -366,14 +366,14 @@ class RuleEditor extends Component {
                     readOnly={true} />
             </div> */}
 
-            {/* <Panel title='Rule Name' > */}
+            <Panel title='Rule Name' >
             <InputField onChange={(value) => this.handleChangeRuleName(value)}
                 value={name}
-                error={outcome.error && outcome.error.value} label="Name"
+                error={outcome.error && outcome.error.value} label=""
                 placeholder='Enter a rule name...'
 
             />
-            {/* </Panel> */}
+            </Panel>
 
             {/* <Panel title='Category and Weights' >
                 <InputField onChange={(value) => this.handleValidationType(value)}
@@ -530,13 +530,24 @@ class RuleEditor extends Component {
     }
 
 
-    generateDescription(){
-        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject,conditionstring, rulePriority } = this.state
+
+    generateApiDescription() {
+        const { apiChecked, apiSource } = this.state;
+        if (!apiChecked) return ('No api has been defined.')
+        return ('API end point is: ' + JSON.stringify(apiSource))
+
+    }
+
+    generateDescription() {
+        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, conditionstring, rulePriority } = this.state
 
         // If: 
-        let description = 'Rule '+name+': If '+conditionstring + ' then send a message: ' + message + ' and track these facts: ' +JSON.stringify(responseVariables) + '. Also perform the following actions:'+JSON.stringify(action)+'. This rule is of type: ' + validationType + '.  It has a rule priority of ' + rulePriority+ ' on a scale of 1-10.'
-        this.setState({description})
-  
+        let description = 'Rule ' + name + ': If ' + conditionstring + ' then send a message: ' + message + ' and track these facts: ' + JSON.stringify(responseVariables) + '. Also perform the following actions:' + JSON.stringify(action) + '. This rule is of type: ' + validationType + '.  It has a rule priority of ' + rulePriority + ' on a scale of 1-10.' +
+            this.generateApiDescription()
+
+
+        this.setState({ description })
+
         return description;
     }
     /**
@@ -545,10 +556,13 @@ class RuleEditor extends Component {
      * added a description field as a state to 
      */
     formRule() {
-        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
+        const { condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority,
+            apiChecked, apiSource } = this.state
+
+        this.generateApiDescription()
 
 
-        let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message } }
+        let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message, apiChecked, apiSource } }
 
 
         conditionStringObject.condition.conditions.all[0].params.conditionstring = this.state.conditionstring
@@ -628,26 +642,24 @@ class RuleEditor extends Component {
                     <Radio value="notify" />Notify
                     <Radio value="impute" />Impute
                     <Radio value="aggregate" />Aggregate
-                    <Radio value="api" />API
                 </RadioGroup>
-               {(actionType==='api')? this.apiPanel(): <div></div>}
+                {/* {(actionType==='api')? this.apiPanel(): <div></div>} */}
             </Panel>)
         }
         else
 
             return (actionType == 'impute' || actionType == 'aggregate') ?
                 (<Panel title='Imputations and Aggregations'>
-                    <div>Active {JSON.stringify(active)} <ToggleButton onToggle={this.onToggleActive} value={active} > </ToggleButton>
-                    </div>
+
 
                     <RadioGroup name="actionType" selectedValue={actionType} onChange={this.handleChangeActionType}>
                         <Radio value="notify" />Notify
                         <Radio value="impute" />Impute
                         <Radio value="aggregate" />Aggregate
-                        <Radio value="api" />API
+                  
                     </RadioGroup>
 
-                    API Active Status <ToggleButton onToggle={this.onToggleAPI} value={apiChecked} />
+               
 
 
 
@@ -685,9 +697,9 @@ class RuleEditor extends Component {
 
 
     apiPanel() {
-        let { actionType, activeAPITab, apiSource } = this.state;
+        let { actionType, apiChecked, activeAPITab, apiSource } = this.state;
         let onEdit = true, onAdd = true, onDelete = true
-        return (actionType == 'api') ?
+        return (apiChecked) ?
             (<Panel title='API'>
                 <div id="treeWrapper">
                     <ReactJson src={apiSource} displayObjectSize={false} displayDataTypes={false}
@@ -747,7 +759,7 @@ class RuleEditor extends Component {
 
                 })
                 .catch(function (error) {
-                    self.setState({ conditionStringObject: error.response.data.error.parent.hint })
+                    self.setState({ conditionStringObject: error.response.data.error })
                     console.log(error)
                 })
             console.log("🚀 ~ file: ruleeditor.js:732 ~ RuleEditor ~ handleCompileConditionString ~ facts", facts)
@@ -794,7 +806,7 @@ class RuleEditor extends Component {
 
                     <textarea
                         style={{
-                            width: '100%', height: '150px', padding: '20px',
+                            width: '100%', height: '100px', padding: '10px',
                             'box-sizing': 'border-box',
                             border: '2px solid #ccc',
                             'border-radius': '4px',
@@ -916,41 +928,43 @@ class RuleEditor extends Component {
 
             (<div style={{ width: '800px', margin: '60px', 'padding-bottom': '100px', }}>
                 <div title={name} >
-              
+
                     <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
                     <div className="tab-page-container">
 
 
 
-                    <textarea
-                        style={{
-                            width: '100%', height: '100px', padding: '20px',
-                            'box-sizing': 'border-box',
-                            border: '2px solid #ccc',
-                            'border-radius': '4px',
-                            'background-color': '#f8f8f8',
-                            'font-size': '16px',
-                            'resize': 'none'
-                        }}
+                        <textarea
+                            style={{
+                                width: '100%', height: '100px', padding: '20px',
+                                'box-sizing': 'border-box',
+                                border: '1px solid #eef',
+                                'border-radius': '4px',
+                                'background-color': '#f8f8f8',
+                                'font-size': '16px',
+                                'resize': 'none',
+                                color: 'gray',
+                                'font-style': 'italic'
+                            }}
 
 
 
 
-                        className="ag-theme-alpine" 
-                        value={this.state.description}
-                        label="Rule Condition Error"
-                        placeholder='Enter the conditions'
+                            className="ag-theme-alpine"
+                            value={this.state.description}
+                            label="Rule Condition Error"
+                            placeholder='Enter the conditions'
 
-                        readOnly={true} />
-
-
+                            readOnly={true} />
 
 
 
 
 
 
-                          
+
+
+
                         {this.state.activeTab === 'If-Then' &&
                             <div>
                                 {this.ifThenPanel()}
@@ -959,6 +973,13 @@ class RuleEditor extends Component {
 
                             </div>}
                         {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
+
+
+                        {this.state.activeTab === 'API' && <div> API Active Status <ToggleButton onToggle={this.onToggleAPI} value={apiChecked} />
+                            {this.apiPanel()}
+                        </div>}
+
+
                         {this.state.activeTab === 'Action' && <div> {this.responseVariablesPanel()}{this.imputeAggregatePanel()}</div>}
                         {this.state.activeTab === 'Settings' &&
                             <div>
@@ -973,10 +994,10 @@ class RuleEditor extends Component {
                                     }
                                         value={rulePriority} label="Weights" />
                                 </Panel>
-                             
-                                     
 
-                             
+
+
+
                             </div>}
 
                         <div className="btn-group">

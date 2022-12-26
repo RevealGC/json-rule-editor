@@ -16,6 +16,7 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import axios from 'axios';
 
 import RuleEditor from './ruleeditor'
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 import { stack as Menu } from 'react-burger-menu';
 
@@ -46,7 +47,7 @@ const newRuleObject = {
   "event": {
     "ruleId": "0",
     "active": true,
-    "name": "CHANGING and adding a new rule",
+    "name": "Creating a new rule. Change its name....",
     "actionType": "impute",
     "validationType": "validation",
     "rulePriority": "5",
@@ -54,7 +55,7 @@ const newRuleObject = {
       "rvs": "['PAY_ANN']",
       rvsJSON: ['PAY_ANN'],
       "action": [{ RCPT_TOT: 'RCPT_TOT' }],
-      "message": "Enter the message you want to display...",
+      "message": "Enter the message you want to display... . Some initial conditions have been pre-defined.",
       "actionType": "impute"
     },
     "type": "0"
@@ -89,6 +90,8 @@ class RulesGrid extends React.Component {
       allRulesRedux: this.props.allRulesRedux,
       ruleCounts: 0,
       displayNewRow: false,
+
+      submitAlert: false, removeAlert: false, successAlert: false, removeDecisionAlert: false,
 
       columnDefs: [
         { headerName: 'Active', field: 'active', cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', checkboxSelection: true },
@@ -128,6 +131,9 @@ class RulesGrid extends React.Component {
     this.getRowId = this.getRowId.bind(this)
     this.loadData = this.loadData.bind(this)
     this.addAllRulesRedux = this.props.addAllRulesRedux.bind(this)
+    this.removeDecisions = this.removeDecisions.bind(this);
+ 
+ 
   }
 
   getRowNodeId = data => {
@@ -247,6 +253,7 @@ class RulesGrid extends React.Component {
 
     return (<div >
       <RuleEditor conditions={rule}
+
         performCrudOperations={this.performCrudOperations}
         facts={this.props.facts} decisionIndex={params.rowIndex} /> </div>)
 
@@ -374,18 +381,89 @@ class RulesGrid extends React.Component {
   handleCancelNewRow = (params) => {
     this.setState({ displayNewRow: !this.state.displayNewRow });
   }
+
+  hideAlert = () => {
+    this.setState({
+        alert: null
+    });
+}
+removeDecisionAlert = () => {
+
+  return (<SweetAlert
+      warning
+      showCancel
+      confirmBtnText="Yes, Remove it!"
+      confirmBtnBsStyle="danger"
+      title="Are you sure you want to delete the selected rule(s)"
+      onConfirm={this.removeDecisions}
+      onCancel={this.cancelAlert}
+      focusCancelBtn
+  >
+      You will not be able to recover the changes!
+  </SweetAlert>)
+}
+
+alert = () => {
+  return (<div>
+      {/* {this.state.removeAlert && this.removeCaseAlert()} */}
+      {this.state.removeDecisionAlert && this.removeDecisionAlert()}
+      {this.state.successAlert && this.successAlert()}
+  </div>);
+}
+cancelAlert = () => {
+  this.setState({ removeAlert: false, successAlert: false, removeDecisionAlert: false });
+}
+
+
+removeDecisions(){
+  const gridApi = this.gridApi;
+
+  // Get the selected row nodes
+  const selectedRowNodes = gridApi.getSelectedNodes();
+      // Get the data for the selected rows
+      const selectedRowData = selectedRowNodes.map(node => node.data);
+      const rids = selectedRowData.map(r=>r.id)
+      
+      
+      try {
+      let url = HOSTURL + '/rulesrepo/'+JSON.stringify(rids)+'?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+      let result = axios.delete(url)
+      .then((response) => {
+
+        if (response.status === 200) {  
+          console.log("🚀 ~ file: RulesGrid.js:436 ~ .then ~ response", response)
+        }
+        
+
+    })
+    .catch(function (error) {
+     
+        console.log(error)
+    })
+  }
+    catch (e) {
+      console.log(e)
+  }
+
+      // Delete the selected rows
+      gridApi.updateRowData({ remove: selectedRowData });
+      this.setState({ successAlert: false, removeDecisionAlert: false})
+
+}
   deleteSelectedRows = () => {
     // Get a reference to the ag-Grid component
-    const gridApi = this.gridApi;
 
-    // Get the selected row nodes
-    const selectedRowNodes = gridApi.getSelectedNodes();
+    this.setState({ removeDecisionAlert: true });
+    // setting this state will opena a sweet alert which can call the gridapi and remove or cancel the alert.
 
-    // Get the data for the selected rows
-    const selectedRowData = selectedRowNodes.map(node => node.data);
 
-    // Delete the selected rows
-    gridApi.updateRowData({ remove: selectedRowData });
+    // const gridApi = this.gridApi;
+
+    // // Get the selected row nodes
+    // const selectedRowNodes = gridApi.getSelectedNodes();
+    // // this.showAlert("Delete rows", "Are you sure you want to delete"+ selectedRowNodes.length+" rows", 'warning')
+
+
   }
 
   render() {
@@ -396,7 +474,7 @@ class RulesGrid extends React.Component {
 
     return (
       <div>
-
+{this.alert()}
 
 <div className={`attributes-header ${background}`}  >
           
@@ -436,12 +514,16 @@ class RulesGrid extends React.Component {
             }
             onGridReady={this.onGridReady}
             getRowNodeId={this.getRowNodeId}
+            detailRowAutoHeight={true}
 
             columnDefs={this.state.columnDefs}
             rowData={rowData}
             animateRows={true}
             masterDetail={true}
+
             detailCellRenderer={this.detailCellRenderer.bind(this)}
+
+            
             // detailCellRendererParams={this.state.selectedCondition}
             detailRowAutoHeight={true}
             embedFullWidthRows={true}
