@@ -508,7 +508,7 @@ class RuleEditor extends Component {
         this.setState({ active: !active })
     }
     cancelAlert = () => {
-        // this.setState({ removeAlert: false, successAlert: false, removeDecisionAlert: false });
+        this.setState({ removeAlert: false, successAlert: false, removeDecisionAlert: false });
     }
     async handleTestRule() {
         const { condition, facts, conditionStringObject } = this.state
@@ -878,7 +878,13 @@ class RuleEditor extends Component {
 
 
 
-
+    alert = () => {
+        return (<div>
+            {/* {this.state.removeAlert && this.removeCaseAlert()} */}
+            {this.state.removeDecisionAlert && this.removeDecisionAlert()}
+            {this.state.successAlert && this.successAlert()}
+        </div>);
+      }
 
 
 
@@ -890,15 +896,17 @@ class RuleEditor extends Component {
         this.setState({ successAlert: false });
     }
 
-    // successAlert = () => {
-    //     return (<SweetAlert
-    //         success
-    //         title={"Rule has been deployed successfully!! "}
-    //         onConfirm={this.cancelAlert.bind(this)}
-    //         onCancel={this.cancelAlert.bind(this)}
-    //       >
-    //       </SweetAlert>);
-    // }
+    successAlert = () => {
+        return (<SweetAlert
+            success
+            title={"Rule has been deployed successfully!! "}
+            onConfirm={this.cancelAlert.bind(this)}
+            onCancel={this.cancelAlert.bind(this)}
+           
+          >
+            {this.state.updatedAlert}
+          </SweetAlert>);
+    }
 
 
     async handleDeployRule() {
@@ -915,7 +923,10 @@ class RuleEditor extends Component {
         }
         let result = await updateParsedRules(data)
         console.log("🚀 ~ file: ruleeditor.js:763 ~ RuleEditor ~ handleDeployRule ~ result", result)
-        alert("Rule # " + result[0].id + " was successfully deployed", '')
+
+        this.setState({successAlert: true, updatedAlert: "Rule # " + result[0].id + " was successfully deployed"})
+
+        // alert("Rule # " + result[0].id + " was successfully deployed", '')
     }
 
     render() {
@@ -927,6 +938,7 @@ class RuleEditor extends Component {
         return (!displayRuleEditor) ? (<div><span /></div>) :
 
             (<div style={{ width: '800px', margin: '60px', 'padding-bottom': '100px', }}>
+                {this.alert()}
                 <div title={name} >
 
                     <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />

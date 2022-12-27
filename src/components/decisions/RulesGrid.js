@@ -94,13 +94,23 @@ class RulesGrid extends React.Component {
       submitAlert: false, removeAlert: false, successAlert: false, removeDecisionAlert: false,
 
       columnDefs: [
-        { headerName: 'Active', field: 'active', cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', checkboxSelection: true },
+        { headerName: 'Active', field: 'active',  sortable: true, filter: 'agTextColumnFilter',hide: true },
         {
-          headerName: 'ID', field: 'id', sortable: true, filter: 'agTextColumnFilter',
+          headerName: '#', field: 'key', sortable: true,cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter',checkboxSelection: true,
 
           comparator: (a, b) => { return a - b }
 
         },
+
+        {
+          headerName: 'RID', field: 'id', sortable: true, filter: 'agTextColumnFilter', width:200,
+
+          comparator: (a, b) => { return a - b }
+
+        },
+
+
+
         { headerName: 'Name', field: 'name', sortable: true, filter: 'agTextColumnFilter', },
 
         { headerName: 'Rule Condition', field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
@@ -203,7 +213,7 @@ class RulesGrid extends React.Component {
   reloadRulesFromDB = () => {
     this.setState({ rowData: [] });
     this.props.addAllRulesRedux([])
-    this.loadData()
+    this.loadData(true)
   };
 
 
@@ -219,11 +229,11 @@ class RulesGrid extends React.Component {
 
 
 
-  async loadData() {
+  async loadData(init = false) {
 
 
     let allRulesRedux = this.props.allRulesRedux
-    if(allRulesRedux.length > 0) {
+    if(allRulesRedux.length > 0 && init == false) {
       // pull from redux state
       this.setState({rowData: allRulesRedux})
       return;
