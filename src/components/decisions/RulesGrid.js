@@ -127,10 +127,10 @@ class RulesGrid extends React.Component {
 
         { headerName: 'Priority', field: 'priority', sortable: true, valueGetter: this.getRulePriority, filter: 'agTextColumnFilter', },
 
-        { headerName: 'Created By', field: 'created_by', sortable: true, filter: 'agTextColumnFilter', },
-        { headerName: 'Modified By', field: 'modified_by', sortable: true, filter: 'agTextColumnFilter', },
-        { headerName: 'Created At', field: 'created_at', sortable: true, filter: 'agTextColumnFilter', },
-        { headerName: 'Modified At', field: 'modified_at', sortable: true, filter: 'agTextColumnFilter', }
+        { headerName: 'Created By', field: 'created_by', sortable: true, filter: 'agTextColumnFilter',hide: true },
+        { headerName: 'Modified By', field: 'modified_by', sortable: true, filter: 'agTextColumnFilter', hide: true},
+        { headerName: 'Created At', field: 'created_at', sortable: true, filter: 'agTextColumnFilter',hide: true },
+        { headerName: 'Modified At', field: 'modified_at', sortable: true, filter: 'agTextColumnFilter',hide: true }
       ],
       rowData: [],
       backupRowData: []
@@ -143,19 +143,21 @@ class RulesGrid extends React.Component {
     this.addAllRulesRedux = this.props.addAllRulesRedux.bind(this)
     this.removeDecisions = this.removeDecisions.bind(this);
  
- 
+ this.addRowData = this.addRowData.bind(this)
   }
 
   getRowNodeId = data => {
     return data.key;
   };
-
+/**
+ * create a new row add new row of a rule. addRule
+ */
   addRowData = () => {
     let newRowData = this.state.rowData.slice();
     let newId =
       this.state.rowData.length === 0
         ? 0
-        : this.state.rowData[this.state.rowData.length - 1].id + 1;
+        : this.state.rowData[this.state.rowData.length - 1].key + 1;
 
 
 
@@ -174,7 +176,20 @@ class RulesGrid extends React.Component {
 
     newRowData.push(newRow);
     this.setState({ rowData: newRowData });
+ 
+ 
+    // try {
+    //   this.gridApi.getDisplayedRowAtIndex(newId-1).setExpanded(true);
+    // } catch (error) {
+    //   console.log("🚀 ~ file: RulesGrid.js:184 ~ RulesGrid ~ error", error)
+      
+    // }
     this.props.addAllRulesRedux(newRowData);
+    // this.gridApi.getDisplayedRowAtIndex(1).setExpanded(true);
+    // this.gridApi.getDisplayedRowAtIndex(8).setExpanded(true)
+   
+ 
+
   };
 
   removeRowData = () => {
@@ -321,7 +336,7 @@ class RulesGrid extends React.Component {
     // Get a reference to the ag-Grid component
     const gridApi = this.gridApi;
     
-
+// not using create.  Leave it.
     if (operation === 'create') {
       // Insert a new row
       gridApi.updateRowData({ add: [rowData], addIndex: 0 });
@@ -376,6 +391,8 @@ class RulesGrid extends React.Component {
     setTimeout(function () {
       // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
       params.api.columnModel.autoSizeAllColumns(true)
+      params.api.getDisplayedRowAtIndex(0).setExpanded(true);
+      
       // gridRef.current.columnApi.autoSizeAllColumns(true);
     }, 0);
   }
@@ -462,25 +479,17 @@ removeDecisions(){
 }
   deleteSelectedRows = () => {
     // Get a reference to the ag-Grid component
+    const gridApi = this.gridApi;
+    const selectedRowNodes = gridApi.getSelectedNodes();
 
+    if(!selectedRowNodes.length) return
     this.setState({ removeDecisionAlert: true });
-    // setting this state will opena a sweet alert which can call the gridapi and remove or cancel the alert.
-
-
-    // const gridApi = this.gridApi;
-
-    // // Get the selected row nodes
-    // const selectedRowNodes = gridApi.getSelectedNodes();
-    // // this.showAlert("Delete rows", "Are you sure you want to delete"+ selectedRowNodes.length+" rows", 'warning')
-
-
   }
 
   render() {
     const { rowIndex, rowData } = this.state
     const { background } = this.context;
 
-    const buttonProps = { primaryLabel: 'Add Rule', secondaryLabel: 'Cancel' };
 
     return (
       <div>
@@ -492,18 +501,14 @@ removeDecisions(){
               <span className="plus-icon" /><span className="text">Add</span> 
           </div>
           <div className="attr-link" onClick={this.deleteSelectedRows}>
-               <span className="delete-icon" /><span className="text">Delete</span> 
+               <span className="reset-icon" /><span className="text">Delete</span> 
           </div>
 
-          <div className="attr-link" onClick={this.deleteSelectedRows}>
-               <span className="plus-icon" /><span className="text">Deploy</span> 
-          </div>
+         
 
-          <div className="attr-link" onClick={this.resetRowData}>
-               <span className="reset-icon" /><span className="text">Reset</span> 
-          </div>
+        
           <div className="attr-link" onClick={this.reloadRulesFromDB}>
-               <span className="reset-icon" /><span className="text">Load from DB</span> 
+               <span className="reset-icon" /><span className="text">Reload</span> 
           </div>
       
 
@@ -514,7 +519,7 @@ removeDecisions(){
 
 
 
-        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1200 }}>
+        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000 }}>
           <AgGridReact
 
             onRowClicked={(e) => {

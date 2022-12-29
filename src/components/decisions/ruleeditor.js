@@ -827,6 +827,7 @@ class RuleEditor extends Component {
                     <div> Syntax: {success ? 'Correct' : 'Incorrect'}</div>
                     <div  >Result: {hasError ? JSON.stringify(conditionStringObject) :
                         conditionStringObject.ruleResult.propertyName ? conditionStringObject.ruleResult.propertyName + " is unknown at this time." : JSON.stringify(conditionStringObject.ruleResult)}</div>
+                        Status: {conditionStringObject.value ? JSON.stringify(conditionStringObject.value): 'N/A'}
                 </div>
             </div>
             <div className="btn-group">
