@@ -827,7 +827,7 @@ class RuleEditor extends Component {
                     <div> Syntax: {success ? 'Correct' : 'Incorrect'}</div>
                     <div  >Result: {hasError ? JSON.stringify(conditionStringObject) :
                         conditionStringObject.ruleResult.propertyName ? conditionStringObject.ruleResult.propertyName + " is unknown at this time." : JSON.stringify(conditionStringObject.ruleResult)}</div>
-                        Status: {conditionStringObject.value ? JSON.stringify(conditionStringObject.value): 'N/A'}
+                        Status: {conditionStringObject.value ? JSON.stringify(conditionStringObject.value): 'false'}
                 </div>
             </div>
             <div className="btn-group">
@@ -880,7 +880,7 @@ class RuleEditor extends Component {
 
 
     alert = () => {
-        return (<div>
+        return (<div >
             {/* {this.state.removeAlert && this.removeCaseAlert()} */}
             {this.state.removeDecisionAlert && this.removeDecisionAlert()}
             {this.state.successAlert && this.successAlert()}
@@ -898,15 +898,20 @@ class RuleEditor extends Component {
     }
 
     successAlert = () => {
-        return (<SweetAlert
+        return (
+        
+         <div style={{ width:"fit-content"}}>
+        
+        <SweetAlert
             success
             title={"Rule has been deployed successfully!! "}
             onConfirm={this.cancelAlert.bind(this)}
             onCancel={this.cancelAlert.bind(this)}
            
+           
           >
             {this.state.updatedAlert}
-          </SweetAlert>);
+          </SweetAlert></div>);
     }
 
 

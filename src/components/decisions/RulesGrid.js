@@ -431,7 +431,7 @@ removeDecisionAlert = () => {
 }
 
 alert = () => {
-  return (<div>
+  return (<div >
       {/* {this.state.removeAlert && this.removeCaseAlert()} */}
       {this.state.removeDecisionAlert && this.removeDecisionAlert()}
       {this.state.successAlert && this.successAlert()}
@@ -540,7 +540,7 @@ removeDecisions(){
 
             
             // detailCellRendererParams={this.state.selectedCondition}
-            detailRowAutoHeight={true}
+
             embedFullWidthRows={true}
             rowSelection={'multiple'}
             pagination={true}
