@@ -741,10 +741,6 @@ class RuleEditor extends Component {
         console.log("🚀 ~ file: ruleeditor.js:709 ~ RuleEditor ~ handleCompileConditionString ~ facts", facts)
 
 
-        // let facts = []
-
-        console.log("🚀 ~ file: ruleeditor.js:713 ~ RuleEditor ~ handleCompileConditionString ~ facts", facts)
-
 
         var self = this
 
@@ -762,7 +758,7 @@ class RuleEditor extends Component {
                     self.setState({ conditionStringObject: error.response.data.error })
                     console.log(error)
                 })
-            console.log("🚀 ~ file: ruleeditor.js:732 ~ RuleEditor ~ handleCompileConditionString ~ facts", facts)
+            
 
 
         }
@@ -791,7 +787,7 @@ class RuleEditor extends Component {
 
 
     conditionPanel() {
-        const { conditionstring, outcome, conditionStringObject } = this.state
+        const { conditionstring, outcome, conditionStringObject, facts } = this.state
         const success = conditionStringObject.parseSuccess
         const hasError = !success
 
@@ -825,7 +821,7 @@ class RuleEditor extends Component {
 
                         readOnly={false} />
                     <div> Syntax: {success ? 'Correct' : 'Incorrect'}</div>
-                    <div  >Result: {hasError ? JSON.stringify(conditionStringObject) :
+                    <div  >Result: {hasError ? JSON.stringify(conditionStringObject.parent.hint) :
                         conditionStringObject.ruleResult.propertyName ? conditionStringObject.ruleResult.propertyName + " is unknown at this time." : JSON.stringify(conditionStringObject.ruleResult)}</div>
                         Status: {conditionStringObject.value ? JSON.stringify(conditionStringObject.value): 'false'}
                 </div>
@@ -845,6 +841,7 @@ class RuleEditor extends Component {
 
 
             </div>
+           
         </Panel>)
 
     }
