@@ -142,6 +142,7 @@ class RuleEditor extends Component {
             condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring, conditionStringObject, facts, rulePriority, displayRuleEditor, apiChecked,
 
             removeAlert: false, successAlert: false,
+            actionParseObject: [], // gives the result of passing an array to the test action API end point. It will provide name value pairs and the imputedValue as an array.
 
 
             activeTab: 'If-Then', generateFlag: false,
@@ -182,6 +183,7 @@ class RuleEditor extends Component {
         this.handleChangeActionType = this.handleChangeActionType.bind(this)
         this.handleActions = this.handleActions.bind(this)
         this.handleCompileConditionString = this.handleCompileConditionString.bind(this)
+        this.handleCompileImputeObject = this.handleCompileImputeObject.bind(this)
 
 
         this.addActions = this.addActions.bind(this);
@@ -367,12 +369,12 @@ class RuleEditor extends Component {
             </div> */}
 
             <Panel title='Rule Name' >
-            <InputField onChange={(value) => this.handleChangeRuleName(value)}
-                value={name}
-                error={outcome.error && outcome.error.value} label=""
-                placeholder='Enter a rule name...'
+                <InputField onChange={(value) => this.handleChangeRuleName(value)}
+                    value={name}
+                    error={outcome.error && outcome.error.value} label=""
+                    placeholder='Enter a rule name...'
 
-            />
+                />
             </Panel>
 
             {/* <Panel title='Category and Weights' >
@@ -622,9 +624,37 @@ class RuleEditor extends Component {
 
         this.setState({ action: newParams });
     }
+
+
+    /**
+     * Build the aggregate panel built form actionType
+     * @returns 
+     */
     imputeAggregatePanel() {
 
-        const { params, actionType, action, active, validationType, rulePriority, apiChecked } = this.state;
+        const { params, actionType, action, active, validationType, rulePriority, apiChecked,actionParseObject } = this.state;
+
+
+        const imputeActionString =  actionParseObject.reduce((acc, actionObject)=> {
+            acc.push(actionObject['ruleResult']);
+            return acc;
+          }, []);
+
+          let imputeValueString = ''
+          for(var i = 0; i < actionParseObject.length; i++) {
+            const actionObject = actionParseObject[i].imputedValue;
+            const { ruleResult } = actionObject;
+
+            imputeValueString = imputeValueString + ((i) ? ', ':' ') + actionParseObject[i].imputedVariable+': '+JSON.stringify(ruleResult);
+            // const { value } = actionObject;
+            // const { condition } = params;
+            // const { message } = params;
+          }
+
+
+        console.log("🚀 ~ file: ruleeditor.js:642 ~ RuleEditor ~ imputeActionString ~ imputeActionString", imputeActionString)
+
+
         // const action = this.state.params.action 
 
         const { background } = this.context;
@@ -656,10 +686,10 @@ class RuleEditor extends Component {
                         <Radio value="notify" />Notify
                         <Radio value="impute" />Impute
                         <Radio value="aggregate" />Aggregate
-                  
+
                     </RadioGroup>
 
-               
+
 
 
 
@@ -691,7 +721,14 @@ class RuleEditor extends Component {
 
 
                     }
-                    <div>Imputations and Aggregations</div>
+              
+                {/* Calling validation */}
+                <div className={`attributes-header ${background}`}>
+                    <div className="attr-link" onClick={this.handleCompileImputeObject}>
+                        <span className="plus-icon" /><span className="text">Validate</span>
+                    </div>
+                </div>
+                <div>{ imputeValueString }</div>
                 </Panel>) : ''
     }
 
@@ -736,31 +773,49 @@ class RuleEditor extends Component {
             </Panel>) : ''
     }
 
-    handleCompileConditionString() {
-        const { conditionstring, conditionStringObject, facts } = this.state;
-        console.log("🚀 ~ file: ruleeditor.js:709 ~ RuleEditor ~ handleCompileConditionString ~ facts", facts)
+    handleCompileImputeObject(){
 
+        const {action, facts} = this.state
 
+        if(!action.length) return;
 
         var self = this
+        let url = HOSTURL + '/rulesrepo/actiontest?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+        try {
+            let result = axios.post(url, { facts: [facts], action: JSON.stringify(action) })
+                .then((response) => {
+                    let actionParseObject = response.data
+                    self.setState({ actionParseObject })
+                })
+                .catch(function (error) {
+                    self.setState({ actionParseObject: error.response.data.error })
+                    console.log(error)
+                })
+        }
+        catch (e) {
+            alert(e)
+        }
+        return;
 
+
+
+    }
+
+
+    handleCompileConditionString() {
+        const { conditionstring, conditionStringObject, facts } = this.state;
+        var self = this
         let url = HOSTURL + '/rulesrepo/testcondition?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
-
         try {
             let result = axios.post(url, { facts: [facts], conditionstring })
                 .then((response) => {
-
                     let conditionStringObject = response.data
                     self.setState({ conditionStringObject })
-
                 })
                 .catch(function (error) {
                     self.setState({ conditionStringObject: error.response.data.error })
                     console.log(error)
                 })
-            
-
-
         }
         catch (e) {
             alert(e)
@@ -820,28 +875,35 @@ class RuleEditor extends Component {
                         placeholder='Enter the conditions'
 
                         readOnly={false} />
+
                     <div> Syntax: {success ? 'Correct' : 'Incorrect'}</div>
+
+                    {/* If has error then show the error in the parent.hint */}
                     <div  >Result: {hasError ? JSON.stringify(conditionStringObject.parent.hint) :
-                        conditionStringObject.ruleResult.propertyName ? conditionStringObject.ruleResult.propertyName + " is unknown at this time." : JSON.stringify(conditionStringObject.ruleResult)}</div>
-                        Status: {conditionStringObject.value ? JSON.stringify(conditionStringObject.value): 'false'}
+
+                        conditionStringObject.ruleResult.propertyName ?
+                            conditionStringObject.ruleResult.propertyName + " is unknown at this time."
+                            :
+                            JSON.stringify(conditionStringObject.ruleResult)}</div>
+
+                      {/* Show the status can be true or false based on the value       */}
+                    Status: {conditionStringObject.value ? JSON.stringify(conditionStringObject.value) : 'false'}
                 </div>
             </div>
             <div className="btn-group">
 
-
+                {/* Calling validation */}
                 <div className={`attributes-header ${background}`}>
-
                     <div className="attr-link" onClick={this.handleCompileConditionString}>
                         <span className="plus-icon" /><span className="text">Validate</span>
                     </div>
-
                 </div>
 
 
 
 
             </div>
-           
+
         </Panel>)
 
     }
@@ -882,7 +944,7 @@ class RuleEditor extends Component {
             {this.state.removeDecisionAlert && this.removeDecisionAlert()}
             {this.state.successAlert && this.successAlert()}
         </div>);
-      }
+    }
 
 
 
@@ -896,19 +958,19 @@ class RuleEditor extends Component {
 
     successAlert = () => {
         return (
-        
-         <div style={{ width:"fit-content"}}>
-        
-        <SweetAlert
-            success
-            title={"Rule has been deployed successfully!! "}
-            onConfirm={this.cancelAlert.bind(this)}
-            onCancel={this.cancelAlert.bind(this)}
-           
-           
-          >
-            {this.state.updatedAlert}
-          </SweetAlert></div>);
+
+            <div style={{ width: "fit-content" }}>
+
+                <SweetAlert
+                    success
+                    title={"Rule has been deployed successfully!! "}
+                    onConfirm={this.cancelAlert.bind(this)}
+                    onCancel={this.cancelAlert.bind(this)}
+
+
+                >
+                    {this.state.updatedAlert}
+                </SweetAlert></div>);
     }
 
 
@@ -927,7 +989,7 @@ class RuleEditor extends Component {
         let result = await updateParsedRules(data)
         console.log("🚀 ~ file: ruleeditor.js:763 ~ RuleEditor ~ handleDeployRule ~ result", result)
 
-        this.setState({successAlert: true, updatedAlert: "Rule # " + result[0].id + " was successfully deployed"})
+        this.setState({ successAlert: true, updatedAlert: "Rule # " + result[0].id + " was successfully deployed" })
 
         // alert("Rule # " + result[0].id + " was successfully deployed", '')
     }
