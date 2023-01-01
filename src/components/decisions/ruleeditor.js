@@ -148,7 +148,6 @@ class RuleEditor extends Component {
 
             searchCriteria: '',
             editCaseFlag: false,
-            editCondition: [],
             //  message: Message.NO_DECISION_MSG,
             decisions: props.decisions || [],
             bannerflag: false
@@ -156,10 +155,7 @@ class RuleEditor extends Component {
         console.log("🚀 ~ file: ruleeditor.js:156 ~ RuleEditor ~ constructor ~ facts", facts)
         this.handleUpdateRule = this.handleUpdateRule.bind(this);
         this.updateCondition = this.updateCondition.bind(this);
-        this.editCondition = this.editCondition.bind(this);
-        this.addCondition = this.addCondition.bind(this);
         this.removeCase = this.removeCase.bind(this);
-        this.cancelAddAttribute = this.cancelAddAttribute.bind(this);
         this.removeDecisions = this.removeDecisions.bind(this);
         this.handleReset = this.handleReset.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
@@ -178,15 +174,12 @@ class RuleEditor extends Component {
         this.deleteRVActions = this.deleteRVActions.bind(this)
         this.handleShowRuleJSON = this.handleShowRuleJSON.bind(this)
         this.handleResponseVariables = this.handleResponseVariables.bind(this)
-        // this.handleCancel = this.handleCancel.bind(this)
         this.handleChangeActionType = this.handleChangeActionType.bind(this)
         this.handleActions = this.handleActions.bind(this)
         this.handleCompileConditionString = this.handleCompileConditionString.bind(this)
         this.handleCompileImputeObject = this.handleCompileImputeObject.bind(this)
 
 
-        // this.addActions = this.addActions.bind(this);
-        // this.deleteActions = this.deleteActions.bind(this);
         this.handleTestRule = this.handleTestRule.bind(this)
         this.handleDeployRule = this.handleDeployRule.bind(this)
 
@@ -220,24 +213,7 @@ class RuleEditor extends Component {
         this.updateCondition(this.formRule())
     }
 
-    cancelAddAttribute = () => {
-        this.setState({ showAddRuleCase: false, editCaseFlag: false, bannerflag: false });
-    }
-
-    editCondition(decisionIndex) {
-        const decision = this.props.decisions[decisionIndex];
-        const editCondition = transformRuleToTree(decision);
-        let outputParams = [];
-        if (decision.event.params && Object.keys(decision.event.params).length > 0) {
-            outputParams = Object.keys(decision.event.params).map(key => ({ pkey: key, pvalue: decision.event.params[key] }))
-        }
-
-        this.setState({
-            editCaseFlag: true, editCondition,
-            editDecisionIndex: decisionIndex,
-            editOutcome: { value: decision.event.type, params: outputParams }
-        });
-    }
+  
 
     addDebug(debug) {
         // this.props.handleDebug('ADD', {debug});
@@ -247,10 +223,7 @@ class RuleEditor extends Component {
 
     }
 
-    addCondition(condition) {
-        this.props.handleDecision('ADD', { condition, decisionIndex: 0 });
-
-    }
+ 
 
     updateCondition(condition) {
 
@@ -264,13 +237,7 @@ class RuleEditor extends Component {
         // this.addDebug({ rowData, log: 'line 261 in ruleeditor' })
 
         this.props.performCrudOperations('update', this.props.decisionIndex, rowData);
-        // (condition.index == -1) ? 'ADD' : 'UPDATE'
-        // this.props.handleDecision((condition.index == -1) ? 'ADD' : 'UPDATE', {
-        //     condition,
-        //     decisionIndex: this.state.decisionIndex
-        // });
-
-        // this.setState({ displayRuleEditor: !this.state.displayRuleEditor });
+      
     }
 
     removeCase(decisionIndex) {
@@ -305,22 +272,18 @@ class RuleEditor extends Component {
     }
     handleChangeRuleName(event) {
         event.preventDefault()
-        let { outcome } = this.state
         let value = event.target.value
         this.setState({ name: value })
 
     }
     handleChangeRuleMessage(event) {
         event.preventDefault()
-        let { outcome } = this.state
         let value = event.target.value
         this.setState({ message: value })
     }
 
     handleChangeActionOptions(event) {
         event.preventDefault()
-        let val = event.target.value
-        const { actionType } = this.state;
         this.setState({ actionType: event.target.value });
     }
 
@@ -344,7 +307,7 @@ class RuleEditor extends Component {
     ifThenPanel() {
         // condition, ruleId, name,message, responseVariables, actionType
 
-        const { conditions, outcome, condition, ruleId, name, message, responseVariables, actionType, validationType, rulePriority, conditionStringObject } = this.state
+        const {  message,   conditionStringObject } = this.state
         const success = conditionStringObject.parseSuccess
         const hasError = !success
 
@@ -589,32 +552,6 @@ class RuleEditor extends Component {
         ];
 
 
-
-
-
-
-
-        // const imputeActionString = actionParseObject.reduce((acc, actionObject) => {
-        //     acc.push(actionObject['ruleResult']);
-        //     return acc;
-        // }, []);
-
-
-
-
-
-
-        let imputeValueString = ''
-        for (var i = 0; i < actionParseObject.length; i++) {
-            const actionObject = actionParseObject[i].imputedValue;
-            const { ruleResult } = actionObject;
-
-            imputeValueString = imputeValueString + ((i) ? ', ' : ' ') + actionParseObject[i].imputedVariable + ': ' + JSON.stringify(ruleResult);
-
-        }
-
-        const { background } = this.context;
-
         if (actionType === 'api' || actionType === 'notify') {
             return (<Panel title='Imputations and Aggregations' className="add-condition-panel "  >
 
@@ -647,26 +584,13 @@ class RuleEditor extends Component {
 
                     {/* Add an impute table grid.  It will be passed actions which are links to add delete and validate actions */}
                     <div className="ag-theme-alpine" style={{ height: 'auto', width: 'auto', 'textAlign': 'left', 'margin': '20px' }}>
-                        <ImputeGrid actions={actions} actionArray={action} ref={imputeGrid} validateAction={this.validateAction.bind(this)} />
+                        <ImputeGrid actions={actions} actionArray={action}
+                        
+                        actionParseObject={{actionParseObject: this.state.actionParseObject}}
+                        
+                        ref={imputeGrid} validateAction={this.validateAction.bind(this)} />
                     </div>
-                    <div>
-                        <textarea
-                            style={{
-                                width: '100%', height: '100px', padding: '20px',
-                                'box-sizing': 'border-box',
-                                border: '0px solid #eef',
-                                'border-radius': '4px',
-                                'background-color': '#f8f8f8',
-                                'font-size': '16px',
-                                'resize': 'both',
-                                color: 'gray',
-                                'font-style': 'italic'
-                            }}
-                            className="ag-theme-alpine"
-                            value={imputeValueString}
-                            label="Status"
-                            readOnly={true} />
-                    </div>
+               
                 </Panel>) : ''
     }
 
@@ -710,7 +634,54 @@ class RuleEditor extends Component {
                 </div>
             </Panel>) : ''
     }
+/**
+ * api returns actionParseObject as
+[
+  {
+    "RCPT_TOT": "RCPT_TOT",
+    "imputedValue": {
+      "error": false,
+      "message": "",
+      "conditionObject": {
+        "conditions": {
+          "all": [
+            {
+              "fact": "checkCondition",
+              "path": "$.value",
+              "operator": "equal",
+              "value": true,
+              "params": {
+                "conditionstring": "RCPT_TOT"
+              }
+            }
+          ]
+        }
+      },
+      "expression": "RCPT_TOT",
+      "value": true,
+      "rvName": "RCPT_TOT",
+      "rvValue": 3500002,
+      "ruleResult": 3500002
+    },
+    "imputedVariable": "RCPT_TOT"
+  }
+]
 
+Pass the above to the imputeGrid and update its rvValue state with actionParseObject(apo) in the imputeGrid (method: updateActionValues for:
+
+Pass the imputeGrid of object: {[]}
+let actionValues = {}
+apo.map(a=>{actionValues = {...actionValues, ...{[a.]}}
+
+
+})
+
+    this.setState({value:value})
+    
+    ).  
+ * @param {} action 
+ * @returns 
+ */
     handleCompileImputeObject(action) {
 
         const { facts } = this.state
@@ -723,7 +694,8 @@ class RuleEditor extends Component {
             let result = axios.post(url, { facts: [facts], action: JSON.stringify(action) })
                 .then((response) => {
                     let actionParseObject = response.data
-                    self.setState({ actionParseObject })
+                    console.log("🚀 ~ file: ruleeditor.js:726 ~ RuleEditor ~ .then ~ actionParseObject", actionParseObject)
+                    self.setState({ actionParseObject }) // key/value/expression array of objects to display in the
                 })
                 .catch(function (error) {
                     self.setState({ actionParseObject: error.response.data.error })
@@ -819,7 +791,7 @@ class RuleEditor extends Component {
                     <div> Syntax: {success ? 'Correct' : 'Incorrect'}</div>
 
                     {/* If has error then show the error in the parent.hint */}
-                    <div  >Result: {hasError ? JSON.stringify(conditionStringObject.parent.hint) :
+                    <div  >Result: {hasError ? JSON.stringify(conditionStringObject.ruleResult ) :
 
                         conditionStringObject.ruleResult.propertyName ?
                             conditionStringObject.ruleResult.propertyName + " is unknown at this time."
@@ -947,7 +919,7 @@ this.this.handleUpdateRule()
         const { conditions } = this.state;
         return (!displayRuleEditor) ? (<div><span /></div>) :
 
-            (<div style={{ 'max-height': '500px;', 'min-width': '800px', padding: '20px', margin: '10px' }}>
+            (<div style={{ 'height': '800px;', 'min-width': '800px', padding: '20px', margin: '10px' }}>
                 {this.alert()}
                 <div title={name} >
 
@@ -962,7 +934,8 @@ this.this.handleUpdateRule()
                     }
 
                     <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
-                    <div className="tab-page-container" style={{ padding: '20px', margin: '50px' }} >
+                    <div style={{ 'height': '800px;', 'min-width': '800px', padding: '20px', margin: '10px' }}>
+                        <div className="tab-page-container"     >
 
                         {this.state.activeTab === 'General' && <div>
 
@@ -1034,7 +1007,7 @@ this.this.handleUpdateRule()
 
 
 
-                    </div>
+                    </div></div>
                 </div>
 
             </div>);

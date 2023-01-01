@@ -12,7 +12,7 @@ import ApperanceContext from '../../context/apperance-context';
  * 
  * The aggrid  expects data as
  *  data: [
-                { key: 'Key 1', value: 'Value 1' },
+                { key: 'Key 1', value: 'Value 1', expression:'' },
                 { key: 'Key 2', value: 'Value 2' },
                 { key: 'Key 3', value: 'Value 3' },
             ],
@@ -31,15 +31,31 @@ class ImputeGrid extends Component {
 
         this.actionArrayAsObject = this.actionArray.reduce((acc, curr) => ({ ...acc, ...curr }), {});
 
-        Object.keys(this.actionArrayAsObject).map(k => this.data.push({ key: k, value: this.actionArrayAsObject[k] }));
+        Object.keys(this.actionArrayAsObject).map(k => this.data.push({ key: k, expression: this.actionArrayAsObject[k], value:'N/A' }));
 
 
 
-
+        
         this.state = {
             actionArray: this.props.actionArray,
             data: this.data
         };
+
+
+        this.componentDidUpdate= (prevProps)=> {
+            if (this.props.actionParseObject !== prevProps.actionParseObject) {
+              // re-render the component when someProp is updated
+              this.setState({data:this.props.actionParseObject.actionParseObject })
+            }
+          }
+
+
+        this.updateValues = (actionParseObject) => {
+            this.setState({data: actionParseObject})
+        }
+
+
+
 
         this.columnDefs = [
             {
@@ -49,24 +65,31 @@ class ImputeGrid extends Component {
 
                 cellEditor: 'agTextCellEditor'
             },
+          
             {
-                headerName: 'Value', field: 'value', editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,
-                sortable: true, filter: 'agTextColumnFilter',
-
-                flex: 2,
-            },
-            {
-                headerName: 'Expression', field: 'value', editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,
+                headerName: 'Expression', field: 'expression', editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,
                 sortable: true, filter: 'agTextColumnFilter',
 
                 flex: 4,
             },
+            {
+                headerName: 'Value', field: 'value', editable: false, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,
+                sortable: true, filter: 'agTextColumnFilter',
+
+                flex: 2,
+            }
         ];
+
+        this.setImputedValues = (actionValues) => {
+
+            this.setState({ actionValues})
+        }
+
 
         this.addRow = () => {
             // Add a new row to the table
             this.setState((prevState) => ({
-                data: [...prevState.data, { key: 'New Key', value: 'New Value' }],
+                data: [...prevState.data, { key: 'New Key', expression: 'New Value', value:'N/A' }],
             }));
         };
 
@@ -82,7 +105,7 @@ class ImputeGrid extends Component {
 
         this.reCreateActionArray = () => {
             let actionArray = []
-            this.state.data.map(d => actionArray.push({ [d.key]: d.value }))
+            this.state.data.map(d => actionArray.push({ [d.key]: d.expression }))
             this.setState({ actionArray })
             this.props.validateAction(actionArray)
 
