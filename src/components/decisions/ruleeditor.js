@@ -9,8 +9,7 @@ import { processEngine, updateParsedRules } from '../../validations/rule-validat
 import InputField from '../forms/input-field';
 import SelectField from '../forms/selectmenu-field';
 import Button from '../button/button';
-import ButtonGroup from '../button/button-groups';
-import operator from '../../data-objects/operator.json';
+
 import Tabs from '../../components/tabs/tabs'
 import ReactJson from 'react-json-view'
 
@@ -18,19 +17,16 @@ import ReactJson from 'react-json-view'
 import ToggleButton from 'react-toggle-button'
 import { RadioGroup, Radio } from 'react-radio-group'
 
-import * as Message from '../../constants/messages';
 import ApperanceContext from '../../context/apperance-context';
 
 
 import { handleDebug } from '../../actions/debug';
 import { handleDecision } from '../../actions/decisions'
 
-import { responsiveFontSizes } from '@mui/material';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 
 import ImputeGrid from './imputeGrid';
-import { max } from 'lodash';
 
 
 const tabs = [{ name: 'General' }, { name: 'If-Then' }, { name: 'Action' }, { name: 'Track' }, { name: 'API' }, { name: 'Settings' }];
@@ -88,7 +84,7 @@ class RuleEditor extends Component {
 
         console.log("🚀 ~ file: ruleeditor.js ~ line 85 ~ RuleEditor ~ constructor ~ conditions", conditions)
 
-        const handleCancel = this.props.handleCancel
+        // const handleCancel = this.props.handleCancel
         const facts = this.props.facts.facts
 
 
@@ -148,7 +144,7 @@ class RuleEditor extends Component {
             actionParseObject: [], // gives the result of passing an array to the test action API end point. It will provide name value pairs and the imputedValue as an array.
 
 
-            activeTab: 'If-Then', generateFlag: false,
+            activeTab: 'General', generateFlag: false,
 
             searchCriteria: '',
             editCaseFlag: false,
@@ -182,7 +178,7 @@ class RuleEditor extends Component {
         this.deleteRVActions = this.deleteRVActions.bind(this)
         this.handleShowRuleJSON = this.handleShowRuleJSON.bind(this)
         this.handleResponseVariables = this.handleResponseVariables.bind(this)
-        this.handleCancel = this.handleCancel.bind(this)
+        // this.handleCancel = this.handleCancel.bind(this)
         this.handleChangeActionType = this.handleChangeActionType.bind(this)
         this.handleActions = this.handleActions.bind(this)
         this.handleCompileConditionString = this.handleCompileConditionString.bind(this)
@@ -536,27 +532,16 @@ class RuleEditor extends Component {
         const condition = this.formRule()
         this.props.handleDebug('ADD', { label: 'time', data: { condition } }, 0)
     }
-    handleCancel() {
-        this.props.handleCancel(this.state.decisionIndex)
-    }
+    // handleCancel() {
+    //     this.props.handleCancel(this.state.decisionIndex)
+    // }
 
 
     handleChangeActionType(value) {
         this.setState({ actionType: value })
     }
 
-    // addActions() {
-    //     const { action } = this.state;
-    //     action.push({ 'name': 'value' });
-    //     this.setState(action)
-    // }
-    // // delete the key and value from the impute panel. remove the selected one.
-    // deleteActions() {
-    //     const { action } = this.state;
-    //     let index = action.length ? action.length : 0
-    //     if (index) delete action[index - 1]
-    //     this.setState(action);
-    // }
+
 
     // Adding key or value to the impute panel
     handleActions(e, type, index) {

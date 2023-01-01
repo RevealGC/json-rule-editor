@@ -5,10 +5,8 @@ I want to creat an react ag-grid with the following columns name, description, a
 
 
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import Button from '../button/button';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -18,7 +16,6 @@ import axios from 'axios';
 import RuleEditor from './ruleeditor'
 import SweetAlert from 'react-bootstrap-sweetalert';
 
-import { stack as Menu } from 'react-burger-menu';
 
 
 import { handleDebug } from '../../actions/debug';
