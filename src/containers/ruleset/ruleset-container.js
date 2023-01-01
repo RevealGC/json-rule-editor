@@ -223,7 +223,7 @@ class RulesetContainer extends Component {
       let priorRowIndex = -1;
       return (
           <div>
-               <div className={`attributes-header ${background}`}>
+               <div className={`attributes-header ${background}`} style={{ height: 100 ,margin:'10px;', padding:'10px;'}}>
                     <div >
                         <span className="attr-link" onClick={this.onGridReady}>
                             <span className="plus-icon" /><span className="text">Load</span>

@@ -53,6 +53,12 @@ class ImputeGrid extends Component {
                 headerName: 'Value', field: 'value', editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,
                 sortable: true, filter: 'agTextColumnFilter',
 
+                flex: 2,
+            },
+            {
+                headerName: 'Expression', field: 'value', editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,
+                sortable: true, filter: 'agTextColumnFilter',
+
                 flex: 4,
             },
         ];

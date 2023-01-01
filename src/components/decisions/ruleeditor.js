@@ -445,11 +445,15 @@ class RuleEditor extends Component {
     }
 
     onToggleAPI(apiChecked) {
+        if(!apiChecked) this.setState({apiSource:newRuleObject})
+        else this.setState({apiSource:{}})
         this.setState({ apiChecked: !apiChecked })
     }
 
     onToggleActive(active) {
+      
         this.setState({ active: !active })
+
     }
     cancelAlert = () => {
         this.setState({ removeAlert: false, successAlert: false, removeDecisionAlert: false });

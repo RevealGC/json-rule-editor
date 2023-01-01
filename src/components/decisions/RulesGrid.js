@@ -484,9 +484,7 @@ class RulesGrid extends React.Component {
     return (
       <div >
         {this.alert()}
-
-        <div className={`attributes-header ${background}`}  >
-
+        <div className={`attributes-header ${background}`} style={{ height: 100 ,margin:'10px;', padding:'10px;'}} >
           <div className="attr-link" onClick={this.addRowData}>
             <span className="plus-icon" /><span className="text">Add</span>
           </div>
@@ -494,19 +492,10 @@ class RulesGrid extends React.Component {
             <span className="reset-icon" /><span className="text">Delete</span>
           </div>
 
-
-
-
           <div className="attr-link" onClick={this.reloadRulesFromDB}>
             <span className="plus-icon" /><span className="text">Reload</span>
           </div>
-
-
-
-
-
         </div>
-
 
         <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000 ,margin:'10px;', padding:'10px;'}}>
           <AgGridReact
