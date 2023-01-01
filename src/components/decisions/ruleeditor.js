@@ -941,6 +941,8 @@ class RuleEditor extends Component {
         console.log("🚀 ~ file: ruleeditor.js:763 ~ RuleEditor ~ handleDeployRule ~ result", result)
 
         this.setState({ successAlert: true, updatedAlert: "Rule # " + result[0].id + " was successfully deployed" })
+        // DOING WORK after deployrule update the states of the rules.
+this.this.handleUpdateRule()
 
         // alert("Rule # " + result[0].id + " was successfully deployed", '')
     }
