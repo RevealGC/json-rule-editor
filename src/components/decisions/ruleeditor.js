@@ -33,7 +33,7 @@ import ImputeGrid from './imputeGrid';
 import { max } from 'lodash';
 
 
-const tabs = [{ name: 'General' }, { name: 'If-Then' }, { name: 'Action' }, { name: 'Track' },{ name: 'API' }, { name: 'Settings' }];
+const tabs = [{ name: 'General' }, { name: 'If-Then' }, { name: 'Action' }, { name: 'Track' }, { name: 'API' }, { name: 'Settings' }];
 const HOSTURL = 'http://localhost'
 
 const newRuleObject = {
@@ -265,7 +265,7 @@ class RuleEditor extends Component {
 
 
         let rowData = { parsed_rule: condition, id: ruleId, data: condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority, key: this.props.decisionIndex }
-        this.addDebug({ rowData, log: 'line 261 in ruleeditor' })
+        // this.addDebug({ rowData, log: 'line 261 in ruleeditor' })
 
         this.props.performCrudOperations('update', this.props.decisionIndex, rowData);
         // (condition.index == -1) ? 'ADD' : 'UPDATE'
@@ -504,12 +504,15 @@ class RuleEditor extends Component {
             apiChecked, apiSource } = this.state
 
         this.generateApiDescription()
-            if(!apiChecked)
-                var  newApiSource = {}
-                else newApiSource = apiSource
-        let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message, apiChecked, 
-            apiSource: newApiSource
-        } }
+        if (!apiChecked)
+            var newApiSource = {}
+        else newApiSource = apiSource
+        let paramsNew = {
+            ...params, ...{
+                rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message, apiChecked,
+                apiSource: newApiSource
+            }
+        }
 
 
 
@@ -575,10 +578,10 @@ class RuleEditor extends Component {
     }
 
 
-    validateAction(action){
-        this.setState({action});
+    validateAction(action) {
+        this.setState({ action });
         this.handleCompileImputeObject(action)
-        
+
     }
 
     /**
@@ -592,11 +595,11 @@ class RuleEditor extends Component {
         const imputeGrid = React.createRef();
         const actions = [
             { name: 'Add', icon: 'plus-icon', value: () => imputeGrid.current.addRow() },
-            { name: 'Delete',icon: 'reset-icon', value: () => imputeGrid.current.deleteSelectedRows() },
-            { name: 'Validate',icon: 'plus-icon', value: () => imputeGrid.current.reCreateActionArray() }
+            { name: 'Delete', icon: 'reset-icon', value: () => imputeGrid.current.deleteSelectedRows() },
+            { name: 'Validate', icon: 'plus-icon', value: () => imputeGrid.current.reCreateActionArray() }
         ];
 
-       
+
 
 
 
@@ -618,7 +621,7 @@ class RuleEditor extends Component {
             const { ruleResult } = actionObject;
 
             imputeValueString = imputeValueString + ((i) ? ', ' : ' ') + actionParseObject[i].imputedVariable + ': ' + JSON.stringify(ruleResult);
-         
+
         }
 
         const { background } = this.context;
@@ -654,8 +657,8 @@ class RuleEditor extends Component {
                     </RadioGroup>
 
                     {/* Add an impute table grid.  It will be passed actions which are links to add delete and validate actions */}
-                    <div className="ag-theme-alpine" style={{ height: 'auto', width: 'auto', 'textAlign': 'left' , 'margin':'20px'}}>
-                        <ImputeGrid actions={actions} actionArray = {action} ref={imputeGrid} validateAction ={this.validateAction.bind(this)} />
+                    <div className="ag-theme-alpine" style={{ height: 'auto', width: 'auto', 'textAlign': 'left', 'margin': '20px' }}>
+                        <ImputeGrid actions={actions} actionArray={action} ref={imputeGrid} validateAction={this.validateAction.bind(this)} />
                     </div>
                     <div>
                         <textarea
@@ -721,7 +724,7 @@ class RuleEditor extends Component {
 
     handleCompileImputeObject(action) {
 
-        const {  facts } = this.state
+        const { facts } = this.state
 
         if (!action.length) return;
 
@@ -943,58 +946,71 @@ class RuleEditor extends Component {
     }
 
     render() {
-        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority, displayRuleEditor, successAlert, apiChecked, outcome } = this.state;
-        const buttonProps = { primaryLabel: ruleId ? 'Update' : 'Add Rulecase', secondaryLabel: 'Cancel' };
+        const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority, displayRuleEditor, successAlert, apiChecked, outcome, facts } = this.state;
+
+        let disabled = !facts || facts.length === 0
+
+        const buttonProps = { primaryLabel: ruleId ? 'Submit' : 'Add', secondaryLabel: 'Cancel' };
         const editButtonProps = { primaryLabel: 'Update Rulecase', secondaryLabel: 'Cancel' };
         const filteredOutcomes = searchCriteria ? this.filterOutcomes() : this.props.outcomes;
         const { conditions } = this.state;
         return (!displayRuleEditor) ? (<div><span /></div>) :
 
-            (<div style={{ display: 'flex', maxWidth: '1000px', padding: '20px', margin: '10px' }}>
+            (<div style={{ 'max-height': '500px;', 'min-width': '800px', padding: '20px', margin: '10px' }}>
                 {this.alert()}
                 <div title={name} >
 
+                    {disabled ? <div className="btn-group"> <Button label='View' onConfirm={this.handleShowRuleJSON} classname="primary-btn" /></div>
+                        :
+                        <div className="btn-group">
+                            <Button label='View' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
+                            <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} disabled={disabled} classname="primary-btn" />
+                            <Button label='Test' onConfirm={this.handleTestRule} classname="primary-btn" disabled={disabled} />
+                            <Button label='Deploy' onConfirm={this.handleDeployRule} classname="primary-btn" disabled={disabled} />
+                        </div>
+                    }
+
                     <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
-                    <div className="tab-page-container" style={{  width: '1000px', padding: '20px', margin: '50px' }} >
+                    <div className="tab-page-container" style={{ padding: '20px', margin: '50px' }} >
 
-                        {this.state.activeTab === 'General' && <div> 
-                            
-                        <Panel title="Enter rule name" >
-                <InputField onChange={(value) => this.handleChangeRuleName(value)}
-                    value={name}
-                    error={outcome.error && outcome.error.value} label=""
-                    placeholder='Enter a rule name...'
+                        {this.state.activeTab === 'General' && <div>
 
-                />
-            </Panel>  
-                            
-                            
-                            
-                            
-                               <textarea
-                            style={{
-                                width: '100%', height: '300px', padding: '20px',
-                                'box-sizing': 'border-box',
-                                border: '1px solid #eef',
-                                'border-radius': '4px',
-                                'background-color': '#f8f8f8',
-                                'font-size': '16px',
-                                'resize': 'vertical',
-                                color: 'gray',
-                                'font-style': 'italic'
-                            }}
+                            <Panel title="Enter rule name" >
+                                <InputField onChange={(value) => this.handleChangeRuleName(value)}
+                                    value={name}
+                                    error={outcome.error && outcome.error.value} label=""
+                                    placeholder='Enter a rule name...'
+
+                                />
+                            </Panel>
 
 
 
 
-                            className="ag-theme-alpine"
-                            value={this.state.description}
-                            label="Rule Condition Error"
-                            placeholder='Enter the conditions'
+                            <textarea
+                                style={{
+                                    width: '100%', height: '300px', padding: '20px',
+                                    'box-sizing': 'border-box',
+                                    border: '1px solid #eef',
+                                    'border-radius': '4px',
+                                    'background-color': '#f8f8f8',
+                                    'font-size': '16px',
+                                    'resize': 'vertical',
+                                    color: 'gray',
+                                    'font-style': 'italic'
+                                }}
 
-                            readOnly={true} /> </div>}
 
-                         {this.state.activeTab === 'Track' && <div>{this.responseVariablesPanel()}</div>}   
+
+
+                                className="ag-theme-alpine"
+                                value={this.state.description}
+                                label="Rule Condition Error"
+                                placeholder='Enter the conditions'
+
+                                readOnly={true} /> </div>}
+
+                        {this.state.activeTab === 'Track' && <div>{this.responseVariablesPanel()}</div>}
 
                         {this.state.activeTab === 'If-Then' && <div> {this.ifThenPanel()} </div>}
                         {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
@@ -1025,16 +1041,7 @@ class RuleEditor extends Component {
 
                             </div>}
 
-                        <div className="btn-group">
-                            <Button label={buttonProps.primaryLabel} onConfirm={this.handleUpdateRule} classname="primary-btn" />
-                            <Button label='View Rule' onConfirm={this.handleShowRuleJSON} classname="primary-btn" />
 
-                            <Button label='Test Rule' onConfirm={this.handleTestRule} classname="primary-btn" />
-
-                            <Button label='Deploy Rule' onConfirm={this.handleDeployRule} classname="primary-btn" />
-
-
-                        </div>
 
                     </div>
                 </div>

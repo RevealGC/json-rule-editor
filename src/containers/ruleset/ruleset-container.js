@@ -218,6 +218,8 @@ class RulesetContainer extends Component {
       const { background } = this.context;
       const { columnDefs, rowData, detailCellRendererParams } = this.state
 
+     
+      this.onGridReady()
       let priorRowIndex = -1;
       return (
           <div>

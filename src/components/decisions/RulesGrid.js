@@ -177,18 +177,8 @@ class RulesGrid extends React.Component {
     newRowData.push(newRow);
     this.setState({ rowData: newRowData });
 
-
-    // try {
-    //   this.gridApi.getDisplayedRowAtIndex(newId-1).setExpanded(true);
-    // } catch (error) {
-    //   console.log("🚀 ~ file: RulesGrid.js:184 ~ RulesGrid ~ error", error)
-
-    // }
     this.props.addAllRulesRedux(newRowData);
-    // this.gridApi.getDisplayedRowAtIndex(1).setExpanded(true);
-    // this.gridApi.getDisplayedRowAtIndex(8).setExpanded(true)
-
-
+ 
 
   };
 
@@ -260,7 +250,7 @@ class RulesGrid extends React.Component {
     rowData = rowData.map((row, index) => {
       return { ...row, key: index + 1 }
     })
-    this.debug({ rowData, log: 'line 207: LOADING DATA FROM DB. check for key in rulesgrid' })
+ 
     this.setState({ rowData, backupRowData: rowData, ruleCounts: ret.data.data.length });
     this.props.addAllRulesRedux(rowData)
 
@@ -323,9 +313,9 @@ class RulesGrid extends React.Component {
     if (rowIndex) this.createNewRow()
   }
 
-  debug(data) {
-    this.props.handleDebug('ADD', { label: 'time', data }, 0)
-  }
+  // debug(data) {
+  //   this.props.handleDebug('ADD', { label: 'time', data }, 0)
+  // }
 
 
 
@@ -391,7 +381,7 @@ class RulesGrid extends React.Component {
     setTimeout(function () {
       // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
       params.api.columnModel.autoSizeAllColumns(true)
-      params.api.getDisplayedRowAtIndex(0).setExpanded(true);
+      // params.api.getDisplayedRowAtIndex(0).setExpanded(true);
 
       // gridRef.current.columnApi.autoSizeAllColumns(true);
     }, 0);
@@ -508,7 +498,7 @@ class RulesGrid extends React.Component {
 
 
           <div className="attr-link" onClick={this.reloadRulesFromDB}>
-            <span className="reset-icon" /><span className="text">Reload</span>
+            <span className="plus-icon" /><span className="text">Reload</span>
           </div>
 
 
@@ -518,8 +508,7 @@ class RulesGrid extends React.Component {
         </div>
 
 
-
-        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000 }}>
+        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000 ,margin:'10px;', padding:'10px;'}}>
           <AgGridReact
 
             onRowClicked={(e) => {
@@ -541,7 +530,7 @@ class RulesGrid extends React.Component {
 
             // detailCellRendererParams={this.state.selectedCondition}
 
-            embedFullWidthRows={true}
+            embedFullWidthRows={false}
             rowSelection={'multiple'}
             pagination={true}
             paginationPageSize={50}
