@@ -94,16 +94,16 @@ class RulesGrid extends React.Component {
       submitAlert: false, removeAlert: false, successAlert: false, removeDecisionAlert: false,
 
       columnDefs: [
-        { headerName: 'Active', field: 'active',  sortable: true, filter: 'agTextColumnFilter',hide: true },
+        { headerName: 'Active', field: 'active', sortable: true, filter: 'agTextColumnFilter', hide: true },
         {
-          headerName: '#', field: 'key', sortable: true,cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter',checkboxSelection: true,
+          headerName: '#', field: 'key', sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter', checkboxSelection: true,
 
           comparator: (a, b) => { return a - b }
 
         },
 
         {
-          headerName: 'RID', field: 'id', sortable: true, filter: 'agTextColumnFilter', width:200,
+          headerName: 'RID', field: 'id', sortable: true, filter: 'agTextColumnFilter', width: 200,
 
           comparator: (a, b) => { return a - b }
 
@@ -127,10 +127,10 @@ class RulesGrid extends React.Component {
 
         { headerName: 'Priority', field: 'priority', sortable: true, valueGetter: this.getRulePriority, filter: 'agTextColumnFilter', },
 
-        { headerName: 'Created By', field: 'created_by', sortable: true, filter: 'agTextColumnFilter',hide: true },
-        { headerName: 'Modified By', field: 'modified_by', sortable: true, filter: 'agTextColumnFilter', hide: true},
-        { headerName: 'Created At', field: 'created_at', sortable: true, filter: 'agTextColumnFilter',hide: true },
-        { headerName: 'Modified At', field: 'modified_at', sortable: true, filter: 'agTextColumnFilter',hide: true }
+        { headerName: 'Created By', field: 'created_by', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Modified By', field: 'modified_by', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Created At', field: 'created_at', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Modified At', field: 'modified_at', sortable: true, filter: 'agTextColumnFilter', hide: true }
       ],
       rowData: [],
       backupRowData: []
@@ -142,16 +142,16 @@ class RulesGrid extends React.Component {
     this.loadData = this.loadData.bind(this)
     this.addAllRulesRedux = this.props.addAllRulesRedux.bind(this)
     this.removeDecisions = this.removeDecisions.bind(this);
- 
- this.addRowData = this.addRowData.bind(this)
+
+    this.addRowData = this.addRowData.bind(this)
   }
 
   getRowNodeId = data => {
     return data.key;
   };
-/**
- * create a new row add new row of a rule. addRule
- */
+  /**
+   * create a new row add new row of a rule. addRule
+   */
   addRowData = () => {
     let newRowData = this.state.rowData.slice();
     let newId =
@@ -161,7 +161,7 @@ class RulesGrid extends React.Component {
 
 
 
-    let newRow  = {
+    let newRow = {
       parsed_rule: newRuleObject,
       active: true,
       type: 'impute',
@@ -170,25 +170,25 @@ class RulesGrid extends React.Component {
       name: newRuleObject.event.name,
       key: newId
 
-    } 
+    }
 
 
 
     newRowData.push(newRow);
     this.setState({ rowData: newRowData });
- 
- 
+
+
     // try {
     //   this.gridApi.getDisplayedRowAtIndex(newId-1).setExpanded(true);
     // } catch (error) {
     //   console.log("🚀 ~ file: RulesGrid.js:184 ~ RulesGrid ~ error", error)
-      
+
     // }
     this.props.addAllRulesRedux(newRowData);
     // this.gridApi.getDisplayedRowAtIndex(1).setExpanded(true);
     // this.gridApi.getDisplayedRowAtIndex(8).setExpanded(true)
-   
- 
+
+
 
   };
 
@@ -248,20 +248,20 @@ class RulesGrid extends React.Component {
 
 
     let allRulesRedux = this.props.allRulesRedux
-    if(allRulesRedux.length > 0 && init == false) {
+    if (allRulesRedux.length > 0 && init == false) {
       // pull from redux state
-      this.setState({rowData: allRulesRedux})
+      this.setState({ rowData: allRulesRedux })
       return;
 
     }
     let url = HOSTURL + '/rulesrepo?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
     let ret = await axios.get(url)
     let rowData = ret.data.data
-    rowData = rowData.map((row,index) => {
-      return{...row,key:index+1}
+    rowData = rowData.map((row, index) => {
+      return { ...row, key: index + 1 }
     })
-    this.debug({rowData, log:'line 207: LOADING DATA FROM DB. check for key in rulesgrid'} )
-    this.setState({ rowData, backupRowData: rowData,  ruleCounts: ret.data.data.length });
+    this.debug({ rowData, log: 'line 207: LOADING DATA FROM DB. check for key in rulesgrid' })
+    this.setState({ rowData, backupRowData: rowData, ruleCounts: ret.data.data.length });
     this.props.addAllRulesRedux(rowData)
 
 
@@ -276,7 +276,7 @@ class RulesGrid extends React.Component {
 
     let rule = [params.data.data]
 
-    return (<div >
+    return (<div>
       <RuleEditor conditions={rule}
 
         performCrudOperations={this.performCrudOperations}
@@ -335,8 +335,8 @@ class RulesGrid extends React.Component {
   performCrudOperations = (operation, rowIndex, rowData) => {
     // Get a reference to the ag-Grid component
     const gridApi = this.gridApi;
-    
-// not using create.  Leave it.
+
+    // not using create.  Leave it.
     if (operation === 'create') {
       // Insert a new row
       gridApi.updateRowData({ add: [rowData], addIndex: 0 });
@@ -352,15 +352,15 @@ class RulesGrid extends React.Component {
       // Update an existing row
 
 
-       gridApi.updateRowData({ update: [{ index: rowData.key, data: rowData }] });
+      gridApi.updateRowData({ update: [{ index: rowData.key, data: rowData }] });
 
       const allRowData = this.state.rowData
 
-     let out = []
-     allRowData.forEach(row => {out.push(row)})
-      out[rowData.key-1] = rowData
-       this.setState({ rowData: out});
-       this.props.addAllRulesRedux(out)
+      let out = []
+      allRowData.forEach(row => { out.push(row) })
+      out[rowData.key - 1] = rowData
+      this.setState({ rowData: out });
+      this.props.addAllRulesRedux(out)
 
     } else if (operation === 'delete') {
       // Delete an existing row
@@ -392,12 +392,12 @@ class RulesGrid extends React.Component {
       // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
       params.api.columnModel.autoSizeAllColumns(true)
       params.api.getDisplayedRowAtIndex(0).setExpanded(true);
-      
+
       // gridRef.current.columnApi.autoSizeAllColumns(true);
     }, 0);
   }
 
-  
+
 
   onGridReady = (params) => {
     this.gridApi = params.api;
@@ -411,12 +411,12 @@ class RulesGrid extends React.Component {
 
   hideAlert = () => {
     this.setState({
-        alert: null
+      alert: null
     });
-}
-removeDecisionAlert = () => {
+  }
+  removeDecisionAlert = () => {
 
-  return (<SweetAlert
+    return (<SweetAlert
       warning
       showCancel
       confirmBtnText="Yes, Remove it!"
@@ -425,64 +425,64 @@ removeDecisionAlert = () => {
       onConfirm={this.removeDecisions}
       onCancel={this.cancelAlert}
       focusCancelBtn
-  >
+    >
       You will not be able to recover the changes!
-  </SweetAlert>)
-}
+    </SweetAlert>)
+  }
 
-alert = () => {
-  return (<div >
+  alert = () => {
+    return (<div >
       {/* {this.state.removeAlert && this.removeCaseAlert()} */}
       {this.state.removeDecisionAlert && this.removeDecisionAlert()}
       {this.state.successAlert && this.successAlert()}
-  </div>);
-}
-cancelAlert = () => {
-  this.setState({ removeAlert: false, successAlert: false, removeDecisionAlert: false });
-}
-
-
-removeDecisions(){
-  const gridApi = this.gridApi;
-
-  // Get the selected row nodes
-  const selectedRowNodes = gridApi.getSelectedNodes();
-      // Get the data for the selected rows
-      const selectedRowData = selectedRowNodes.map(node => node.data);
-      const rids = selectedRowData.map(r=>r.id)
-      
-      
-      try {
-      let url = HOSTURL + '/rulesrepo/'+JSON.stringify(rids)+'?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
-      let result = axios.delete(url)
-      .then((response) => {
-
-        if (response.status === 200) {  
-          console.log("🚀 ~ file: RulesGrid.js:436 ~ .then ~ response", response)
-        }
-        
-
-    })
-    .catch(function (error) {
-     
-        console.log(error)
-    })
+    </div>);
   }
+  cancelAlert = () => {
+    this.setState({ removeAlert: false, successAlert: false, removeDecisionAlert: false });
+  }
+
+
+  removeDecisions() {
+    const gridApi = this.gridApi;
+
+    // Get the selected row nodes
+    const selectedRowNodes = gridApi.getSelectedNodes();
+    // Get the data for the selected rows
+    const selectedRowData = selectedRowNodes.map(node => node.data);
+    const rids = selectedRowData.map(r => r.id)
+
+
+    try {
+      let url = HOSTURL + '/rulesrepo/' + JSON.stringify(rids) + '?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+      let result = axios.delete(url)
+        .then((response) => {
+
+          if (response.status === 200) {
+            console.log("🚀 ~ file: RulesGrid.js:436 ~ .then ~ response", response)
+          }
+
+
+        })
+        .catch(function (error) {
+
+          console.log(error)
+        })
+    }
     catch (e) {
       console.log(e)
+    }
+
+    // Delete the selected rows
+    gridApi.updateRowData({ remove: selectedRowData });
+    this.setState({ successAlert: false, removeDecisionAlert: false })
+
   }
-
-      // Delete the selected rows
-      gridApi.updateRowData({ remove: selectedRowData });
-      this.setState({ successAlert: false, removeDecisionAlert: false})
-
-}
   deleteSelectedRows = () => {
     // Get a reference to the ag-Grid component
     const gridApi = this.gridApi;
     const selectedRowNodes = gridApi.getSelectedNodes();
 
-    if(!selectedRowNodes.length) return
+    if (!selectedRowNodes.length) return
     this.setState({ removeDecisionAlert: true });
   }
 
@@ -492,30 +492,30 @@ removeDecisions(){
 
 
     return (
-      <div>
-{this.alert()}
+      <div >
+        {this.alert()}
 
-<div className={`attributes-header ${background}`}  >
-          
+        <div className={`attributes-header ${background}`}  >
+
           <div className="attr-link" onClick={this.addRowData}>
-              <span className="plus-icon" /><span className="text">Add</span> 
+            <span className="plus-icon" /><span className="text">Add</span>
           </div>
           <div className="attr-link" onClick={this.deleteSelectedRows}>
-               <span className="reset-icon" /><span className="text">Delete</span> 
+            <span className="reset-icon" /><span className="text">Delete</span>
           </div>
 
-         
 
-        
+
+
           <div className="attr-link" onClick={this.reloadRulesFromDB}>
-               <span className="reset-icon" /><span className="text">Reload</span> 
+            <span className="reset-icon" /><span className="text">Reload</span>
           </div>
-      
 
-   
-    
-          
-      </div>
+
+
+
+
+        </div>
 
 
 
@@ -538,7 +538,7 @@ removeDecisions(){
 
             detailCellRenderer={this.detailCellRenderer.bind(this)}
 
-            
+
             // detailCellRendererParams={this.state.selectedCondition}
 
             embedFullWidthRows={true}
@@ -565,13 +565,13 @@ RulesGrid.defaultProps = {
 
 const mapStateToProps = (state) => ({
   ruleset: state.ruleset.rulesets[state.ruleset.activeRuleset],
-  allRulesRedux : state.ruleset.allRulesRedux, // gets all the rules pulled from the db and not from the ruleset.
+  allRulesRedux: state.ruleset.allRulesRedux, // gets all the rules pulled from the db and not from the ruleset.
   updatedFlag: state.ruleset.updatedFlag,
   facts: state.ruleset.rulesets[state.ruleset.activeRuleset]
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addAllRulesRedux: ( rules) => dispatch(addAllRulesRedux(rules)),
+  addAllRulesRedux: (rules) => dispatch(addAllRulesRedux(rules)),
   handleAttribute: (operation, attribute, index) => dispatch(handleAttribute(operation, attribute, index)),
   handleDecisions: (operation, decision) => dispatch(handleDecision(operation, decision)),
   handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))

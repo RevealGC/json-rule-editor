@@ -29,8 +29,11 @@ import { responsiveFontSizes } from '@mui/material';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 
+import ImputeGrid from './imputeGrid';
+import { max } from 'lodash';
 
-const tabs = [{ name: 'If-Then' }, { name: 'Action' }, { name: 'API' }, { name: 'Settings' }];
+
+const tabs = [{ name: 'General' }, { name: 'If-Then' }, { name: 'Action' }, { name: 'Track' },{ name: 'API' }, { name: 'Settings' }];
 const HOSTURL = 'http://localhost'
 
 const newRuleObject = {
@@ -186,8 +189,8 @@ class RuleEditor extends Component {
         this.handleCompileImputeObject = this.handleCompileImputeObject.bind(this)
 
 
-        this.addActions = this.addActions.bind(this);
-        this.deleteActions = this.deleteActions.bind(this);
+        // this.addActions = this.addActions.bind(this);
+        // this.deleteActions = this.deleteActions.bind(this);
         this.handleTestRule = this.handleTestRule.bind(this)
         this.handleDeployRule = this.handleDeployRule.bind(this)
 
@@ -350,54 +353,9 @@ class RuleEditor extends Component {
         const hasError = !success
 
         return (<div>
-
-            {/* general
-            {name}
-            {ruleId}
-            {message}
-            {responseVariables}
-            {actionType} */}
-
-
-            {/* <div >
-                <InputField onChange={(value) => this.onChangeOutcomeValue(value, 'value')}
-                    value={ruleId}
-                    error={outcome.error && outcome.error.value} label="    ID"
-                    placeholder='Enter a rule name...'
-
-                    readOnly={true} />
-            </div> */}
-
-            <Panel title='Rule Name' >
-                <InputField onChange={(value) => this.handleChangeRuleName(value)}
-                    value={name}
-                    error={outcome.error && outcome.error.value} label=""
-                    placeholder='Enter a rule name...'
-
-                />
-            </Panel>
-
-            {/* <Panel title='Category and Weights' >
-                <InputField onChange={(value) => this.handleValidationType(value)}
-                    value={validationType}
-                    error={outcome.error && outcome.error.value} label="Category"
-                    placeholder='Enter a validation type(For example: "validation")...'
-                />
-                    <SelectField options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} onChange={(e) =>
-                        this.handleRulePriority(e)
-                    }
-                        value={rulePriority} label="Weights" />
-            </Panel> */}
-
             <div> {this.conditionPanel()} </div>
-
-
             <div className="add-field-panel " >
-
                 <Panel className="add-field-panel" title='Then Message'>
-
-
-
                     <textarea
                         style={{
                             width: '100%', height: '75px', padding: '20px',
@@ -406,12 +364,8 @@ class RuleEditor extends Component {
                             'border-radius': '4px',
                             'background-color': '#f8f8f8',
                             'font-size': '16px',
-                            'resize': 'none'
+                            'resize': 'vertical'
                         }}
-
-
-
-
                         className="ag-theme-alpine" onChange={(value) => this.handleChangeRuleMessage(value)}
                         value={message}
                         error={hasError} label="Rule Message"
@@ -419,18 +373,6 @@ class RuleEditor extends Component {
 
                         readOnly={false} />
 
-
-
-
-
-
-                    {/* <div >
-                        <InputField onChange={(value) => this.handleChangeRuleMessage(value)}
-                            value={message}
-                            error={outcome.error && outcome.error.value} label=""
-                            placeholder='Enter the message to be displayed when rule is fired...'
-                        />
-                    </div> */}
                 </Panel>
 
 
@@ -492,7 +434,7 @@ class RuleEditor extends Component {
                     {responseVariables && responseVariables.length > 0 && responseVariables.map((param, ind) =>
                     (<div key={ind} className="add-field-panel">
 
-                        <InputField onChange={(value) => this.handleResponseVariables(value, 'pvalue', ind)} value={param} label="Value"
+                        <InputField onChange={(value) => this.handleResponseVariables(value, 'pvalue', ind)} value={param} label="Variable"
                             placeholder='Enter a response variable to track...' />
                     </div>))
 
@@ -562,9 +504,14 @@ class RuleEditor extends Component {
             apiChecked, apiSource } = this.state
 
         this.generateApiDescription()
+            if(!apiChecked)
+                var  newApiSource = {}
+                else newApiSource = apiSource
+        let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message, apiChecked, 
+            apiSource: newApiSource
+        } }
 
 
-        let paramsNew = { ...params, ...{ rvsJSON: responseVariables, rvs: JSON.stringify(responseVariables), action, actionType: actionType, message, apiChecked, apiSource } }
 
 
         conditionStringObject.condition.conditions.all[0].params.conditionstring = this.state.conditionstring
@@ -591,18 +538,20 @@ class RuleEditor extends Component {
         this.setState({ actionType: value })
     }
 
-    addActions() {
-        const { action } = this.state;
-        action.push({ 'name': 'value' });
-        this.setState(action)
-    }
+    // addActions() {
+    //     const { action } = this.state;
+    //     action.push({ 'name': 'value' });
+    //     this.setState(action)
+    // }
+    // // delete the key and value from the impute panel. remove the selected one.
+    // deleteActions() {
+    //     const { action } = this.state;
+    //     let index = action.length ? action.length : 0
+    //     if (index) delete action[index - 1]
+    //     this.setState(action);
+    // }
 
-    deleteActions() {
-        const { action } = this.state;
-        let index = action.length ? action.length : 0
-        if (index) delete action[index - 1]
-        this.setState(action);
-    }
+    // Adding key or value to the impute panel
     handleActions(e, type, index) {
         const { action } = this.state;
         // const params = [...action.params];
@@ -626,54 +575,71 @@ class RuleEditor extends Component {
     }
 
 
+    validateAction(action){
+        this.setState({action});
+        this.handleCompileImputeObject(action)
+        
+    }
+
     /**
-     * Build the aggregate panel built form actionType
+     * Build the aggregate panel built form actionactionType
      * @returns 
      */
     imputeAggregatePanel() {
 
-        const { params, actionType, action, active, validationType, rulePriority, apiChecked,actionParseObject } = this.state;
+        const { params, actionType, action, active, validationType, rulePriority, apiChecked, actionParseObject } = this.state;
+
+        const imputeGrid = React.createRef();
+        const actions = [
+            { name: 'Add', icon: 'plus-icon', value: () => imputeGrid.current.addRow() },
+            { name: 'Delete',icon: 'reset-icon', value: () => imputeGrid.current.deleteSelectedRows() },
+            { name: 'Validate',icon: 'plus-icon', value: () => imputeGrid.current.reCreateActionArray() }
+        ];
+
+       
 
 
-        const imputeActionString =  actionParseObject.reduce((acc, actionObject)=> {
-            acc.push(actionObject['ruleResult']);
-            return acc;
-          }, []);
 
-          let imputeValueString = ''
-          for(var i = 0; i < actionParseObject.length; i++) {
+
+
+        // const imputeActionString = actionParseObject.reduce((acc, actionObject) => {
+        //     acc.push(actionObject['ruleResult']);
+        //     return acc;
+        // }, []);
+
+
+
+
+
+
+        let imputeValueString = ''
+        for (var i = 0; i < actionParseObject.length; i++) {
             const actionObject = actionParseObject[i].imputedValue;
             const { ruleResult } = actionObject;
 
-            imputeValueString = imputeValueString + ((i) ? ', ':' ') + actionParseObject[i].imputedVariable+': '+JSON.stringify(ruleResult);
-            // const { value } = actionObject;
-            // const { condition } = params;
-            // const { message } = params;
-          }
-
-
-        console.log("🚀 ~ file: ruleeditor.js:642 ~ RuleEditor ~ imputeActionString ~ imputeActionString", imputeActionString)
-
-
-        // const action = this.state.params.action 
+            imputeValueString = imputeValueString + ((i) ? ', ' : ' ') + actionParseObject[i].imputedVariable + ': ' + JSON.stringify(ruleResult);
+         
+        }
 
         const { background } = this.context;
 
         if (actionType === 'api' || actionType === 'notify') {
-            return (<Panel title='Imputations and Aggregations'>
+            return (<Panel title='Imputations and Aggregations' className="add-condition-panel "  >
 
-                <div>Active {JSON.stringify(active)}
-                    <ToggleButton onToggle={this.onToggleActive} value={active} >
+                <div style={{ 'white-space': 'normal', 'text-align': 'left' }}>
 
-                    </ToggleButton>
+                    <div>Active {JSON.stringify(active)}
+                        <ToggleButton onToggle={this.onToggleActive} value={active} >
+
+                        </ToggleButton>
+                    </div>
+
+                    <RadioGroup name="actionType" selectedValue={actionType} onChange={this.handleChangeActionType}>
+                        <Radio value="notify" />Notify
+                        <Radio value="impute" />Impute
+                        <Radio value="aggregate" />Aggregate
+                    </RadioGroup>
                 </div>
-
-                <RadioGroup name="actionType" selectedValue={actionType} onChange={this.handleChangeActionType}>
-                    <Radio value="notify" />Notify
-                    <Radio value="impute" />Impute
-                    <Radio value="aggregate" />Aggregate
-                </RadioGroup>
-                {/* {(actionType==='api')? this.apiPanel(): <div></div>} */}
             </Panel>)
         }
         else
@@ -681,62 +647,42 @@ class RuleEditor extends Component {
             return (actionType == 'impute' || actionType == 'aggregate') ?
                 (<Panel title='Imputations and Aggregations'>
 
-
                     <RadioGroup name="actionType" selectedValue={actionType} onChange={this.handleChangeActionType}>
                         <Radio value="notify" />Notify
                         <Radio value="impute" />Impute
                         <Radio value="aggregate" />Aggregate
-
                     </RadioGroup>
 
-
-
-
-
-                    <div className={`attributes-header ${background}`}>
-                        <div className="attr-link" onClick={this.addActions}>
-                            <span className="plus-icon" /><span className="text">Add Action</span>
-                        </div>
-
-
-                        <div className="attr-link" onClick={this.deleteActions}>
-                            <span className="plus-icon" /><span className="text">Delete Action</span>
-                        </div>
-
+                    {/* Add an impute table grid.  It will be passed actions which are links to add delete and validate actions */}
+                    <div className="ag-theme-alpine" style={{ height: 'auto', width: 'auto', 'textAlign': 'left' , 'margin':'20px'}}>
+                        <ImputeGrid actions={actions} actionArray = {action} ref={imputeGrid} validateAction ={this.validateAction.bind(this)} />
                     </div>
-
-                    {action && action.length > 0 && action.map((param, ind) =>
-
-
-                    (<div key={ind} className="add-field-panel">
-                        <InputField onChange={(value) => this.handleActions(value, 'pkey', ind)}
-                            label="Actions"
-                            value={Object.keys(param)}
-                            placeholder='Enter a computed variable name...' />
-                        <InputField onChange={(value) => this.handleActions(value, 'pvalue', ind)}
-                            value={Object.values(param)} label="Value"
-                            placeholder='Enter an expression or logical condition to compute...'
-                        />
-                    </div>))
-
-
-                    }
-              
-                {/* Calling validation */}
-                <div className={`attributes-header ${background}`}>
-                    <div className="attr-link" onClick={this.handleCompileImputeObject}>
-                        <span className="plus-icon" /><span className="text">Validate</span>
+                    <div>
+                        <textarea
+                            style={{
+                                width: '100%', height: '100px', padding: '20px',
+                                'box-sizing': 'border-box',
+                                border: '0px solid #eef',
+                                'border-radius': '4px',
+                                'background-color': '#f8f8f8',
+                                'font-size': '16px',
+                                'resize': 'both',
+                                color: 'gray',
+                                'font-style': 'italic'
+                            }}
+                            className="ag-theme-alpine"
+                            value={imputeValueString}
+                            label="Status"
+                            readOnly={true} />
                     </div>
-                </div>
-                <div>{ imputeValueString }</div>
                 </Panel>) : ''
     }
 
 
     apiPanel() {
         let { actionType, apiChecked, activeAPITab, apiSource } = this.state;
-        let onEdit = true, onAdd = true, onDelete = true
-        return (apiChecked) ?
+        let onEdit = apiChecked, onAdd = apiChecked, onDelete = apiChecked
+        return (true) ?
             (<Panel title='API'>
                 <div id="treeWrapper">
                     <ReactJson src={apiSource} displayObjectSize={false} displayDataTypes={false}
@@ -773,11 +719,11 @@ class RuleEditor extends Component {
             </Panel>) : ''
     }
 
-    handleCompileImputeObject(){
+    handleCompileImputeObject(action) {
 
-        const {action, facts} = this.state
+        const {  facts } = this.state
 
-        if(!action.length) return;
+        if (!action.length) return;
 
         var self = this
         let url = HOSTURL + '/rulesrepo/actiontest?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
@@ -805,6 +751,7 @@ class RuleEditor extends Component {
     handleCompileConditionString() {
         const { conditionstring, conditionStringObject, facts } = this.state;
         var self = this
+        if (!facts) return;
         let url = HOSTURL + '/rulesrepo/testcondition?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
         try {
             let result = axios.post(url, { facts: [facts], conditionstring })
@@ -863,7 +810,8 @@ class RuleEditor extends Component {
                             'border-radius': '4px',
                             'background-color': '#f8f8f8',
                             'font-size': '16px',
-                            'resize': 'none'
+                            'resize': 'vertical'
+
                         }}
 
 
@@ -886,7 +834,7 @@ class RuleEditor extends Component {
                             :
                             JSON.stringify(conditionStringObject.ruleResult)}</div>
 
-                      {/* Show the status can be true or false based on the value       */}
+                    {/* Show the status can be true or false based on the value       */}
                     Status: {conditionStringObject.value ? JSON.stringify(conditionStringObject.value) : 'false'}
                 </div>
             </div>
@@ -1002,24 +950,36 @@ class RuleEditor extends Component {
         const { conditions } = this.state;
         return (!displayRuleEditor) ? (<div><span /></div>) :
 
-            (<div style={{ width: '800px', margin: '60px', 'padding-bottom': '100px', }}>
+            (<div style={{ display: 'flex', maxWidth: '1000px', padding: '20px', margin: '10px' }}>
                 {this.alert()}
                 <div title={name} >
 
                     <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
-                    <div className="tab-page-container">
+                    <div className="tab-page-container" style={{  width: '1000px', padding: '20px', margin: '50px' }} >
 
+                        {this.state.activeTab === 'General' && <div> 
+                            
+                        <Panel title="Enter rule name" >
+                <InputField onChange={(value) => this.handleChangeRuleName(value)}
+                    value={name}
+                    error={outcome.error && outcome.error.value} label=""
+                    placeholder='Enter a rule name...'
 
-
-                        <textarea
+                />
+            </Panel>  
+                            
+                            
+                            
+                            
+                               <textarea
                             style={{
-                                width: '100%', height: '100px', padding: '20px',
+                                width: '100%', height: '300px', padding: '20px',
                                 'box-sizing': 'border-box',
                                 border: '1px solid #eef',
                                 'border-radius': '4px',
                                 'background-color': '#f8f8f8',
                                 'font-size': '16px',
-                                'resize': 'none',
+                                'resize': 'vertical',
                                 color: 'gray',
                                 'font-style': 'italic'
                             }}
@@ -1032,23 +992,11 @@ class RuleEditor extends Component {
                             label="Rule Condition Error"
                             placeholder='Enter the conditions'
 
-                            readOnly={true} />
+                            readOnly={true} /> </div>}
 
+                         {this.state.activeTab === 'Track' && <div>{this.responseVariablesPanel()}</div>}   
 
-
-
-
-
-
-
-
-                        {this.state.activeTab === 'If-Then' &&
-                            <div>
-                                {this.ifThenPanel()}
-
-
-
-                            </div>}
+                        {this.state.activeTab === 'If-Then' && <div> {this.ifThenPanel()} </div>}
                         {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
 
 
@@ -1057,7 +1005,7 @@ class RuleEditor extends Component {
                         </div>}
 
 
-                        {this.state.activeTab === 'Action' && <div> {this.responseVariablesPanel()}{this.imputeAggregatePanel()}</div>}
+                        {this.state.activeTab === 'Action' && <div> {this.imputeAggregatePanel()}</div>}
                         {this.state.activeTab === 'Settings' &&
                             <div>
                                 <Panel title='Category and Weights' >

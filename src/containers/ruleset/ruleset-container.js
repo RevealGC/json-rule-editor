@@ -272,7 +272,7 @@ class RulesetContainer extends Component {
         <RuleErrorBoundary>
           <PageTitle name={name} />
           <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
-          <div className="tab-page-container">
+          <div className="tab-page-container" style={{'margin':'20px'}}>
 
       {this.state.activeTab === 'Rules' && <RulesGrid facts={attributes}/>}
 
