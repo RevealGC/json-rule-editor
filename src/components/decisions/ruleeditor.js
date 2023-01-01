@@ -420,7 +420,7 @@ class RuleEditor extends Component {
 
 
 
-                    <div className={`attributes-header ${background}`}>
+                    <div className={`attributes-header `} style={{"margin":"20px;"}}>
                         <div className="attr-link" onClick={this.addResponseVariables}>
                             <span className="plus-icon" /><span className="text">Add Response Variables</span>
                         </div>
@@ -844,7 +844,7 @@ class RuleEditor extends Component {
             <div className="btn-group">
 
                 {/* Calling validation */}
-                <div className={`attributes-header ${background}`}>
+                <div className={`attributes-header ${background}`} style={{"margin":"20px;"}}>
                     <div className="attr-link" onClick={this.handleCompileConditionString}>
                         <span className="plus-icon" /><span className="text">Validate</span>
                     </div>
