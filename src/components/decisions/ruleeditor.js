@@ -182,6 +182,7 @@ class RuleEditor extends Component {
 
         this.handleTestRule = this.handleTestRule.bind(this)
         this.handleDeployRule = this.handleDeployRule.bind(this)
+        this.handleAIDescribe = this.handleAIDescribe.bind(this)
 
 
 
@@ -193,13 +194,31 @@ class RuleEditor extends Component {
 
     componentDidMount() {
         this.handleCompileConditionString()
-        this.generateDescription()
+        // this.generateDescription()
     }
     handleTab = (tabName) => {
         this.setState({ activeTab: tabName });
     }
+// enter the state parameter. get the string value for the state parameter and pass it to ai for processing.
 
+/**
+ * Call handleAIDescribe with a state string like description.  
+ * Will read the str from this.state.description
+ * will call axios to handle the ai parsing and get the description from ai
+ * then resetting the state value of description to the new state.
+ * @param {} strStateParam 
+ */
+    handleAIDescribe = async ()=>{
+        let url = HOSTURL + '/openai/aicomplete?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+        // get the string you want to process and update
+        let str = this.generateDescription()
+        // now call axios post and once you get the value
+        let valueFromAI = await  axios.post(url, { conditionstring: str})
 
+        // update the value of the state parameter.
+        this.setState({description:valueFromAI.data})
+
+    }
 
 
 
@@ -894,7 +913,7 @@ class RuleEditor extends Component {
             active: this.state.active,
             type: this.state.validationType,
             data: r,
-            description: this.state.message,
+            description: this.state.description,
             name: this.state.name,
             id: Number(r.event.ruleId)
 
@@ -968,27 +987,26 @@ class RuleEditor extends Component {
 
 
 
+                                <Panel title='Description'>
+
+                                <div className="btn-group"> <Button label='Describe' onConfirm={this.handleAIDescribe} classname="primary-btn" /></div>
+
+
+
 
                                 <textarea
                                     style={{
                                         width: '100%', height: '300px', padding: '20px',
-                               
-                                        'font-size': '13px',
+                                        'font-size': '16px',
                                         'resize': 'vertical',
-                                     
-                                        'font-style': 'bold'
+                                        // 'font-style': 'bold'
                                     }}
-
-
-
-
                                     className="ag-theme-alpine"
                                     value={this.state.description}
-                                    label="Rule Condition Error"
-                                    placeholder='Enter the conditions'
-
-                                    readOnly={true} /> </div>}
-
+                                     />
+                                    </Panel>
+                                     </div>}
+                                   
                             {this.state.activeTab === 'Track' && <div>{this.responseVariablesPanel()}</div>}
 
                             {this.state.activeTab === 'If-Then' && <div> {this.ifThenPanel()} </div>}

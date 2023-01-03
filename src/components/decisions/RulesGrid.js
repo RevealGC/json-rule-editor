@@ -105,6 +105,12 @@ class RulesGrid extends React.Component {
           comparator: (a, b) => { return a - b }
 
         },
+        {
+          headerName: 'Description', field: 'description', sortable: true, filter: 'agTextColumnFilter', width: 400,
+
+          comparator: (a, b) => { return a - b }
+
+        },
 
 
 
@@ -265,7 +271,7 @@ class RulesGrid extends React.Component {
 
     return (<div>
       <RuleEditor conditions={rule}
-
+      
         performCrudOperations={this.performCrudOperations}
         facts={this.props.facts} decisionIndex={params.rowIndex} /> </div>)
 
