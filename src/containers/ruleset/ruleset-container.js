@@ -44,13 +44,13 @@ const columnDefs = [
         field: 'id', width: 200, headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
         cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true
     },
-    { field: 'parent_id', width: 200, headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true , hide: true},
-    { field: 'reporting_id',width: 200,  headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'status', width: 150, filter: 'agTextColumnFilter', sortable: true },
-    { field: 'elapsed_time', width: 150, headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: true },
-    { field: 'error_message',width: 150,  headerName: 'Error', filter: 'agTextColumnFilter', sortable: true, hide: true },
-    { field: 'valid',width: 600,  headerName: 'Valid Rules', filter: 'agTextColumnFilter', valueFormatter: stringifierAggregateRules, sortable: true },
-    { field: 'facts',width: 400,  headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
+    { field: 'parent_id',  headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true , hide: true},
+    { field: 'reporting_id', headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'status',  filter: 'agTextColumnFilter', sortable: true },
+    { field: 'elapsed_time', headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: true },
+    { field: 'error_message', headerName: 'Error', filter: 'agTextColumnFilter', sortable: true, hide: true },
+    { field: 'valid', headerName: 'Valid Rules', filter: 'agTextColumnFilter',autoHeight:true, valueFormatter: stringifierAggregateRules, sortable: true },
+    { field: 'facts', headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
 
     {
         field: 'merge_status', headerName: 'Merge Status', cellRenderer: function (params, data) {
@@ -67,11 +67,29 @@ const columnDefs = [
 
 
     { field: 'result' , resizable: true, valueFormatter: stringifier, autoHeight: true, }  ,
- { field: 'last_modified_date', headerName: 'Modified', filter: 'agTextColumnFilter' },
-    { field: 'created_date', headerName: 'Created', filter: 'agTextColumnFilter' },
+ { field: 'last_modified_date', headerName: 'Modified', filter: 'agTextColumnFilter' , valueFormatter:formatDateLastModified},
+    { field: 'created_date', headerName: 'Created', filter: 'agTextColumnFilter', valueFormatter:formatDateCreated },
    
     // { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
 ];
+
+
+function formatDateLastModified(params) {
+
+    let dateTimeString = params.data.last_modified_date
+    const date = new Date(dateTimeString);
+    const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second:'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  }
+
+  function formatDateCreated(params) {
+
+    let dateTimeString = params.data.created_date
+    const date = new Date(dateTimeString);
+    const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' , second:'numeric'};
+    return date.toLocaleDateString('en-US', options);
+  }
+
 function myFunction(spadId) {
     alert('Merge spadID ' + spadId)
 }
@@ -89,11 +107,13 @@ function stringifierAggregateRules(params) {
     let valids = params.data && params.data.result && params.data.result.rules.valid ? params.data.result.rules.valid: []
     let rules = []
    valids.map((valid)=>{
-        rules.push(valid.id +": "+valid.message)
+        rules.push(valid.id +" ")//+valid.message)
  
    })
-    return JSON.stringify(rules)
-    return JSON.stringify(params.data.aggregate);
+
+   
+    return (rules)
+    // return JSON.stringify(params.data.aggregate);
 }
 function stringifierFact(params) {
     return JSON.stringify(params.data.facts);
@@ -110,6 +130,7 @@ class RulesetContainer extends Component {
 
     constructor(props) {
         super(props);
+        this.gridApi = {}
         this.state = {activeTab: 'Facts', generateFlag: false, rowData: [],
         columnDefs: columnDefs,
         detailRowAutoHeight: true,
@@ -125,8 +146,9 @@ class RulesetContainer extends Component {
                         masterDetail: true,
                         embedFullWidthRows: true,
                         onRowSelected: this.debugPanelAttribute.bind(this),
-                        onRowClicked: this.debugPanelResult.bind(this),
-                        defaultColDef: { flex: 1,resizable: true},
+                        // onRowClicked: this.debugPanelResult.bind(this),
+                        onCellClicked: this.onDetailDetailCellClicked.bind(this),
+                        defaultColDef: { flex: 1,resizable: true, width:200},
                     },
                    
                     getDetailRowData: (params) => {
@@ -134,8 +156,9 @@ class RulesetContainer extends Component {
                     }
                 },
                 onRowSelected: this.debugPanelAttribute.bind(this),
-                onRowClicked: this.debugPanelResult.bind(this),
-                defaultColDef: { flex: 1,resizable: true },
+                // onRowClicked: this.debugPanelResult.bind(this),
+                onCellClicked: this.onDetailCellClicked.bind(this),
+                defaultColDef: { flex: 1,resizable: true, width:200 },
             },
             getDetailRowData: (params) => {
                 params.successCallback(params.data.spadself);
@@ -145,17 +168,19 @@ class RulesetContainer extends Component {
         this.generateFile = this.generateFile.bind(this);
         this.cancelAlert = this.cancelAlert.bind(this);
         this.onGridReady = this.onGridReady.bind(this)
+        this.onCellClicked = this.onCellClicked.bind(this)
     }
     componentDidMount() {
       // document.body.className = this.state.theme.background;
       this.onGridReady()
   }
     onFirstDataRendered = (params) => {
-      setTimeout(function () {
+   
           // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
-          params.api.columnModel.autoSizeAllColumns(true)
+          this.gridApi = params.api
+        //   params.api.columnModel.autoSizeAllColumns(true)
           // gridRef.current.columnApi.autoSizeAllColumns(true);
-      }, 0);
+   
   }
     async onGridReady() {
       // +this.state.dbSearchText
@@ -213,6 +238,88 @@ class RulesetContainer extends Component {
         > {`${name} rule is succefully generated at your default download location`}
         </SweetAlert>);
     }
+
+/**
+ * On ag-grid cell clicked. get the data and print it to debug window.
+ * @param {*} event 
+ */
+    onCellClicked = (event) => {
+        // the event contains the row and column index of the clicked cell
+        const rowIndex = event.rowIndex;
+        const colId = event.column.colId;
+        // you can use these indices to get the row data and column definition from the grid's api
+        const rowData = this.gridApi.getDisplayedRowAtIndex(rowIndex).data;
+        const colDef = this.gridApi.getColumnDef(colId)
+        // now you can read the name and value of the cell as follows:
+        const name = colDef.field;
+        // const value = rowData[name];
+        var value = rowData[name]
+        if(name === 'facts' || name === 'valid' || name === 'invalid') {    
+            value = rowData.result.rules[name];
+        }
+     
+
+        this.props.handleDebug('ADD', { label: 'time', data: { name,value} },0)
+
+      }
+
+      onDetailCellClicked = (event) => {
+        let gridApi = {}
+
+      this.gridApi.forEachDetailGridInfo((detailGridApi) => {
+        gridApi = detailGridApi.api;
+      });
+
+      const rowIndex = event.rowIndex;
+      const colId = event.column.colId;
+      // you can use these indices to get the row data and column definition from the grid's api
+      const rowData = gridApi.getDisplayedRowAtIndex(rowIndex).data;
+      const colDef = gridApi.getColumnDef(colId)
+      // now you can read the name and value of the cell as follows:
+      const name = colDef.field;
+      // const value = rowData[name];
+      var value = rowData[name]
+      if(name === 'facts' || name === 'valid' || name === 'invalid') {    
+          value = rowData.result.rules[name];
+      }
+      this.props.handleDebug('ADD', { label: 'time', data: { name,value} },0)
+    }
+
+
+    onDetailDetailCellClicked = (event) => {
+        let gridApi = {}
+        let gridApiChild = {}
+
+      this.gridApi.forEachDetailGridInfo((detailGridApi) => {
+        gridApi = detailGridApi.api;
+      });
+
+      gridApi.forEachDetailGridInfo((detailGridApi) => {
+        gridApiChild = detailGridApi.api;
+      });
+
+
+      gridApi = gridApiChild
+
+      const rowIndex = event.rowIndex;
+      const colId = event.column.colId;
+      // you can use these indices to get the row data and column definition from the grid's api
+      const rowData = gridApi.getDisplayedRowAtIndex(rowIndex).data;
+      const colDef = gridApi.getColumnDef(colId)
+      // now you can read the name and value of the cell as follows:
+      const name = colDef.field;
+      // const value = rowData[name];
+      var value = rowData[name]
+      if(name === 'facts' || name === 'valid' || name === 'invalid') {    
+          value = rowData.result.rules[name];
+      }
+      this.props.handleDebug('ADD', { label: 'time', data: { name,value} },0)
+    }
+
+
+
+
+
     spadTables() {
 
       const { background } = this.context;
@@ -221,6 +328,11 @@ class RulesetContainer extends Component {
      
       this.onGridReady()
       let priorRowIndex = -1;
+
+    //   onRowSelected={(e) =>
+    //     //   this.props.handleDebug('ADD', { label: 'time', data: { aggregate: e.data.aggregate } }, 0)}
+    // //   onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { facts: e.data.facts, aggregate: e.data.aggregate, valid: e.data.result.rules.valid, invalid: e.data.result.rules.invalid, deltaFacts: e.data.result.rules.deltaFacts } }, 0)}
+
       return (
           <div>
                <div className={`attributes-header ${background}`} style={{ height: 100 ,margin:'10px;', padding:'10px;'}}>
@@ -232,16 +344,17 @@ class RulesetContainer extends Component {
                 </div>
               <div className="ag-theme-alpine" id="myGrid" style={{ height:1200 }}>
                   <AgGridReact
-                      onRowSelected={(e) =>
-                          this.props.handleDebug('ADD', { label: 'time', data: { aggregate: e.data.aggregate } }, 0)}
-                      onRowClicked={(e) => this.props.handleDebug('ADD', { label: 'time', data: { facts: e.data.facts, aggregate: e.data.aggregate, valid: e.data.result.rules.valid, invalid: e.data.result.rules.invalid, deltaFacts: e.data.result.rules.deltaFacts } }, 0)}
+                   
+
+                      onCellClicked = {this.onCellClicked}
+
                       masterDetail={true}
                       detailRowAutoHeight= {true}
                       embedFullWidthRows={true}
             
                       rowData={rowData}
                       columnDefs={columnDefs}
-                      defaultColDef= {{ flex: 1,resizable: true}}
+                      defaultColDef= {{ flex: 1,resizable: true,  width:200}}
                       detailCellRendererParams={detailCellRendererParams}
                       animateRows={true}
                       pagination={true}
@@ -282,8 +395,10 @@ class RulesetContainer extends Component {
 
               {this.state.activeTab === 'Facts' && <Attributes attributes={attributes} 
                 handleAttribute={this.props.handleAttribute }/>}
-              {this.state.activeTab === 'Decisions' && <Decisions decisions={indexedDecisions || []} attributes={attributes}
-              handleDecisions={this.props.handleDecisions} outcomes={outcomes}/>}
+
+              {/* {this.state.activeTab === 'Decisions' && <Decisions decisions={indexedDecisions || []} attributes={attributes}
+              handleDecisions={this.props.handleDecisions} outcomes={outcomes}/>} */}
+
               {this.state.activeTab === 'Validate' && <ValidateRules attributes={attributes} decisions={decisions} />}
               {this.state.activeTab === 'Generate' && <Banner message={message} ruleset={this.props.ruleset} onConfirm={this.generateFile}/> }
               {this.state.activeTab === 'Spad' && rowData.length > 0 &&

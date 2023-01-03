@@ -128,12 +128,13 @@ return;
         }
         return (
         <React.Fragment>
+             <div className="btn-group">
+               <Button label={'Validate Ruleset'} onConfirm={this.validateRules} classname="primary-btn" type="submit" />
+           </div>
             <Table columns={['Name', 'Value']}>
                      {formElements}
             </Table>
-            <div className="btn-group">
-               <Button label={'Validate Ruleset'} onConfirm={this.validateRules} classname="primary-btn" type="submit" />
-           </div>
+           
             <hr/>
                 { loading && <Loader /> }
                 { !loading && message }

@@ -29,7 +29,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import ImputeGrid from './imputeGrid';
 
 
-const tabs = [{ name: 'General' }, { name: 'If-Then' }, { name: 'Action' }, { name: 'Track' }, { name: 'API' }, { name: 'Settings' }];
+const tabs = [{ name: 'General' }, { name: 'If-Then' }, { name: 'Action' }, { name: 'Track' }, { name: 'API' }];
 const HOSTURL = 'http://localhost'
 
 const newRuleObject = {
@@ -213,7 +213,7 @@ class RuleEditor extends Component {
         this.updateCondition(this.formRule())
     }
 
-  
+
 
     addDebug(debug) {
         // this.props.handleDebug('ADD', {debug});
@@ -223,7 +223,7 @@ class RuleEditor extends Component {
 
     }
 
- 
+
 
     updateCondition(condition) {
 
@@ -237,7 +237,7 @@ class RuleEditor extends Component {
         // this.addDebug({ rowData, log: 'line 261 in ruleeditor' })
 
         this.props.performCrudOperations('update', this.props.decisionIndex, rowData);
-      
+
     }
 
     removeCase(decisionIndex) {
@@ -307,7 +307,7 @@ class RuleEditor extends Component {
     ifThenPanel() {
         // condition, ruleId, name,message, responseVariables, actionType
 
-        const {  message,   conditionStringObject } = this.state
+        const { message, conditionStringObject } = this.state
         const success = conditionStringObject.parseSuccess
         const hasError = !success
 
@@ -379,7 +379,7 @@ class RuleEditor extends Component {
 
 
 
-                    <div className={`attributes-header `} style={{"margin":"20px;"}}>
+                    <div className={`attributes-header `} style={{ "margin": "20px;" }}>
                         <div className="attr-link" onClick={this.addResponseVariables}>
                             <span className="plus-icon" /><span className="text">Add Response Variables</span>
                         </div>
@@ -404,13 +404,19 @@ class RuleEditor extends Component {
     }
 
     onToggleAPI(apiChecked) {
-        if(!apiChecked) this.setState({apiSource:newRuleObject})
-        else this.setState({apiSource:{}})
+        if (!apiChecked) this.setState({ apiSource: {
+            url: 'http://census.gov',
+            verb: 'POST',
+            headers: [{ key: 'X-JBID', value: 'kapoo' }, { key: 'X-API-KEY', value: '12345ABC233' }],
+            data: [{ key: 'row', value: 3 }],
+            query: [{ key: 'DEBUG', value: true }]
+        } })
+        else this.setState({ apiSource: {} })
         this.setState({ apiChecked: !apiChecked })
     }
 
     onToggleActive(active) {
-      
+
         this.setState({ active: !active })
 
     }
@@ -557,11 +563,6 @@ class RuleEditor extends Component {
 
                 <div style={{ 'white-space': 'normal', 'text-align': 'left' }}>
 
-                    <div>Active {JSON.stringify(active)}
-                        <ToggleButton onToggle={this.onToggleActive} value={active} >
-
-                        </ToggleButton>
-                    </div>
 
                     <RadioGroup name="actionType" selectedValue={actionType} onChange={this.handleChangeActionType}>
                         <Radio value="notify" />Notify
@@ -585,12 +586,12 @@ class RuleEditor extends Component {
                     {/* Add an impute table grid.  It will be passed actions which are links to add delete and validate actions */}
                     <div className="ag-theme-alpine" style={{ height: 'auto', width: 'auto', 'textAlign': 'left', 'margin': '20px' }}>
                         <ImputeGrid actions={actions} actionArray={action}
-                        
-                        actionParseObject={{actionParseObject: this.state.actionParseObject}}
-                        
-                        ref={imputeGrid} validateAction={this.validateAction.bind(this)} />
+
+                            actionParseObject={{ actionParseObject: this.state.actionParseObject }}
+
+                            ref={imputeGrid} validateAction={this.validateAction.bind(this)} />
                     </div>
-               
+
                 </Panel>) : ''
     }
 
@@ -634,54 +635,54 @@ class RuleEditor extends Component {
                 </div>
             </Panel>) : ''
     }
-/**
- * api returns actionParseObject as
-[
-  {
-    "RCPT_TOT": "RCPT_TOT",
-    "imputedValue": {
-      "error": false,
-      "message": "",
-      "conditionObject": {
-        "conditions": {
-          "all": [
-            {
-              "fact": "checkCondition",
-              "path": "$.value",
-              "operator": "equal",
-              "value": true,
-              "params": {
-                "conditionstring": "RCPT_TOT"
-              }
+    /**
+     * api returns actionParseObject as
+    [
+      {
+        "RCPT_TOT": "RCPT_TOT",
+        "imputedValue": {
+          "error": false,
+          "message": "",
+          "conditionObject": {
+            "conditions": {
+              "all": [
+                {
+                  "fact": "checkCondition",
+                  "path": "$.value",
+                  "operator": "equal",
+                  "value": true,
+                  "params": {
+                    "conditionstring": "RCPT_TOT"
+                  }
+                }
+              ]
             }
-          ]
-        }
-      },
-      "expression": "RCPT_TOT",
-      "value": true,
-      "rvName": "RCPT_TOT",
-      "rvValue": 3500002,
-      "ruleResult": 3500002
-    },
-    "imputedVariable": "RCPT_TOT"
-  }
-]
-
-Pass the above to the imputeGrid and update its rvValue state with actionParseObject(apo) in the imputeGrid (method: updateActionValues for:
-
-Pass the imputeGrid of object: {[]}
-let actionValues = {}
-apo.map(a=>{actionValues = {...actionValues, ...{[a.]}}
-
-
-})
-
-    this.setState({value:value})
+          },
+          "expression": "RCPT_TOT",
+          "value": true,
+          "rvName": "RCPT_TOT",
+          "rvValue": 3500002,
+          "ruleResult": 3500002
+        },
+        "imputedVariable": "RCPT_TOT"
+      }
+    ]
     
-    ).  
- * @param {} action 
- * @returns 
- */
+    Pass the above to the imputeGrid and update its rvValue state with actionParseObject(apo) in the imputeGrid (method: updateActionValues for:
+    
+    Pass the imputeGrid of object: {[]}
+    let actionValues = {}
+    apo.map(a=>{actionValues = {...actionValues, ...{[a.]}}
+    
+    
+    })
+    
+        this.setState({value:value})
+        
+        ).  
+     * @param {} action 
+     * @returns 
+     */
     handleCompileImputeObject(action) {
 
         const { facts } = this.state
@@ -791,7 +792,7 @@ apo.map(a=>{actionValues = {...actionValues, ...{[a.]}}
                     <div> Syntax: {success ? 'Correct' : 'Incorrect'}</div>
 
                     {/* If has error then show the error in the parent.hint */}
-                    <div  >Result: {hasError ? JSON.stringify(conditionStringObject.ruleResult ) :
+                    <div  >Result: {hasError ? JSON.stringify(conditionStringObject.ruleResult) :
 
                         conditionStringObject.ruleResult.propertyName ?
                             conditionStringObject.ruleResult.propertyName + " is unknown at this time."
@@ -805,7 +806,7 @@ apo.map(a=>{actionValues = {...actionValues, ...{[a.]}}
             <div className="btn-group">
 
                 {/* Calling validation */}
-                <div className={`attributes-header ${background}`} style={{"margin":"20px;"}}>
+                <div className={`attributes-header ${background}`} style={{ "margin": "20px;" }}>
                     <div className="attr-link" onClick={this.handleCompileConditionString}>
                         <span className="plus-icon" /><span className="text">Validate</span>
                     </div>
@@ -903,7 +904,7 @@ apo.map(a=>{actionValues = {...actionValues, ...{[a.]}}
 
         this.setState({ successAlert: true, updatedAlert: "Rule # " + result[0].id + " was successfully deployed" })
         // DOING WORK after deployrule update the states of the rules.
-this.this.handleUpdateRule()
+        this.this.handleUpdateRule()
 
         // alert("Rule # " + result[0].id + " was successfully deployed", '')
     }
@@ -937,77 +938,81 @@ this.this.handleUpdateRule()
                     <div style={{ 'height': '800px;', 'min-width': '800px', padding: '20px', margin: '10px' }}>
                         <div className="tab-page-container"     >
 
-                        {this.state.activeTab === 'General' && <div>
+                            {this.state.activeTab === 'General' && <div>
 
-                            <Panel title="Enter rule name" >
-                                <InputField onChange={(value) => this.handleChangeRuleName(value)}
-                                    value={name}
-                                    error={outcome.error && outcome.error.value} label=""
-                                    placeholder='Enter a rule name...'
+                                <Panel title="Enter rule name" >
 
-                                />
-                            </Panel>
+                                    <div>Active 
+                                        <ToggleButton onToggle={this.onToggleActive} value={active} >
 
+                                        </ToggleButton>
+                                    </div>
+                                    <InputField onChange={(value) => this.handleChangeRuleName(value)}
+                                        value={name}
+                                        error={outcome.error && outcome.error.value} label=""
+                                        placeholder='Enter a rule name...'
 
-
-
-                            <textarea
-                                style={{
-                                    width: '100%', height: '300px', padding: '20px',
-                                    'box-sizing': 'border-box',
-                                    border: '1px solid #eef',
-                                    'border-radius': '4px',
-                                    'background-color': '#f8f8f8',
-                                    'font-size': '16px',
-                                    'resize': 'vertical',
-                                    color: 'gray',
-                                    'font-style': 'italic'
-                                }}
-
-
-
-
-                                className="ag-theme-alpine"
-                                value={this.state.description}
-                                label="Rule Condition Error"
-                                placeholder='Enter the conditions'
-
-                                readOnly={true} /> </div>}
-
-                        {this.state.activeTab === 'Track' && <div>{this.responseVariablesPanel()}</div>}
-
-                        {this.state.activeTab === 'If-Then' && <div> {this.ifThenPanel()} </div>}
-                        {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
-
-
-                        {this.state.activeTab === 'API' && <div> API Active Status <ToggleButton onToggle={this.onToggleAPI} value={apiChecked} />
-                            {this.apiPanel()}
-                        </div>}
-
-
-                        {this.state.activeTab === 'Action' && <div> {this.imputeAggregatePanel()}</div>}
-                        {this.state.activeTab === 'Settings' &&
-                            <div>
-                                <Panel title='Category and Weights' >
-                                    <InputField onChange={(value) => this.handleValidationType(value)}
-                                        value={validationType}
-                                        error={outcome.error && outcome.error.value} label="Category"
-                                        placeholder='Enter a validation type(For example: "validation")...'
                                     />
-                                    <SelectField options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} onChange={(e) =>
-                                        this.handleRulePriority(e)
-                                    }
-                                        value={rulePriority} label="Weights" />
                                 </Panel>
+                                <Panel title='Category and Weights'  >
+                                        <InputField  onChange={(value) => this.handleValidationType(value)}
+                                            value={validationType}
+                                            error={outcome.error && outcome.error.value} label="Category"
+                                            placeholder='Enter a validation type(For example: "validation")...'
+                                        />
+                                        <SelectField options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} onChange={(e) =>
+                                            this.handleRulePriority(e)
+                                        }
+                                            value={rulePriority} label="Weights" />
+                                    </Panel>
 
 
 
 
+                                <textarea
+                                    style={{
+                                        width: '100%', height: '300px', padding: '20px',
+                               
+                                        'font-size': '13px',
+                                        'resize': 'vertical',
+                                     
+                                        'font-style': 'bold'
+                                    }}
+
+
+
+
+                                    className="ag-theme-alpine"
+                                    value={this.state.description}
+                                    label="Rule Condition Error"
+                                    placeholder='Enter the conditions'
+
+                                    readOnly={true} /> </div>}
+
+                            {this.state.activeTab === 'Track' && <div>{this.responseVariablesPanel()}</div>}
+
+                            {this.state.activeTab === 'If-Then' && <div> {this.ifThenPanel()} </div>}
+                            {this.state.activeTab === 'Condition' && <div> {this.conditionPanel()} </div>}
+
+
+                            {this.state.activeTab === 'API' && <div> API Active Status <ToggleButton onToggle={this.onToggleAPI} value={apiChecked} />
+                                {this.apiPanel()}
                             </div>}
 
 
+                            {this.state.activeTab === 'Action' && <div> {this.imputeAggregatePanel()}</div>}
+                            {this.state.activeTab === 'Settings' &&
+                                <div>
+                                 
 
-                    </div></div>
+
+
+
+                                </div>}
+
+
+
+                        </div></div>
                 </div>
 
             </div>);

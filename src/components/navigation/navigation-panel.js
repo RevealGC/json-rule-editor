@@ -45,6 +45,8 @@ class NavigationPanel extends Component {
         const history = createHashHistory();
         this.props.setActiveRulesetIndex(name);
         history.push('./ruleset');
+        // close the left panel.
+this.props.updateState("closed")
 
     }
     handleSearch(e){
@@ -60,6 +62,9 @@ class NavigationPanel extends Component {
         let result = await axios.get(url)
         let ruleSet = result.data
         this.props.uploadRuleset(result.data)
+
+
+
         }
         catch(e){
             alert(e)
