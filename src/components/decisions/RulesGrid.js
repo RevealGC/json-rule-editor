@@ -73,13 +73,39 @@ const newRuleObject = {
   }
 }
 
+const cellStyle = {
+  display: 'block',
+  alignItems: 'center',
+  maxWidth:'80px;'
+};
 
+
+
+function stripHTML(html) {
+  var tmp = document.createElement("DIV");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
+} 
+function truncateString(str, len) {
+  if (str && str.length > len) {
+    return str.substring(0, len) + "...";
+  }
+  return stripHTML(str)
+
+}
+
+/**
+ * Want to create a react component
+ */
 
 class RulesGrid extends React.Component {
   constructor(props) {
     super(props);
     this.gridApi = ''
     this.allRulesRedux = this.props.allRulesRedux
+
+  
+  
 
     this.state = {
       selectedCondition: {},
@@ -92,27 +118,13 @@ class RulesGrid extends React.Component {
 
       columnDefs: [
         { headerName: 'Active', field: 'active', sortable: true, filter: 'agTextColumnFilter', hide: true },
-        {
-          headerName: '#', field: 'key', sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter', checkboxSelection: true,
-
-          comparator: (a, b) => { return a - b }
-
-        },
-
-        {
-          headerName: 'RID', field: 'id', sortable: true, filter: 'agTextColumnFilter', width: 200,
-
-          comparator: (a, b) => { return a - b }
-
-        },
-        {
-          headerName: 'Description', field: 'description', sortable: true, filter: 'agTextColumnFilter', width: 400,
-
-          comparator: (a, b) => { return a - b }
-
-        },
+        { headerName: '#', field: 'key', sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter', checkboxSelection: true, comparator: (a, b) => { return a - b } },
+        { headerName: 'RID', field: 'id', sortable: true, filter: 'agTextColumnFilter', width: 200, comparator: (a, b) => { return a - b } },
 
 
+
+        // DESCRIPTION
+        { headerName: 'Description', field: 'description', autoHeight: true,editable:true,wrapText: true, sortable: true, filter: 'agTextColumnFilter',cellEditor: 'agTextCellEditor', cellEditorPopup: true,valueGetter: this.truncateDescription, cellStyle: cellStyle },
 
         { headerName: 'Name', field: 'name', sortable: true, filter: 'agTextColumnFilter', },
 
@@ -148,6 +160,9 @@ class RulesGrid extends React.Component {
 
     this.addRowData = this.addRowData.bind(this)
   }
+
+
+
 
   getRowNodeId = data => {
     return data.key;
@@ -270,7 +285,7 @@ class RulesGrid extends React.Component {
     let rule = [params.data.data]
 
     return (<div>
-      <RuleEditor conditions={rule}
+      <RuleEditor conditions={rule} description ={params.data.description}
       
         performCrudOperations={this.performCrudOperations}
         facts={this.props.facts} decisionIndex={params.rowIndex} /> </div>)
@@ -294,6 +309,14 @@ class RulesGrid extends React.Component {
       return ''
     }
   }
+
+
+  truncateDescription(params){
+    let ret = params.data.description
+    return  stripHTML(truncateString(ret,100))
+  }
+
+
   getActionType(params) {
     try {
       let ret = params.data.parsed_rule.event.actionType

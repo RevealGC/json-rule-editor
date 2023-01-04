@@ -5,6 +5,13 @@ import Panel from '../panel/panel';
 import axios from 'axios'
 
 
+import ReactQuill from 'react-quill';
+import EditorToolbar, { modules, formats } from "./EditorToolbar";
+import "../../../node_modules/react-quill/dist/quill.snow.css"// .  react-quill/dist/quill.snow.css';
+
+import FormExample from './GeneralRuleForm';
+
+
 import { processEngine, updateParsedRules } from '../../validations/rule-validation';
 import InputField from '../forms/input-field';
 import SelectField from '../forms/selectmenu-field';
@@ -116,6 +123,9 @@ class RuleEditor extends Component {
 
         const name = condition.event ? condition.event.name : ''
         const message = condition.event ? condition.event.params.message : ''
+
+        const description = this.props.description ? this.props.description : ''
+
         const responseVariables = condition.event && condition.event.params && condition.event.params.rvsJSON ? condition.event.params.rvsJSON :
             (condition.event && condition.event.params && condition.event.params.rvs ? JSON.parse(condition.event.params.rvs) : [])
 
@@ -138,7 +148,8 @@ class RuleEditor extends Component {
             showAddRuleCase: false,
             conditions: this.props.conditions,
             outcome,
-            condition, ruleId, name, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring, conditionStringObject, facts, rulePriority, displayRuleEditor, apiChecked,
+
+            condition, ruleId, name, description, message, actionType, responseVariables, active, validationType, params, decisionIndex, action, apiSource, conditionstring, conditionStringObject, facts, rulePriority, displayRuleEditor, apiChecked,
 
             removeAlert: false, successAlert: false,
             actionParseObject: [], // gives the result of passing an array to the test action API end point. It will provide name value pairs and the imputedValue as an array.
@@ -183,6 +194,7 @@ class RuleEditor extends Component {
         this.handleTestRule = this.handleTestRule.bind(this)
         this.handleDeployRule = this.handleDeployRule.bind(this)
         this.handleAIDescribe = this.handleAIDescribe.bind(this)
+        this.handleQuillChange = this.handleQuillChange.bind(this)
 
 
 
@@ -199,24 +211,24 @@ class RuleEditor extends Component {
     handleTab = (tabName) => {
         this.setState({ activeTab: tabName });
     }
-// enter the state parameter. get the string value for the state parameter and pass it to ai for processing.
+    // enter the state parameter. get the string value for the state parameter and pass it to ai for processing.
 
-/**
- * Call handleAIDescribe with a state string like description.  
- * Will read the str from this.state.description
- * will call axios to handle the ai parsing and get the description from ai
- * then resetting the state value of description to the new state.
- * @param {} strStateParam 
- */
-    handleAIDescribe = async ()=>{
+    /**
+     * Call handleAIDescribe with a state string like description.  
+     * Will read the str from this.state.description
+     * will call axios to handle the ai parsing and get the description from ai
+     * then resetting the state value of description to the new state.
+     * @param {} strStateParam 
+     */
+    handleAIDescribe = async () => {
         let url = HOSTURL + '/openai/aicomplete?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
         // get the string you want to process and update
         let str = this.generateDescription()
         // now call axios post and once you get the value
-        let valueFromAI = await  axios.post(url, { conditionstring: str})
+        let valueFromAI = await axios.post(url, { conditionstring: str })
 
         // update the value of the state parameter.
-        this.setState({description:valueFromAI.data})
+        this.setState({ description: valueFromAI.data })
 
     }
 
@@ -246,13 +258,13 @@ class RuleEditor extends Component {
 
     updateCondition(condition) {
 
-        const { responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority } = this.state
+        const { responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, description, rulePriority } = this.state
 
 
 
 
 
-        let rowData = { parsed_rule: condition, id: ruleId, data: condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority, key: this.props.decisionIndex }
+        let rowData = { parsed_rule: condition, description, id: ruleId, data: condition, responseVariables, name, ruleId, message, actionType, params, active, validationType, action, conditionStringObject, rulePriority, key: this.props.decisionIndex }
         // this.addDebug({ rowData, log: 'line 261 in ruleeditor' })
 
         this.props.performCrudOperations('update', this.props.decisionIndex, rowData);
@@ -423,13 +435,15 @@ class RuleEditor extends Component {
     }
 
     onToggleAPI(apiChecked) {
-        if (!apiChecked) this.setState({ apiSource: {
-            url: 'http://census.gov',
-            verb: 'POST',
-            headers: [{ key: 'X-JBID', value: 'kapoo' }, { key: 'X-API-KEY', value: '12345ABC233' }],
-            data: [{ key: 'row', value: 3 }],
-            query: [{ key: 'DEBUG', value: true }]
-        } })
+        if (!apiChecked) this.setState({
+            apiSource: {
+                url: 'http://census.gov',
+                verb: 'POST',
+                headers: [{ key: 'X-JBID', value: 'kapoo' }, { key: 'X-API-KEY', value: '12345ABC233' }],
+                data: [{ key: 'row', value: 3 }],
+                query: [{ key: 'DEBUG', value: true }]
+            }
+        })
         else this.setState({ apiSource: {} })
         this.setState({ apiChecked: !apiChecked })
     }
@@ -928,6 +942,20 @@ class RuleEditor extends Component {
         // alert("Rule # " + result[0].id + " was successfully deployed", '')
     }
 
+
+    handleDescriptionChange(event) {
+        event.preventDefault()
+        let description = event.target.value
+        this.setState({ description: description })
+
+    }
+
+    handleQuillChange(description) {
+
+        this.setState({ description: description })
+
+    }
+
     render() {
         const { searchCriteria, bannerflag, name, active, validationType, ruleId, actionType, rulePriority, displayRuleEditor, successAlert, apiChecked, outcome, facts } = this.state;
 
@@ -957,56 +985,70 @@ class RuleEditor extends Component {
                     <div style={{ 'height': '800px;', 'min-width': '800px', padding: '20px', margin: '10px' }}>
                         <div className="tab-page-container"     >
 
-                            {this.state.activeTab === 'General' && <div>
+                            {this.state.activeTab === 'General' &&
+                                <div >
 
-                                <Panel title="Enter rule name" >
+<Panel title="Enter rule name" >
+<FormExample
+      name={this.state.name}
+      active={this.state.active}
+      priority={this.state.rulePriority}
+      validationType = {this.state.validationType}
+    />
+    </Panel>
 
-                                    <div>Active 
-                                        <ToggleButton onToggle={this.onToggleActive} value={active} >
 
-                                        </ToggleButton>
-                                    </div>
-                                    <InputField onChange={(value) => this.handleChangeRuleName(value)}
-                                        value={name}
-                                        error={outcome.error && outcome.error.value} label=""
-                                        placeholder='Enter a rule name...'
 
-                                    />
-                                </Panel>
-                                <Panel title='Category and Weights'  >
-                                        <InputField  onChange={(value) => this.handleValidationType(value)}
-                                            value={validationType}
-                                            error={outcome.error && outcome.error.value} label="Category"
-                                            placeholder='Enter a validation type(For example: "validation")...'
-                                        />
-                                        <SelectField options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} onChange={(e) =>
-                                            this.handleRulePriority(e)
-                                        }
-                                            value={rulePriority} label="Weights" />
+
+
+                                    {/* <div style={{ display: "flex" }}>
+                                        <div style={{ display: "inline-block" }}>
+
+                                            <Panel title="Enter rule name" >
+
+                                                <div>Active
+                                                    <ToggleButton onToggle={this.onToggleActive} value={active} >
+                                                    label = "Active"
+                                                    </ToggleButton>
+                                                </div>
+                                                <InputField onChange={(value) => this.handleChangeRuleName(value)}
+                                                    value={name}
+                                                    error={outcome.error && outcome.error.value} label=""
+                                                    placeholder='Enter a rule name...'
+
+                                                />
+                                            </Panel>
+                                        </div>
+                                        <div style={{ display: "inline-block" }}>
+
+                                            <Panel title='Category and Weights'  >
+                                                <InputField onChange={(value) => this.handleValidationType(value)}
+                                                    value={validationType}
+                                                    error={outcome.error && outcome.error.value} label="Category"
+                                                    placeholder='Enter a validation type(For example: "validation")...'
+                                                />
+                                                <SelectField options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} onChange={(e) =>
+                                                    this.handleRulePriority(e)
+                                                }
+                                                    value={rulePriority} label="Weights" />
+                                            </Panel>
+
+                                        </div>
+                                    </div> */}
+
+                                    <Panel title='Description'>
+                                        <EditorToolbar />
+                                        <ReactQuill value={this.state.description} onChange={this.handleQuillChange} theme="snow" modules={modules}
+                                            formats={formats} />
+
+                                        <div className="btn-group"> <Button label='Describe' onConfirm={this.handleAIDescribe} classname="primary-btn" /></div>
+
                                     </Panel>
+                                </div>
+                                
+                                
+                                }
 
-
-
-                                <Panel title='Description'>
-
-                                <div className="btn-group"> <Button label='Describe' onConfirm={this.handleAIDescribe} classname="primary-btn" /></div>
-
-
-
-
-                                <textarea
-                                    style={{
-                                        width: '100%', height: '300px', padding: '20px',
-                                        'font-size': '16px',
-                                        'resize': 'vertical',
-                                        // 'font-style': 'bold'
-                                    }}
-                                    className="ag-theme-alpine"
-                                    value={this.state.description}
-                                     />
-                                    </Panel>
-                                     </div>}
-                                   
                             {this.state.activeTab === 'Track' && <div>{this.responseVariablesPanel()}</div>}
 
                             {this.state.activeTab === 'If-Then' && <div> {this.ifThenPanel()} </div>}
@@ -1021,7 +1063,7 @@ class RuleEditor extends Component {
                             {this.state.activeTab === 'Action' && <div> {this.imputeAggregatePanel()}</div>}
                             {this.state.activeTab === 'Settings' &&
                                 <div>
-                                 
+
 
 
 
