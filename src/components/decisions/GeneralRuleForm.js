@@ -13,28 +13,43 @@ function FormExample(props) {
   const [validationType, setValidationType] = useState(props.validationType || '');
 
   const handleNameChange = (event) => {
+    event.preventDefault();
     setName(event.target.value);
+    props.handleChangeRuleName(event.target.value)
+   
   };
 
   const handleToggle = () => {
+
+
     setActive(!active);
+    props.handleToggleActive(event.target.value)
+    
+    
   };
   const handleValidationTypeChange = (event) => {
+    event.preventDefault();
     setValidationType(event.target.value);
+    props.handleValidationType(event.target.value)
+
+
   };
   const handlePriorityChange = (event) => {
+    event.preventDefault();
     setPriority(event.target.value);
+    props.handleRulePriority(event.target.value)
+   
   };
 
   return (
-    <form style={{ width: '800px', 'margin': '20px;' }}>
+    <form style={{ width: '800px',  }}>
        
         <label>
-        Active:
+        <span >Active:</span>
         <input type="checkbox" checked={active} onChange={handleToggle} />
       </label>
       <label>
-        Priority:
+        <span >Priority: </span>
         <select value={priority} onChange={handlePriorityChange}>
           <option value={1}>1</option>
           <option value={2}>2</option>
@@ -50,9 +65,9 @@ function FormExample(props) {
       </label>
       <br />
   
-      <div className="form-field" style={{'margin': '20px;', 'padding': '20px;'}}>
+      <div className="form-field" >
       <label>
-        Name:
+      <span >Name:</span>
         <input type="text" value={name} onChange={handleNameChange} />
       </label>
       <br />
@@ -61,7 +76,7 @@ function FormExample(props) {
  
       <br />
       <label>
-        Type:
+      <span>Type: </span>
         <input  type="text" value={validationType} onChange={handleValidationTypeChange} />
       </label>
       </div>
