@@ -112,7 +112,7 @@ class RuleEditor extends Component {
         ? condition.conditions.all[0].params.conditionstring
         : "RCPT_TOT > 0"; // is an object of all/or array of conditions
 
-    const conditionStringObject = { parseSuccess: true, ruleResult: true };
+    const conditionStringObject = {condition:condition} // { parseSuccess: true, ruleResult: true };
 
     const apiChecked =
       condition.event.params && condition.event.params.apiChecked
@@ -1107,7 +1107,7 @@ class RuleEditor extends Component {
       updatedAlert: "Rule # " + result[0].id + " was successfully deployed",
     });
     // DOING WORK after deployrule update the states of the rules.
-    this.this.handleUpdateRule();
+    this.handleUpdateRule();
 
     // alert("Rule # " + result[0].id + " was successfully deployed", '')
   }
@@ -1160,47 +1160,40 @@ class RuleEditor extends Component {
     ) : (
       <div
         style={{
-          height: "800px;",
-          "min-width": "800px",
+          height: "800px",
+          "minWidth": "800px",
           padding: "20px",
           margin: "10px",
         }}
       >
         {this.alert()}
         <div title={name}>
-          {disabled ? (
+          { (
             <div className="btn-group">
-              {" "}
-              <Button
-                label="View"
-                onConfirm={this.handleShowRuleJSON}
-                classname="primary-btn"
-              />
-            </div>
-          ) : (
-            <div className="btn-group">
-              <Button
-                label="View"
-                onConfirm={this.handleShowRuleJSON}
-                classname="primary-btn"
-              />
-              <Button
+                  <Button
                 label={buttonProps.primaryLabel}
                 onConfirm={this.handleUpdateRule}
-                disabled={disabled}
+                visible={disabled}
                 classname="primary-btn"
               />
+              <Button
+                label="View"
+                onConfirm={this.handleShowRuleJSON}
+                // disabled={disabled}
+                classname="primary-btn"
+              />
+            
               <Button
                 label="Test"
                 onConfirm={this.handleTestRule}
                 classname="primary-btn"
-                disabled={disabled}
+                // disabled={disabled}
               />
               <Button
                 label="Deploy"
                 onConfirm={this.handleDeployRule}
                 classname="primary-btn"
-                disabled={disabled}
+                // disabled={disabled}
               />
             </div>
           )}
@@ -1212,7 +1205,7 @@ class RuleEditor extends Component {
           />
           <div
             style={{
-              height: "800px;",
+              height: "800px",
               "min-width": "800px",
               padding: "20px",
               margin: "10px",

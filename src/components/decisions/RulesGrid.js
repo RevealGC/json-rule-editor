@@ -74,8 +74,9 @@ const newRuleObject = {
 }
 
 const cellStyle = {
-  display: 'block',
-  alignItems: 'center',
+  display: 'flex',
+  'align-items': 'center',
+  
   maxWidth:'80px;'
 };
 
@@ -117,35 +118,43 @@ class RulesGrid extends React.Component {
       submitAlert: false, removeAlert: false, successAlert: false, removeDecisionAlert: false,
 
       columnDefs: [
-        { headerName: 'Active', field: 'active', sortable: true, filter: 'agTextColumnFilter', hide: true },
-        { headerName: '#', field: 'key', sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter', checkboxSelection: true, comparator: (a, b) => { return a - b } },
-        { headerName: 'RID', field: 'id', sortable: true, filter: 'agTextColumnFilter', width: 200, comparator: (a, b) => { return a - b } },
+        { headerName: 'Active', field: 'active', sortable: true, filter: 'agTextColumnFilter', hide: true,
+         cellStyle: cellStyle  },
+        { headerName: '#', field: 'key',  cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter', checkboxSelection: true, comparator: (a, b) => { return a - b } },
+        { headerName: 'RID', field: 'id', cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', width: 200, comparator: (a, b) => { return a - b } },
 
 
 
         // DESCRIPTION
-        { headerName: 'Description', field: 'description', autoHeight: true,editable:true,wrapText: true, sortable: true, filter: 'agTextColumnFilter',cellEditor: 'agTextCellEditor', cellEditorPopup: true,valueGetter: this.truncateDescription, cellStyle: cellStyle },
+        { headerName: 'Description', field: 'description', autoHeight: true,editable:true,wrapText: true, sortable: true, filter: 'agTextColumnFilter',cellEditor: 'agTextCellEditor', cellEditorPopup: true,valueGetter: this.truncateDescription,
+        
+        
+        cellStyle: cellStyle 
+      
+      
+      
+      },
 
-        { headerName: 'Name', field: 'name', sortable: true, filter: 'agTextColumnFilter', },
+        { headerName: 'Name', field: 'name',  cellStyle: cellStyle,sortable: true, filter: 'agTextColumnFilter', },
 
-        { headerName: 'Rule Condition', field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
-        { headerName: 'Message', field: 'description', sortable: true, filter: 'agTextColumnFilter', width: 300, },
+        { headerName: 'Rule Condition', cellStyle: cellStyle, field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
+        { headerName: 'Message', field: 'description', cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', width: 300, },
 
-        { headerName: 'Action Type', field: 'actionType', valueGetter: this.getActionType, width: 100, sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Action Type', field: 'actionType', cellStyle: cellStyle, valueGetter: this.getActionType, width: 100, sortable: true, filter: 'agTextColumnFilter', hide: true },
 
-        { headerName: 'Action', field: 'action', valueGetter: this.getAction, width: 400, sortable: true, filter: 'agTextColumnFilter' },
+        { headerName: 'Action', field: 'action', cellStyle: cellStyle, valueGetter: this.getAction, width: 400, sortable: true, filter: 'agTextColumnFilter' },
 
-        { headerName: 'Track', field: 'parsed_rule.event.params.rvs', sortable: true, filter: 'agTextColumnFilter', },
-        { headerName: 'RefPer Start', field: 'refper_start', sortable: true, filter: 'agTextColumnFilter', hide: true },
-        { headerName: 'RefPer End', field: 'refper_end', sortable: true, filter: 'agTextColumnFilter', hide: true },
-        { headerName: 'Parsed Rule', field: 'parsed_rule', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Track', cellStyle: cellStyle, field: 'parsed_rule.event.params.rvs', sortable: true, filter: 'agTextColumnFilter', },
+        { headerName: 'RefPer Start', cellStyle: cellStyle, field: 'refper_start', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'RefPer End', cellStyle: cellStyle, field: 'refper_end', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Parsed Rule', cellStyle: cellStyle, field: 'parsed_rule', sortable: true, filter: 'agTextColumnFilter', hide: true },
 
         { headerName: 'Priority', field: 'priority', sortable: true, valueGetter: this.getRulePriority, filter: 'agTextColumnFilter', },
 
-        { headerName: 'Created By', field: 'created_by', sortable: true, filter: 'agTextColumnFilter', hide: true },
-        { headerName: 'Modified By', field: 'modified_by', sortable: true, filter: 'agTextColumnFilter', hide: true },
-        { headerName: 'Created At', field: 'created_at', sortable: true, filter: 'agTextColumnFilter', hide: true },
-        { headerName: 'Modified At', field: 'modified_at', sortable: true, filter: 'agTextColumnFilter', hide: true }
+        { headerName: 'Created By', cellStyle: cellStyle, field: 'created_by', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Modified By', cellStyle: cellStyle, field: 'modified_by', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Created At',  cellStyle: cellStyle,field: 'created_at', sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Modified At', cellStyle: cellStyle, field: 'modified_at', sortable: true, filter: 'agTextColumnFilter', hide: true }
       ],
       rowData: [],
       backupRowData: []
@@ -313,7 +322,7 @@ class RulesGrid extends React.Component {
 
   truncateDescription(params){
     let ret = params.data.description
-    return  stripHTML(truncateString(ret,100))
+    return  truncateString(stripHTML(ret),100)
   }
 
 
@@ -544,7 +553,7 @@ class RulesGrid extends React.Component {
 
 
             // detailCellRendererParams={this.state.selectedCondition}
-
+            defaultColDef= {{ flex: 1,resizable: true}}
             embedFullWidthRows={false}
             rowSelection={'multiple'}
             pagination={true}

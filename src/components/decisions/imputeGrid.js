@@ -5,7 +5,12 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 import ApperanceContext from '../../context/apperance-context';
-
+const cellStyle = {
+    display: 'flex',
+    'align-items': 'center',
+    
+    maxWidth:'80px;'
+  };
 /**
  * actionArray is a an array of action which is comprised of objets like so:
  * {"RVNAME": "Computational Expression or logical one", 
@@ -63,20 +68,20 @@ class ImputeGrid extends Component {
                 sortable: true, filter: 'agTextColumnFilter',
 
 
-                cellEditor: 'agTextCellEditor'
+                cellEditor: 'agTextCellEditor', cellStyle: cellStyle 
             },
           
             {
                 headerName: 'Expression', field: 'expression', editable: true, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,
                 sortable: true, filter: 'agTextColumnFilter',
 
-                flex: 4,
+                flex: 4,cellStyle: cellStyle 
             },
             {
                 headerName: 'Value', field: 'value', editable: false, cellEditor: 'agLargeTextCellEditor', cellEditorPopup: true,
                 sortable: true, filter: 'agTextColumnFilter',
 
-                flex: 2,
+                flex: 2,cellStyle: cellStyle 
             }
         ];
 
