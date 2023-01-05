@@ -98,8 +98,8 @@ this.props.updateState("closed")
                 value=  {this.state.dbSearchText }
                 onConfirm={this.handleSearch} 
                 onChange={this.handleSearch}/>
-                <div class="btn-container">
-                    <button class="btn primary-btn" type="submit" onClick={this.loadRuleSet}>Load Ruleset</button>
+                <div className="btn-container">
+                    <button className="btn primary-btn" type="submit" onClick={this.loadRuleSet}>Load Ruleset</button>
                     </div>
                     </div>
 

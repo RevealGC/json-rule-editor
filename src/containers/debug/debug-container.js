@@ -126,13 +126,12 @@ debugPanelAttribute(data) {
 
     debugPanel() {
         const debugData = this.props.debugData.reverse()
-        console.log("🚀 ~ file: debug-container.js:129 ~ DebugContainer ~ debugPanel ~ debugData", debugData)
 
         return (
             debugData.map((d, index, debugData) => {
                 let collapsed = (index === 0) ? false : true
-                return (<Panel title={d.label} >
-                    <ReactJson displayObjectSize={false} displayDataTypes={false} collapsed={collapsed}
+                return (<Panel title={d.label} key={index}>
+                    <ReactJson displayObjectSize={false}   key={index +'debug'} displayDataTypes={false} collapsed={collapsed}
                         src={d.data} onClick={this.handleReset} /> </Panel>
                 )
             }))

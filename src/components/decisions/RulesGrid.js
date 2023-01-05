@@ -34,6 +34,18 @@ const arrayToString = (arr) => {
     return acc;
   }, '');
 };
+const groupDisplayType = 'multipleColumns';
+const gridOptions = {
+ 
+  getRowStyle: function(params) {
+    return {
+
+      margin: '40px',
+      
+
+    }
+  }
+};
 
 
 // var facts = { reporting_id: 8771348140 }
@@ -75,9 +87,9 @@ const newRuleObject = {
 
 const cellStyle = {
   display: 'flex',
-  'align-items': 'center',
-  
-  maxWidth:'80px;'
+  'alignItems': 'center',
+
+
 };
 
 
@@ -106,7 +118,7 @@ class RulesGrid extends React.Component {
     this.allRulesRedux = this.props.allRulesRedux
 
   
-  
+    // rowGroup: true,
 
     this.state = {
       selectedCondition: {},
@@ -121,7 +133,14 @@ class RulesGrid extends React.Component {
         { headerName: 'Active', field: 'active', sortable: true, filter: 'agTextColumnFilter', hide: true,
          cellStyle: cellStyle  },
         { headerName: '#', field: 'key',  cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter', checkboxSelection: true, comparator: (a, b) => { return a - b } },
-        { headerName: 'RID', field: 'id', cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', width: 200, comparator: (a, b) => { return a - b } },
+        
+        
+        
+        
+        { headerName: 'Rule ID', field: 'id',
+        
+        valueGetter: this.getRuleId,
+        cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
 
 
@@ -135,16 +154,25 @@ class RulesGrid extends React.Component {
       
       },
 
-        { headerName: 'Name', field: 'name',  cellStyle: cellStyle,sortable: true, filter: 'agTextColumnFilter', },
+        { headerName: 'Name', field: 'name', valueGetter: this.getRuleName, cellStyle: cellStyle,sortable: true, filter: 'agTextColumnFilter', },
 
         { headerName: 'Rule Condition', cellStyle: cellStyle, field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
-        { headerName: 'Message', field: 'description', cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', width: 300, },
+        { headerName: 'Message', field: 'description', cellStyle: cellStyle,
+        valueGetter: this.getRuleMessage,
+        
+        
+        sortable: true, filter: 'agTextColumnFilter',  },
 
-        { headerName: 'Action Type', field: 'actionType', cellStyle: cellStyle, valueGetter: this.getActionType, width: 100, sortable: true, filter: 'agTextColumnFilter', hide: true },
+        { headerName: 'Track', cellStyle: cellStyle, field: 'parsed_rule.event.params.rvs',valueGetter: this.getTrackVariables,width: 100, sortable: true, filter: 'agTextColumnFilter', },
+
+
+        { headerName: 'Action Type', field: 'actionType', cellStyle: cellStyle, valueGetter: this.getActionType, width: 100, sortable: true, filter: 'agTextColumnFilter', hide: true},
+//Type
+
+        { headerName: 'Type', field: 'type', rowGroup: true, cellStyle: cellStyle,  width: 100, sortable: true, filter: 'agTextColumnFilter', hide: true},
 
         { headerName: 'Action', field: 'action', cellStyle: cellStyle, valueGetter: this.getAction, width: 400, sortable: true, filter: 'agTextColumnFilter' },
 
-        { headerName: 'Track', cellStyle: cellStyle, field: 'parsed_rule.event.params.rvs', sortable: true, filter: 'agTextColumnFilter', },
         { headerName: 'RefPer Start', cellStyle: cellStyle, field: 'refper_start', sortable: true, filter: 'agTextColumnFilter', hide: true },
         { headerName: 'RefPer End', cellStyle: cellStyle, field: 'refper_end', sortable: true, filter: 'agTextColumnFilter', hide: true },
         { headerName: 'Parsed Rule', cellStyle: cellStyle, field: 'parsed_rule', sortable: true, filter: 'agTextColumnFilter', hide: true },
@@ -157,7 +185,21 @@ class RulesGrid extends React.Component {
         { headerName: 'Modified At', cellStyle: cellStyle, field: 'modified_at', sortable: true, filter: 'agTextColumnFilter', hide: true }
       ],
       rowData: [],
-      backupRowData: []
+      backupRowData: [],
+      defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        sortable: true,
+        resizable: true,
+     
+      },
+      
+      autoGroupColumnDef: {
+        minWidth: 200,
+      },
+      groupMultiAutoColumn: true,
+  enableRangeSelection: true,
+  groupUseEntireRow: true,
     }
     this.onGridReady = this.onGridReady.bind(this)
     this.createNewRow = this.createNewRow.bind(this)
@@ -253,10 +295,10 @@ class RulesGrid extends React.Component {
 
 
 
-  componentDidMount() {
+  async componentDidMount() {
 
 
-    this.loadData()
+    await this.loadData()
   }
 
 
@@ -305,7 +347,7 @@ class RulesGrid extends React.Component {
       let ret = params.data.parsed_rule.event.rulePriority
       return ret
     } catch (error) {
-      return ''
+      return 'Priority'
     }
   }
   getAction(params) {
@@ -315,23 +357,69 @@ class RulesGrid extends React.Component {
       return arrayToString(ret)
 
     } catch (error) {
-      return ''
+      return 'If the rule condition is met perform these actions'
+    }
+  }
+  getRuleName(params){
+    try {
+      let ret = params.data.parsed_rule.event.name
+
+      return (ret)
+
+    } catch (error) {
+      return 'Rule names.'
+    }
+  }
+
+  getTrackVariables(params){
+    try {
+      let ret = params.data.parsed_rule.event.params.rvs
+
+      return (ret)
+
+    } catch (error) {
+      return 'Tracking Variables'
     }
   }
 
 
-  truncateDescription(params){
-    let ret = params.data.description
-    return  truncateString(stripHTML(ret),100)
+  getRuleMessage(params){
+    try {
+      let ret = params.data.parsed_rule.event.params.message
+
+      return stripHTML(ret)
+
+    } catch (error) {
+      return 'Message when rule passes.'
+    }
   }
 
+  truncateDescription(params){
 
+    try{
+    let ret = params.data.description
+    return  truncateString(stripHTML(ret),100)
+    }
+    catch(error){
+    
+      return 'Description for the rule. Rule description can be generated'
+    }
+  }
+
+  getRuleId(params){
+    try {
+      let ret = params.data.id
+      return ret
+    } catch (error) {
+      return 'Rule ID'
+    }
+  }
   getActionType(params) {
     try {
       let ret = params.data.parsed_rule.event.actionType
       return ret
     } catch (error) {
-      return ''
+      return 'Action Type: Can be notify or impute'
     }
   }
 
@@ -340,7 +428,7 @@ class RulesGrid extends React.Component {
       let ret = params.data.parsed_rule.conditions.all[0].params.conditionstring
       return ret
     } catch (error) {
-      return ''
+      return 'Rule condition can be a logical or mathematical expression'
     }
   }
   crudRule() {
@@ -424,10 +512,12 @@ class RulesGrid extends React.Component {
 
 
 
-  onGridReady = (params) => {
+  onGridReady = async (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
-    this.loadData()
+    await this.loadData()
+    this.gridApi.autoSizeColumns();
+  
   }
 
   handleCancelNewRow = (params) => {
@@ -517,9 +607,9 @@ class RulesGrid extends React.Component {
 
 
     return (
-      <div >
+      <div   >
         {this.alert()}
-        <div className={`attributes-header ${background}`} style={{ height: 100 ,margin:'10px;', padding:'10px;'}} >
+        <div className={`attributes-header ${background}`} style={{ display: 'flex' ,height: 100 ,margin:'10px', padding:'10px'}} >
           <div className="attr-link" onClick={this.addRowData}>
             <span className="plus-icon" /><span className="text">Add</span>
           </div>
@@ -532,7 +622,7 @@ class RulesGrid extends React.Component {
           </div>
         </div>
 
-        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000 ,margin:'10px;', padding:'10px;'}}>
+        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000 ,margin:'10px', padding:'10px'}}>
           <AgGridReact
 
             onRowClicked={(e) => {
@@ -550,7 +640,8 @@ class RulesGrid extends React.Component {
             masterDetail={true}
 
             detailCellRenderer={this.detailCellRenderer.bind(this)}
-
+            groupDisplayType={groupDisplayType}
+            gridOptions={gridOptions}
 
             // detailCellRendererParams={this.state.selectedCondition}
             defaultColDef= {{ flex: 1,resizable: true}}

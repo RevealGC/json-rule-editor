@@ -9,7 +9,7 @@ const cellStyle = {
     display: 'flex',
     'align-items': 'center',
     
-    maxWidth:'80px;'
+    width:'80px'
   };
 /**
  * actionArray is a an array of action which is comprised of objets like so:

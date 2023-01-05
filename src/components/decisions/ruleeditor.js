@@ -87,16 +87,10 @@ class RuleEditor extends Component {
       : { value: "New", params: [] };
 
     const decisionIndex = this.props.decisionIndex;
-    console.log(
-      "🚀 ~ file: ruleeditor.js:83 ~ RuleEditor ~ constructor ~ decisionIndex",
-      decisionIndex
-    );
+   
     const conditions = this.props.conditions;
 
-    console.log(
-      "🚀 ~ file: ruleeditor.js ~ line 85 ~ RuleEditor ~ constructor ~ conditions",
-      conditions
-    );
+
 
     // const handleCancel = this.props.handleCancel
     const facts = this.props.facts.facts;
@@ -124,10 +118,7 @@ class RuleEditor extends Component {
         ? condition.event.active
         : false;
 
-    console.log(
-      "🚀 ~ file: ruleeditor.js:97 ~ RuleEditor ~ constructor ~ active",
-      active
-    );
+
 
     const params =
       condition.event && condition.event.params ? condition.event.params : [];
@@ -222,10 +213,7 @@ class RuleEditor extends Component {
       decisions: props.decisions || [],
       bannerflag: false,
     };
-    console.log(
-      "🚀 ~ file: ruleeditor.js:156 ~ RuleEditor ~ constructor ~ facts",
-      facts
-    );
+
     this.handleUpdateRule = this.handleUpdateRule.bind(this);
     this.updateCondition = this.updateCondition.bind(this);
     this.removeCase = this.removeCase.bind(this);
@@ -258,11 +246,12 @@ class RuleEditor extends Component {
     this.handleQuillChange = this.handleQuillChange.bind(this);
 
     this.addDebug = this.addDebug.bind(this);
-    this.addDebug(this.props.conditions);
+   
   }
 
   componentDidMount() {
     this.handleCompileConditionString();
+    this.addDebug(this.props.conditions);
     // this.generateDescription()
   }
   handleTab = (tabName) => {
@@ -287,7 +276,7 @@ class RuleEditor extends Component {
     let valueFromAI = await axios.post(url, { conditionstring: str });
 
     // update the value of the state parameter.
-    this.setState({ description: valueFromAI.data });
+    this.setState({ description: "<h2>Rule Definition: "+this.state.name+"</h2><br>"+valueFromAI.data });
   };
 
   handleSearch = (value) => {
@@ -471,7 +460,7 @@ class RuleEditor extends Component {
     return (
       <div>
         <Panel className="add-field-panel" title="Track Variables">
-          <div className={`attributes-header `} style={{ margin: "20px;" }}>
+          <div className={`attributes-header `} style={{ margin: "20px" }}>
             <div className="attr-link" onClick={this.addResponseVariables}>
               <span className="plus-icon" />
               <span className="text">Add Response Variables</span>
@@ -1206,7 +1195,7 @@ class RuleEditor extends Component {
           <div
             style={{
               height: "800px",
-              "min-width": "800px",
+              "minWidth": "800px",
               padding: "20px",
               margin: "10px",
             }}
