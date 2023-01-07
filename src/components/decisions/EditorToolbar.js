@@ -13,7 +13,7 @@ const CustomUndo = () => (
     />
   </svg>
 );
-
+  
 // Redo button icon component for Quill editor
 const CustomRedo = () => (
   <svg viewBox="0 0 18 18">

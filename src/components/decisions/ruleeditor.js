@@ -1236,7 +1236,7 @@ class RuleEditor extends Component {
                       handleValidationType={this.handleValidationType}
                       handleToggleActive={this.onToggleActive}
                     />
-                  </Panel>
+                  </Panel> 
                   <Panel title="Description">
                     <EditorToolbar id={"A"+this.state.ruleId} />
                     <ReactQuill value={this.state.description} onChange={this.handleQuillChange} theme="snow"
