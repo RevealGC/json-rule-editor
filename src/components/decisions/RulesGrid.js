@@ -182,7 +182,6 @@ class RulesGrid extends React.Component {
       backupRowData: [],
       defaultColDef: {
         flex: 1,
-        minWidth: 100,
         sortable: true,
         resizable: true,
         
@@ -235,14 +234,14 @@ class RulesGrid extends React.Component {
   }
   if(name === 'action')
   {
-    value = rowData.parsed_rule.event.params.action
+    value  = JSON.stringify(rowData.parsed_rule.event.params.action)
   }
   if(name === 'priority')
   {
     value = rowData.parsed_rule.event.rulePriority 
   }
   value = stripHTML(value)
-  this.props.handleDebug('ADD', { label: 'time', data: { name,value} },0)
+  this.props.handleDebug('ADD', { label: 'time', data: { name,...{value: value}} },0)
 
 }
   getRowNodeId = data => {
