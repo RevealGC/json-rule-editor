@@ -241,7 +241,7 @@ class RulesGrid extends React.Component {
   {
     value = rowData.parsed_rule.event.rulePriority 
   }
-
+  value = stripHTML(value)
   this.props.handleDebug('ADD', { label: 'time', data: { name,value} },0)
 
 }
