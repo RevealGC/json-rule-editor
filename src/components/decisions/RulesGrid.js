@@ -21,6 +21,7 @@ import SweetAlert from 'react-bootstrap-sweetalert';
 import { handleDebug } from '../../actions/debug';
 
 import { addAllRulesRedux } from '../../actions/ruleset';
+import { truncate } from 'lodash';
 
 const HOSTURL = 'http://localhost'
 
@@ -37,6 +38,7 @@ const arrayToString = (arr) => {
 const groupDisplayType = 'multipleColumns';
 const gridOptions = {
   rowMultiSelectWithClick: true,
+  groupDefaultExpanded: 1,
   getRowStyle: function(params) {
     return {
 
@@ -58,7 +60,7 @@ const newRuleObject = {
     "active": true,
     "name": "Creating a new rule. Change its name....",
     "actionType": "impute",
-    "validationType": "validation",
+    "validationType": "new",
     "rulePriority": "5",
     "params": {
       "rvs": "['PAY_ANN']",
@@ -131,21 +133,20 @@ class RulesGrid extends React.Component {
       submitAlert: false, removeAlert: false, successAlert: false, removeDecisionAlert: false,
 
       columnDefs: [
-        { headerName: 'Active', field: 'active', sortable: true, filter: 'agTextColumnFilter', hide: true,
 
-         cellStyle: cellStyle 
-         },
+
+        //Type: GROUP like validation or user ruleset
+
+        { headerName: 'Rule Groups', field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellStyle: cellStyle,   sortable: true, filter: 'agTextColumnFilter', hide: true},
+
+
         { headerName: '#', field: 'key',  cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter', checkboxSelection: true, comparator: (a, b) => { return a - b } },
-        
-        
-        
-        
-        { headerName: 'Rule ID', field: 'id',
-        
-        valueGetter: this.getRuleId,
-        cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
+        
+        
+        { headerName: 'Rule ID', field: 'id', valueGetter: this.getRuleId, cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
+        { headerName: 'Active', field: 'active', sortable: true, filter: 'agTextColumnFilter', hide: true, cellStyle: cellStyle },
 
         // DESCRIPTION
         { headerName: 'Description',width: 800, field: 'description', autoHeight: true,editable:true,wrapText: true, sortable: true, filter: 'agTextColumnFilter',cellEditor: 'agTextCellEditor', cellEditorPopup: true,valueGetter: this.truncateDescription,  cellStyle: cellStyle },
@@ -163,9 +164,6 @@ class RulesGrid extends React.Component {
         { headerName: 'Action Type', field: 'actionType', cellStyle: cellStyle, valueGetter: this.getActionType, width: 100, sortable: true, filter: 'agTextColumnFilter', hide: true},
 
 
-        //Type: GROUP like validation or user ruleset
-
-        { headerName: 'Type', field: 'type', rowGroup: true, cellStyle: cellStyle,  width: 100, sortable: true, filter: 'agTextColumnFilter', hide: true},
 
         { headerName: 'Action', field: 'action', cellStyle: cellStyle, valueGetter: this.getAction, width: 400, sortable: true, filter: 'agTextColumnFilter' },
 
@@ -265,7 +263,7 @@ class RulesGrid extends React.Component {
     let newRow = {
       parsed_rule: newRuleObject,
       active: true,
-      type: 'impute',
+      type: 'new',
       data: newRuleObject,
       description: 'New Rule',
       name: newRuleObject.event.name,
@@ -277,8 +275,11 @@ class RulesGrid extends React.Component {
 
     newRowData.push(newRow);
     this.setState({ rowData: newRowData });
-
     this.props.addAllRulesRedux(newRowData);
+         // get the index of the newly added row
+   const newRowIndex = newRowData.length
+   // open the detail of the newly added row
+    this.gridApi.getRowNode(newRowIndex).setExpanded(true);
  
 
   };
@@ -369,10 +370,22 @@ class RulesGrid extends React.Component {
 
     return (<div>
       <RuleEditor conditions={rule} description ={params.data.description}
-      
+        reloadRulesFromDB = {this.reloadRulesFromDB}
         performCrudOperations={this.performCrudOperations}
-        facts={this.props.facts} decisionIndex={params.rowIndex} /> </div>)
+        handleCancel={this.handleCancel}
+        // facts={this.props.facts} 
+        
+        decisionIndex={params.rowIndex} /> </div>)
 
+  }
+
+  getValidationType(params){
+    try {
+      let ret = params.data.parsed_rule.event.validationType
+      return (ret)
+    } catch (error) {
+      return ''
+    }
   }
   getRulePriority(params) {
     try {
@@ -534,29 +547,37 @@ class RulesGrid extends React.Component {
 
   onFirstDataRendered = (params) => {
     // setTimeout(function () {
-      // params.api.getDisplayedRowAtIndex(0).setExpanded(false);
-      params.api.columnModel.autoSizeColumns()
-      // params.api.getDisplayedRowAtIndex(0).setExpanded(true);
-
-      // gridRef.current.columnApi.autoSizeAllColumns(true);
+      // params.api.getDisplayedRowAtIndex(1).setExpanded(false);
+     
     // }, 0);
   }
 
 
 
-  onGridReady = async (params) => {
+  onGridReady =  (params) => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
    
-    // this.gridColumnApi.autoSizeColumns();
+    this.gridColumnApi.autoSizeColumns();
+    // this.gridApi.getRowNode(1).setExpanded(true);
+
+        // get the index of the newly added row
+        // const newRowIndex = this.state.rowData.length - 1;
+        // open the detail of the newly added row
+      
+
+    // this.gridApi.sizeColumnsToFit();
    
-    await this.loadData()
+    // await this.loadData()
     // params.api.columnModel.autoSizeAllColumns()
+
+
   
   }
 
-  handleCancelNewRow = (params) => {
-    this.setState({ displayNewRow: !this.state.displayNewRow });
+  handleCancel = () => {
+    this.alert("REACHED RGRID at579")
+    // this.setState({ displayNewRow: !this.state.displayNewRow });
   }
 
   hideAlert = () => {

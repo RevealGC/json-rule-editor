@@ -157,7 +157,7 @@ class ImputeGrid extends Component {
         // this will render the ag-grid in ImputeGrid in ruleseditor on line 715+
         this.render = () => {
             return (
-                <div className="ag-theme-alpine" style={{ height: '400px', width: 'auto','margin':'10px' }}>
+                <div className="ag-theme-alpine" style={{ height: '440px', width: 'auto','margin':'10px','padding':'10px' }}>
 
                     <div className={`attributes-header `}  >
                     
@@ -170,7 +170,7 @@ class ImputeGrid extends Component {
                         ))}
                           
                     </div>
-                    <div  style={{ height: '400px', width: '800px;','margin':'10px' }}>
+                    <div  style={{ height: '400px', width: '800px;','margin':'10px'  }}>
                     <AgGridReact
                         columnDefs={this.columnDefs}
                         rowData={this.state.data}

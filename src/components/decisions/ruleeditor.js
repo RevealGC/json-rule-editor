@@ -93,7 +93,7 @@ class RuleEditor extends Component {
 
 
     // const handleCancel = this.props.handleCancel
-    const facts = this.props.facts.facts;
+    const facts = this.props.facts.facts || [];
 
     const condition = conditions.length
       ? conditions[0]
@@ -244,6 +244,9 @@ class RuleEditor extends Component {
     this.handleDeployRule = this.handleDeployRule.bind(this);
     this.handleAIDescribe = this.handleAIDescribe.bind(this);
     this.handleQuillChange = this.handleQuillChange.bind(this);
+
+    this.reloadRulesFromDB = this.props.reloadRulesFromDB.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
 
     this.addDebug = this.addDebug.bind(this);
    
@@ -512,6 +515,13 @@ class RuleEditor extends Component {
     this.setState({ active: !active });
   }
   cancelAlert = () => {
+
+       // DOING WORK after deployrule update the states of the rules.
+    this.handleUpdateRule();
+    // // will reload all rules after deployrule update
+    this.reloadRulesFromDB()
+
+
     this.setState({
       removeAlert: false,
       successAlert: false,
@@ -519,13 +529,14 @@ class RuleEditor extends Component {
     });
   };
   async handleTestRule() {
-    const { condition, facts, conditionStringObject } = this.state;
+    const { condition,  conditionStringObject } = this.state;
+    const { facts } = this.props.facts
     console.log(
       "🚀 ~ file: ruleeditor.js:508 ~ RuleEditor ~ handleTestRule ~ facts",
       facts
     );
     if (!conditionStringObject.parseSuccess) {
-      alert("Error: Test rule " + conditionStringObject);
+      alert("Error: Please fix the If-Then condition. It has a status of invalid. " );
       return;
     }
 
@@ -652,9 +663,10 @@ class RuleEditor extends Component {
     const condition = this.formRule();
     this.props.handleDebug("ADD", { label: "time", data: { condition } }, 0);
   }
-  // handleCancel() {
-  //     this.props.handleCancel(this.state.decisionIndex)
-  // }
+   handleCancel(params) {
+    this.alert("LINE 677 ")
+    this.props.handleCancel()
+  }
 
   handleChangeActionType(value) {
     this.setState({ actionType: value });
@@ -745,7 +757,7 @@ class RuleEditor extends Component {
       );
     } else
       return actionType == "impute" || actionType == "aggregate" ? (
-        <Panel title="Imputations and Aggregations">
+        <Panel title="Imputations and Aggregations" >
           <RadioGroup
             name="actionType"
             selectedValue={actionType}
@@ -883,7 +895,7 @@ class RuleEditor extends Component {
      * @returns 
      */
   handleCompileImputeObject(action) {
-    const { facts } = this.state;
+    const { facts } = this.props.facts
 
     if (!action.length) return;
 
@@ -913,9 +925,10 @@ class RuleEditor extends Component {
   }
 
   handleCompileConditionString() {
-    const { conditionstring, conditionStringObject, facts } = this.state;
+    const { conditionstring, conditionStringObject } = this.state;
+    const { facts } = this.props.facts
     var self = this;
-    if (!facts) return;
+    // if (!facts) return;
     let url =
       HOSTURL +
       "/rulesrepo/testcondition?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false";
@@ -983,14 +996,10 @@ class RuleEditor extends Component {
             />
             <div> Syntax: {success ? "Correct" : "Incorrect"}</div>
             {/* If has error then show the error in the parent.hint */}
+            
             <div>
               Result:{" "}
-              {hasError
-                ? JSON.stringify(conditionStringObject.ruleResult)
-                : conditionStringObject.ruleResult.propertyName
-                ? conditionStringObject.ruleResult.propertyName +
-                  " is unknown at this time."
-                : JSON.stringify(conditionStringObject.ruleResult)}
+            {JSON.stringify(conditionStringObject.ruleResult)}
             </div>
             {/* Show the status can be true or false based on the value       */}
             Status:{" "}
@@ -1073,7 +1082,12 @@ class RuleEditor extends Component {
       </div>
     );
   };
-
+/**
+ * Deploy the rule
+ * 1) formRule(collect all the parts of a rule)
+ * 2) update the db with the data
+ * 3) show the successAlert
+ */
   async handleDeployRule() {
     const r = this.formRule();
     let data = {
@@ -1086,17 +1100,17 @@ class RuleEditor extends Component {
       id: Number(r.event.ruleId),
     };
     let result = await updateParsedRules(data);
-    console.log(
-      "🚀 ~ file: ruleeditor.js:763 ~ RuleEditor ~ handleDeployRule ~ result",
-      result
-    );
+ 
 
-    this.setState({
-      successAlert: true,
-      updatedAlert: "Rule # " + result[0].id + " was successfully deployed",
-    });
+  
     // DOING WORK after deployrule update the states of the rules.
-    this.handleUpdateRule();
+    // this.handleUpdateRule();
+    // // will reload all rules after deployrule update
+    // this.props.reloadRulesFromDB()
+    this.setState({
+        successAlert: true,
+        updatedAlert: "Rule # " + result[0].id + " was successfully deployed",
+      });
 
     // alert("Rule # " + result[0].id + " was successfully deployed", '')
   }
@@ -1159,12 +1173,14 @@ class RuleEditor extends Component {
         <div title={name}>
           { (
             <div className="btn-group">
+                  
                   <Button
                 label={buttonProps.primaryLabel}
-                onConfirm={this.handleUpdateRule}
-                visible={disabled}
+                onConfirm={this.handleDeployRule}
                 classname="primary-btn"
+                // disabled={disabled}
               />
+              
               <Button
                 label="View"
                 onConfirm={this.handleShowRuleJSON}
@@ -1178,12 +1194,7 @@ class RuleEditor extends Component {
                 classname="primary-btn"
                 // disabled={disabled}
               />
-              <Button
-                label="Deploy"
-                onConfirm={this.handleDeployRule}
-                classname="primary-btn"
-                // disabled={disabled}
-              />
+          
             </div>
           )}
 
@@ -1297,12 +1308,14 @@ RuleEditor.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   // debugData: state.ruleset.debugData
+  facts: state.ruleset.rulesets[state.ruleset.activeRuleset]
 });
 const mapDispatchToProps = (dispatch) => ({
   handleDebug: (operation, attribute, index) =>
     dispatch(handleDebug(operation, attribute, index)),
   handleDecision: (operation, decision) =>
     dispatch(handleDecision(operation, decision)),
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RuleEditor);
