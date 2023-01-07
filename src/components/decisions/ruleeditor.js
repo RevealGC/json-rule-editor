@@ -87,7 +87,7 @@ class RuleEditor extends Component {
       : { value: "New", params: [] };
 
     const decisionIndex = this.props.decisionIndex;
-   
+
     const conditions = this.props.conditions;
 
 
@@ -101,12 +101,12 @@ class RuleEditor extends Component {
 
     const conditionstring =
       condition.conditions &&
-      condition.conditions.all &&
-      condition.conditions.all[0].params
+        condition.conditions.all &&
+        condition.conditions.all[0].params
         ? condition.conditions.all[0].params.conditionstring
         : "RCPT_TOT > 0"; // is an object of all/or array of conditions
 
-    const conditionStringObject = {condition:condition} // { parseSuccess: true, ruleResult: true };
+    const conditionStringObject = { condition: condition } // { parseSuccess: true, ruleResult: true };
 
     const apiChecked =
       condition.event.params && condition.event.params.apiChecked
@@ -146,34 +146,34 @@ class RuleEditor extends Component {
 
     const responseVariables =
       condition.event &&
-      condition.event.params &&
-      condition.event.params.rvsJSON
+        condition.event.params &&
+        condition.event.params.rvsJSON
         ? condition.event.params.rvsJSON
         : condition.event &&
           condition.event.params &&
           condition.event.params.rvs
-        ? JSON.parse(condition.event.params.rvs)
-        : [];
+          ? JSON.parse(condition.event.params.rvs)
+          : [];
 
     const actionType =
       condition.event &&
-      condition.event.params &&
-      condition.event.params.actionType
+        condition.event.params &&
+        condition.event.params.actionType
         ? condition.event.params.actionType
         : "nofify";
 
     const apiSource = params.apiSource
       ? params.apiSource
       : {
-          url: "http://census.gov",
-          verb: "POST",
-          headers: [
-            { key: "X-JBID", value: "kapoo" },
-            { key: "X-API-KEY", value: "12345ABC233" },
-          ],
-          data: [{ key: "row", value: 3 }],
-          query: [{ key: "DEBUG", value: true }],
-        };
+        url: "http://census.gov",
+        verb: "POST",
+        headers: [
+          { key: "X-JBID", value: "kapoo" },
+          { key: "X-API-KEY", value: "12345ABC233" },
+        ],
+        data: [{ key: "row", value: 3 }],
+        query: [{ key: "DEBUG", value: true }],
+      };
 
     this.state = {
       showAddRuleCase: false,
@@ -249,7 +249,7 @@ class RuleEditor extends Component {
     this.handleCancel = this.handleCancel.bind(this);
 
     this.addDebug = this.addDebug.bind(this);
-   
+
   }
 
   componentDidMount() {
@@ -279,7 +279,7 @@ class RuleEditor extends Component {
     let valueFromAI = await axios.post(url, { conditionstring: str });
 
     // update the value of the state parameter.
-    this.setState({ description: "<h2>Rule Definition: "+this.state.name+"</h2><br>"+valueFromAI.data });
+    this.setState({ description: "<h2>Rule Definition: " + this.state.name + "</h2><br>" + valueFromAI.data });
   };
 
   handleSearch = (value) => {
@@ -371,7 +371,7 @@ class RuleEditor extends Component {
     this.setState({ ruleId });
   }
   handleChangeRuleName(name) {
-    this.setState({ name});
+    this.setState({ name });
   }
   handleChangeRuleMessage(event) {
     event.preventDefault();
@@ -395,7 +395,7 @@ class RuleEditor extends Component {
   }
   handleRulePriority(rulePriority) {
     // event.preventDefault();
-    this.setState({ rulePriority});
+    this.setState({ rulePriority });
   }
 
   ifThenPanel() {
@@ -516,7 +516,7 @@ class RuleEditor extends Component {
   }
   cancelAlert = () => {
 
-       // DOING WORK after deployrule update the states of the rules.
+    // DOING WORK after deployrule update the states of the rules.
     this.handleUpdateRule();
     // // will reload all rules after deployrule update
     this.reloadRulesFromDB()
@@ -529,14 +529,14 @@ class RuleEditor extends Component {
     });
   };
   async handleTestRule() {
-    const { condition,  conditionStringObject } = this.state;
+    const { condition, conditionStringObject } = this.state;
     const { facts } = this.props.facts
     console.log(
       "🚀 ~ file: ruleeditor.js:508 ~ RuleEditor ~ handleTestRule ~ facts",
       facts
     );
     if (!conditionStringObject.parseSuccess) {
-      alert("Error: Please fix the If-Then condition. It has a status of invalid. " );
+      alert("Error: Please fix the If-Then condition. It has a status of invalid. ");
       return;
     }
 
@@ -663,7 +663,7 @@ class RuleEditor extends Component {
     const condition = this.formRule();
     this.props.handleDebug("ADD", { label: "time", data: { condition } }, 0);
   }
-   handleCancel(params) {
+  handleCancel(params) {
     this.alert("LINE 677 ")
     this.props.handleCancel()
   }
@@ -812,31 +812,31 @@ class RuleEditor extends Component {
             onEdit={
               onEdit
                 ? (e) => {
-                    console.log(e);
-                    this.setState({ apiSource: e.updated_src });
-                  }
+                  console.log(e);
+                  this.setState({ apiSource: e.updated_src });
+                }
                 : false
             }
             onDelete={
               onDelete
                 ? (e) => {
-                    console.log(e);
-                    this.setState({ apiSource: e.updated_src });
-                  }
+                  console.log(e);
+                  this.setState({ apiSource: e.updated_src });
+                }
                 : false
             }
             onAdd={
               onAdd
                 ? (e) => {
-                    console.log(e);
-                    let name = e.name; // header, query, body anything with key value pairs
-                    let length = e.updated_src[name].length;
-                    e.updated_src[name].pop();
+                  console.log(e);
+                  let name = e.name; // header, query, body anything with key value pairs
+                  let length = e.updated_src[name].length;
+                  e.updated_src[name].pop();
 
-                    e.updated_src[name].push({ key: "", value: "" });
+                  e.updated_src[name].push({ key: "", value: "" });
 
-                    this.setState({ apiSource: e.updated_src });
-                  }
+                  this.setState({ apiSource: e.updated_src });
+                }
                 : false
             }
           />
@@ -996,10 +996,10 @@ class RuleEditor extends Component {
             />
             <div> Syntax: {success ? "Correct" : "Incorrect"}</div>
             {/* If has error then show the error in the parent.hint */}
-            
+
             <div>
               Result:{" "}
-            {JSON.stringify(conditionStringObject.ruleResult)}
+              {JSON.stringify(conditionStringObject.ruleResult)}
             </div>
             {/* Show the status can be true or false based on the value       */}
             Status:{" "}
@@ -1082,12 +1082,12 @@ class RuleEditor extends Component {
       </div>
     );
   };
-/**
- * Deploy the rule
- * 1) formRule(collect all the parts of a rule)
- * 2) update the db with the data
- * 3) show the successAlert
- */
+  /**
+   * Deploy the rule
+   * 1) formRule(collect all the parts of a rule)
+   * 2) update the db with the data
+   * 3) show the successAlert
+   */
   async handleDeployRule() {
     const r = this.formRule();
     let data = {
@@ -1100,17 +1100,17 @@ class RuleEditor extends Component {
       id: Number(r.event.ruleId),
     };
     let result = await updateParsedRules(data);
- 
 
-  
+
+
     // DOING WORK after deployrule update the states of the rules.
     // this.handleUpdateRule();
     // // will reload all rules after deployrule update
     // this.props.reloadRulesFromDB()
     this.setState({
-        successAlert: true,
-        updatedAlert: "Rule # " + result[0].id + " was successfully deployed",
-      });
+      successAlert: true,
+      updatedAlert: "Rule # " + result[0].id + " was successfully deployed",
+    });
 
     // alert("Rule # " + result[0].id + " was successfully deployed", '')
   }
@@ -1125,6 +1125,16 @@ class RuleEditor extends Component {
     this.setState({ description: description });
   }
 
+  modules = (id)=>{
+    return {
+      toolbar: {
+        container: "#" + id,
+        // handlers: {
+        //   "insertStar": insertStar,
+        // }
+      }
+    }
+  }
   render() {
     const {
       searchCriteria,
@@ -1171,30 +1181,30 @@ class RuleEditor extends Component {
       >
         {this.alert()}
         <div title={name}>
-          { (
+          {(
             <div className="btn-group">
-                  
-                  <Button
+
+              <Button
                 label={buttonProps.primaryLabel}
                 onConfirm={this.handleDeployRule}
                 classname="primary-btn"
-                // disabled={disabled}
+              // disabled={disabled}
               />
-              
+
               <Button
                 label="View"
                 onConfirm={this.handleShowRuleJSON}
                 // disabled={disabled}
                 classname="primary-btn"
               />
-            
+
               <Button
                 label="Test"
                 onConfirm={this.handleTestRule}
                 classname="primary-btn"
-                // disabled={disabled}
+              // disabled={disabled}
               />
-          
+
             </div>
           )}
 
@@ -1221,20 +1231,17 @@ class RuleEditor extends Component {
                       active={this.state.active}
                       priority={this.state.rulePriority}
                       validationType={this.state.validationType}
-                      handleChangeRuleName = {this.handleChangeRuleName}
-                      handleRulePriority = {this.handleRulePriority}
-                      handleValidationType = {this.handleValidationType}
-                      handleToggleActive = {this.onToggleActive}
+                      handleChangeRuleName={this.handleChangeRuleName}
+                      handleRulePriority={this.handleRulePriority}
+                      handleValidationType={this.handleValidationType}
+                      handleToggleActive={this.onToggleActive}
                     />
                   </Panel>
                   <Panel title="Description">
-                    <EditorToolbar />
-                    <ReactQuill
-                      value={this.state.description}
-                      onChange={this.handleQuillChange}
-                     
-                      theme="snow"
-                      modules={modules}
+                    <EditorToolbar id={"A"+this.state.ruleId} />
+                    <ReactQuill value={this.state.description} onChange={this.handleQuillChange} theme="snow"
+                      // modules={modules}
+                      modules={this.modules("A"+this.state.ruleId)}
                       formats={formats}
                     />
 

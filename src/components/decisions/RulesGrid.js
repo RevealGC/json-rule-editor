@@ -137,10 +137,10 @@ class RulesGrid extends React.Component {
 
         //Type: GROUP like validation or user ruleset
 
-        { headerName: 'Rule Groups', field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellStyle: cellStyle,   sortable: true, filter: 'agTextColumnFilter', hide: true},
+        { headerName: 'Rule Groups', field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellStyle: cellStyle,  checkboxSelection: true, sortable: true, filter: 'agTextColumnFilter', hide: true},
 
 
-        { headerName: '#', field: 'key',  cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter', checkboxSelection: true, comparator: (a, b) => { return a - b } },
+        { headerName: '#', field: 'key',  cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter',  comparator: (a, b) => { return a - b } },
 
         
         
@@ -627,15 +627,10 @@ class RulesGrid extends React.Component {
       let url = HOSTURL + '/rulesrepo/' + JSON.stringify(rids) + '?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
       let result = axios.delete(url)
         .then((response) => {
-
           if (response.status === 200) {
-            console.log("🚀 ~ file: RulesGrid.js:436 ~ .then ~ response", response)
           }
-
-
         })
         .catch(function (error) {
-
           console.log(error)
         })
     }
