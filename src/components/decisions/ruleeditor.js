@@ -1170,14 +1170,18 @@ class RuleEditor extends Component {
       <div>
         <span />
       </div>
-    ) : (
+    ) : 
+
+      <div style={{
+      
+        "minWidth": "400px",
+        padding: "20px",
+        margin: "10px",
+      }}>
+        
+    
       <div
-        style={{
-          height: "800px",
-          "minWidth": "800px",
-          padding: "20px",
-          margin: "10px",
-        }}
+        
       >
         {this.alert()}
         <div title={name}>
@@ -1288,7 +1292,8 @@ class RuleEditor extends Component {
           </div>
         </div>
       </div>
-    );
+     
+    </div>;
   }
 }
 RuleEditor.contextType = ApperanceContext;
