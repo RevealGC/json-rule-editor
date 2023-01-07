@@ -137,10 +137,15 @@ class RulesGrid extends React.Component {
 
         //Type: GROUP like validation or user ruleset 
 
-        { headerName: 'Rule Groups', field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellStyle: cellStyle,  checkboxSelection: true, sortable: true, filter: 'agTextColumnFilter', hide: true},
+        {  field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellStyle: cellStyle,   sortable: true, filter: 'agTextColumnFilter', hide: true,
+        
+        headerName: "Rule Group"},
+        
+        
+       
 
 
-        { headerName: '#', field: 'key',  cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter',  comparator: (a, b) => { return a - b } },
+        { headerName: '#', field: 'key', checkboxSelection: true, cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter',  comparator: (a, b) => { return a - b } },
 
         
         
