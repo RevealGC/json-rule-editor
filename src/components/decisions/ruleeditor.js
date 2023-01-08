@@ -748,9 +748,9 @@ class RuleEditor extends Component {
               <Radio value="notify" />
               Notify
               <Radio value="impute" />
-              Impute
-              <Radio value="aggregate" />
-              Aggregate
+              Impute & Aggregate
+              {/* <Radio value="aggregate" />
+              Aggregate */}
             </RadioGroup>
           </div>
         </Panel>
@@ -766,9 +766,9 @@ class RuleEditor extends Component {
             <Radio value="notify" />
             Notify
             <Radio value="impute" />
-            Impute
-            <Radio value="aggregate" />
-            Aggregate
+            Impute & Aggregate
+    
+            
           </RadioGroup>
 
           {/* Add an impute table grid.  It will be passed actions which are links to add delete and validate actions */}
