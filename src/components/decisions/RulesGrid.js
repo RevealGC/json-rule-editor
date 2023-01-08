@@ -12,6 +12,7 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import axios from 'axios';
+import { GridApi, ColumnApi } from 'ag-grid-community';
 
 import RuleEditor from './ruleeditor'
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -563,6 +564,20 @@ class RulesGrid extends React.Component {
     this.gridColumnApi = params.columnApi;
    
     this.gridColumnApi.autoSizeColumns();
+
+// // Assume that `api` is a reference to the GridApi
+// const columnApi =   params.api.getColumnApi();
+
+
+
+// // Get a reference to the desired column
+// const column = columnApi.getColumn('type');
+
+// // Get an array of the distinct values in the column
+// const distinctValues =  column.getUniqueValues();
+// console.log("🚀 ~ file: RulesGrid.js:575 ~ RulesGrid ~ distinctValues", distinctValues)
+
+
     // this.gridApi.getRowNode(1).setExpanded(true);
 
         // get the index of the newly added row
@@ -578,6 +593,9 @@ class RulesGrid extends React.Component {
 
   
   }
+
+
+
 
   handleCancel = () => {
     this.alert("REACHED RGRID at579")
