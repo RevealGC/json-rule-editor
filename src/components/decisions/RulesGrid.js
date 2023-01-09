@@ -99,14 +99,14 @@ const newRuleObject = {
 // };
 const cellStyle = {
   fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-  fontSize: '14px',
-  fontWeight: 'bold',
+  fontSize: '12px',
+  fontWeight: '450',
     display: 'flex',
   'alignItems': 'center',
   fill: '#fff',
   stroke: '#fff',
   strokeWidth: 0,
-  color: '#808080'
+  color: '#505050'
 }
 
 
@@ -176,10 +176,11 @@ class RulesGrid extends React.Component {
 
         { headerName: 'Active', field: 'active', sortable: true, filter: 'agTextColumnFilter', hide: true, cellStyle: cellStyle },
 
+        { headerName: 'Name', field: 'name', valueGetter: this.getRuleName, cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', },
+
         // DESCRIPTION
         { headerName: 'Description', width: 800, field: 'description', autoHeight: true, editable: true, wrapText: true, sortable: true, filter: 'agTextColumnFilter', cellEditor: 'agTextCellEditor', cellEditorPopup: true, valueGetter: this.truncateDescription, cellStyle: cellStyle },
 
-        { headerName: 'Name', field: 'name', valueGetter: this.getRuleName, cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', },
 
         { headerName: 'Rule Condition', cellStyle: cellStyle, field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
 
@@ -310,9 +311,10 @@ try
     this.setState({ rowData: newRowData });
     this.props.addAllRulesRedux(newRowData);
     // get the index of the newly added row
-    const newRowIndex = newRowData.length
+    // const newRowIndex = this.state.rowData.length
     // open the detail of the newly added row
-    this.gridApi.getRowNode(newRowIndex).setExpanded(true);
+  
+    // this.gridApi.getRowNode(newRowIndex).setExpanded(true);
 
 
   };
@@ -386,9 +388,10 @@ try
 
 
   async componentDidMount() {
-
-
     await this.loadData()
+    this.gridApi.gridOptions.onGridReady = this.onGridReady;
+
+
   }
 
 
@@ -614,20 +617,20 @@ try
 
 
 
-  onGridReady = (params) => {
+  onGridReady = function(params) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
 
     this.gridColumnApi.autoSizeColumns();
 
-
+  
 
     const allColumnIds = [];
     gridOptions.columnApi.getAllColumns().forEach(column => allColumnIds.push(column.colId));
     gridOptions.columnApi.autoSizeColumns(allColumnIds);
 
-
-
+    const newRowIndex = this.state.rowData.length;
+    this.gridApi.getRowNode(newRowIndex).setExpanded(true);
 
 
 
@@ -773,6 +776,7 @@ try
   render() {
     const { rowIndex, rowData } = this.state
     const { background } = this.context;
+    const ruleCount = rowData.length;
 
     const links = [
       { label: 'Add', className: 'plus-icon', onClick: this.addRowData },
@@ -791,7 +795,7 @@ try
         style={{ display: 'block',  }} >
           <IconLink links={links} />
         </div>
-
+      Rules: {ruleCount}
         <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000, margin: '10px',  }}>
           <AgGridReact
 

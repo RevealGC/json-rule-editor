@@ -11,19 +11,19 @@ const MODIFIED_BODY = 'You have created / modified this ruleset. Do you want to 
 export const MODIFIED_MSG = {header: MODIFIED_HEADER, body: MODIFIED_BODY, type: 'submit-panel', buttonProps: BUTTON_PROPS_NO_CHANGES,};
 
 
-const NO_ATTRIBUTE_HEADER = 'No Facts';
-const NO_ATTRIBUTE_BODY = 'There is no facts available in the selected ruleset.'
+const NO_ATTRIBUTE_HEADER = 'No Dataset';
+const NO_ATTRIBUTE_BODY = 'Please select a Dataset first.'
 const BUTTON_PROPS_ATTRIBUTE = {label: 'Create Facts'};
 export const NO_ATTRIBUTE_MSG = {header: NO_ATTRIBUTE_HEADER, body: NO_ATTRIBUTE_BODY, buttonProps: BUTTON_PROPS_ATTRIBUTE, type: 'warning-panel'};
 
 
-const NO_DECISION_HEADER = 'No Decisions';
-const NO_DECISION_BODY = 'There is no decisions available in the selected ruleset.'
+const NO_DECISION_HEADER = 'No Dataset';
+const NO_DECISION_BODY = 'Please select a Dataset before validating.'
 const BUTTON_PROPS_DECISION = {label: 'Create Decisions'};
 export const NO_DECISION_MSG = {header: NO_DECISION_HEADER, body: NO_DECISION_BODY, buttonProps: BUTTON_PROPS_DECISION, type: 'warning-panel'};
 
 
-const NO_VALIDATION_BODY = 'There is no decisions available in the selected ruleset to validate.'
+const NO_VALIDATION_BODY = 'Please select a Dataset before validating.'
 export const NO_VALIDATION_MSG = {header: NO_DECISION_HEADER, body: NO_VALIDATION_BODY, type: 'warning-panel'};
 
 export const RULE_AVAILABLE_CREATE = { type: 'warning', heading: 'This rule name is already exist' };

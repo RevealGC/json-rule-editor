@@ -36,24 +36,39 @@ const HOSTURL = 'http://localhost'
 //     };
 //   }, []);
 
-
+const cellStyle = {
+  fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
+  fontSize: '12px',
+  fontWeight: '450',
+    display: 'flex',
+  'alignItems': 'center',
+  fill: '#fff',
+  stroke: '#fff',
+  strokeWidth: 0,
+  color: '#505050',
+ 
+}
 const columnDefs = [
     // group cell renderer needed for expand / collapse icons
 
     {
-        field: 'id', width: 200, headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
+        field: 'id', width: 200,  cellStyle: cellStyle, headerName: 'Workflow ID', filter: 'agTextColumnFilter', checkboxSelection: true, aggFunc: 'sum',
         cellRenderer: 'agGroupCellRenderer', showRowGroup: true, sortable: true
     },
-    { field: 'parent_id',  headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true , hide: true},
-    { field: 'reporting_id', headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'status',  filter: 'agTextColumnFilter', sortable: true },
-    { field: 'elapsed_time', headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: true },
-    { field: 'error_message', headerName: 'Error', filter: 'agTextColumnFilter', sortable: true, hide: true },
-    { field: 'valid', headerName: 'Valid Rules', filter: 'agTextColumnFilter',autoHeight:true, valueFormatter: stringifierAggregateRules, sortable: true },
-    { field: 'facts', headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
+    { field: 'parent_id',  cellStyle: cellStyle,  headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true , hide: true},
+
+    { field: 'reporting_id', cellStyle: cellStyle,  headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
+    { field: 'status',   cellStyle: cellStyle, filter: 'agTextColumnFilter', sortable: true },
+    { field: 'elapsed_time', cellStyle: cellStyle,  headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: false },
+    { field: 'last_modified_date',hide: true, cellStyle: cellStyle,  headerName: 'Modified', filter: 'agTextColumnFilter' , valueFormatter:formatDateLastModified},
+    { field: 'created_date',hide: true, cellStyle: cellStyle,  headerName: 'Created', filter: 'agTextColumnFilter', valueFormatter:formatDateCreated },
+    { field: 'error_message', cellStyle: cellStyle,  headerName: 'Error', filter: 'agTextColumnFilter', sortable: true, hide: true },
+    
+    { field: 'valid', cellStyle: cellStyle, minWidth:400, headerName: 'Valid Rules', filter: 'agTextColumnFilter',autoHeight:true, valueFormatter: stringifierAggregateRules, sortable: true },
+    { field: 'facts', cellStyle: cellStyle,  headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true ,hide: true},
 
     {
-        field: 'merge_status', headerName: 'Merge Status', cellRenderer: function (params, data) {
+        field: 'merge_status', cellStyle: cellStyle,  headerName: 'Merge Status',hide:true, cellRenderer: function (params, data) {
             if (params.data.merge_status !== 0)
                 // return   <button onclick={"return myFunction("+params.data.id+")"}>Merge</button> 
                 return <a href={HOSTURL + "/spad/merge/" + params.data.id + '?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'} target="_blank" rel="noopener"> Merge {params.data.id} </a>
@@ -63,12 +78,11 @@ const columnDefs = [
     }
     ,
 
-    { field: 'merge_data', headerName: 'Merge Data', valueFormatter: stringifier, filter: 'agTextColumnFilter', sortable: true },
+    { field: 'merge_data', cellStyle: cellStyle,  headerName: 'Merge Data', valueFormatter: stringifier, filter: 'agTextColumnFilter', sortable: true },
 
 
-    { field: 'result' , resizable: true, valueFormatter: stringifier, autoHeight: true, }  ,
- { field: 'last_modified_date', headerName: 'Modified', filter: 'agTextColumnFilter' , valueFormatter:formatDateLastModified},
-    { field: 'created_date', headerName: 'Created', filter: 'agTextColumnFilter', valueFormatter:formatDateCreated },
+    { field: 'result' ,  cellStyle: cellStyle, resizable: true, valueFormatter: stringifier, autoHeight: true,hide: true }  ,
+ 
    
     // { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
 ];
@@ -326,7 +340,7 @@ class RulesetContainer extends Component {
       const { columnDefs, rowData, detailCellRendererParams } = this.state
 
      
-      this.onGridReady()
+      // this.onGridReady()
       let priorRowIndex = -1;
 
     //   onRowSelected={(e) =>
@@ -342,7 +356,7 @@ class RulesetContainer extends Component {
                         </span>
                     </div>
                 </div>
-              <div className="ag-theme-alpine" id="myGrid" style={{ height:1200 }}>
+              <div className="ag-theme-alpine" id="myGridSpad" style={{ height:1000,margin:10 }}>
                   <AgGridReact
                    
 
@@ -354,7 +368,8 @@ class RulesetContainer extends Component {
             
                       rowData={rowData}
                       columnDefs={columnDefs}
-                      defaultColDef= {{ flex: 1,resizable: true,  width:200}}
+                      defaultColDef= {{ flex: 1,resizable: true,  filter: true,
+                        sortable: true,  minWidth: 150}}
                       detailCellRendererParams={detailCellRendererParams}
                       animateRows={true}
                       pagination={true}
