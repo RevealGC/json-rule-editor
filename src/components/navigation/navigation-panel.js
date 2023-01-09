@@ -78,7 +78,7 @@ this.props.updateState("closed")
         const val = this.state.dbSearchText || '8771348140'
         
         let rulesetLink = this.props.rulenames.length > 0 ?
-         [{ name: 'Ruleset', sublinks: this.props.rulenames, iconClass:"rules-icon", linkClass: 'link-heading'}] : [];
+         [{ name: 'Dataset', sublinks: this.props.rulenames, iconClass:"rules-icon", linkClass: 'link-heading'}] : [];
 
         rulesetLink = rulesetLink.concat(navmenu);
 
@@ -99,7 +99,7 @@ this.props.updateState("closed")
                 onConfirm={this.handleSearch} 
                 onChange={this.handleSearch}/>
                 <div className="btn-container">
-                    <button className="btn primary-btn" type="submit" onClick={this.loadRuleSet}>Load Ruleset</button>
+                    <button className="btn primary-btn" type="submit" onClick={this.loadRuleSet}>Load Dataset</button>
                     </div>
                     </div>
 

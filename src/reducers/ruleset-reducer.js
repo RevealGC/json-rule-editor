@@ -5,12 +5,25 @@ import * as ActionTypes from '../actions/action-types';
      
 
 const dateTime = () =>{
-    var today = new Date();
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    var dateTime = date+' '+time;
-    return  dateTime
-}
+    // Create a date object with the current time
+    var date = new Date();
+  
+    // Extract the hours, minutes, and seconds from the date object
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+  
+    // Convert the hours, minutes, and seconds to strings and add leading zeros if necessary
+    hours = hours < 10 ? "0" + hours : hours;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+  
+    // Create a string in the format "hh:mm:ss"
+    var timeString = hours + ":" + minutes + ":" + seconds;
+  
+    // Return the string
+    return timeString;
+  }
 var initTime = dateTime()
 const initialState = {
     rulesets: [],

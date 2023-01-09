@@ -6,7 +6,7 @@ import ApperanceContext from '../../context/apperance-context';
 const Panel = (props) => {
 
     return (<div className="panel-wrapper">
-        {props.title && <h2>{props.title}</h2>}
+        {props.title && <h3>{props.title}</h3>}
         {props.children}
     </div>);
 };

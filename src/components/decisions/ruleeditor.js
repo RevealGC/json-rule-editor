@@ -7,7 +7,7 @@ import axios from "axios";
 import ReactQuill from "react-quill";
 import EditorToolbar, { modules, formats } from "./EditorToolbar";
 import "../../../node_modules/react-quill/dist/quill.snow.css"; // .  react-quill/dist/quill.snow.css';
-
+import IconLink from '../menus/IconLink'
 import FormExample from "./GeneralRuleForm";
 
 import {
@@ -1153,6 +1153,7 @@ class RuleEditor extends Component {
     } = this.state;
 
     let disabled = !facts || facts.length === 0;
+    const { background } = this.context;
 
     const buttonProps = {
       primaryLabel: ruleId ? "Submit" : "Add",
@@ -1166,6 +1167,20 @@ class RuleEditor extends Component {
       ? this.filterOutcomes()
       : this.props.outcomes;
     const { conditions } = this.state;
+
+
+
+    const links = [
+      { label: 'Submit', className: 'submit-icon', onClick: this.handleDeployRule },
+      { label: 'View', className: 'reset-icon', onClick: this.handleShowRuleJSON },
+      { label: 'Test', className: 'plus-icon', onClick: this.handleTestRule },
+      { label: 'Describe', className: 'reset-icon', onClick: this.handleAIDescribe },
+      
+    ]
+
+
+
+
     return !displayRuleEditor ? (
       <div>
         <span />
@@ -1184,34 +1199,14 @@ class RuleEditor extends Component {
         
       >
         {this.alert()}
+
+
+        <div className={`attributes-header ${background}`} 
+        style={{ display: 'block',  }} >
+          <IconLink links={links} />
+        </div>
+
         <div title={name}>
-          {(
-            <div className="btn-group">
-
-              <Button
-                label={buttonProps.primaryLabel}
-                onConfirm={this.handleDeployRule}
-                classname="primary-btn"
-              // disabled={disabled}
-              />
-
-              <Button
-                label="View"
-                onConfirm={this.handleShowRuleJSON}
-                // disabled={disabled}
-                classname="primary-btn"
-              />
-
-              <Button
-                label="Test"
-                onConfirm={this.handleTestRule}
-                classname="primary-btn"
-              // disabled={disabled}
-              />
-
-            </div>
-          )}
-
           <Tabs
             tabs={tabs}
             onConfirm={this.handleTab}
@@ -1248,15 +1243,6 @@ class RuleEditor extends Component {
                       modules={this.modules("A"+this.state.ruleId)}
                       formats={formats}
                     />
-
-                    <div className="btn-group">
-                      {" "}
-                      <Button
-                        label="Describe"
-                        onConfirm={this.handleAIDescribe}
-                        classname="primary-btn"
-                      />
-                    </div>
                   </Panel>
                 </div>
               )}
