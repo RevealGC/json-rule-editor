@@ -38,7 +38,7 @@ const HOSTURL = 'http://localhost'
 
 const cellStyle = {
   fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-  fontSize: '12px',
+  fontSize: '13px',
   fontWeight: '450',
     display: 'flex',
   'alignItems': 'center',
@@ -46,6 +46,7 @@ const cellStyle = {
   stroke: '#fff',
   strokeWidth: 0,
   color: '#505050',
+  'border-right': '0.5px dotted'
  
 }
 const columnDefs = [

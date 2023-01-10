@@ -6,11 +6,17 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 import ApperanceContext from '../../context/apperance-context';
 const cellStyle = {
-    display: 'flex',
-    'align-items': 'center',
-    
-    width:'80px'
-  };
+    fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
+    fontSize: '14px',
+    fontWeight: '450',
+      display: 'flex',
+    'alignItems': 'center',
+    fill: '#fff',
+    stroke: '#fff',
+    strokeWidth: 0,
+    color: '#505050',
+    'border-right': '0.5px dotted'
+  }
 /**
  * actionArray is a an array of action which is comprised of objets like so:
  * {"RVNAME": "Computational Expression or logical one", 

@@ -100,13 +100,14 @@ const newRuleObject = {
 const cellStyle = {
   fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
   fontSize: '14px',
-  fontWeight: '400',
+  fontWeight: '450',
     display: 'flex',
   'alignItems': 'center',
   fill: '#fff',
   stroke: '#fff',
   strokeWidth: 0,
-  color: '#505050'
+  color: '#505050',
+  'border-right': '0.5px dotted'
 }
 
 
@@ -795,7 +796,7 @@ try
         style={{ display: 'block',  }} >
           <IconLink links={links} />
         </div>
-      Rules: {ruleCount}
+     
         <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000, margin: '10px',  }}>
           <AgGridReact
 

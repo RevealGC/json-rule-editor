@@ -21,7 +21,8 @@ class TrackVariablesGrid extends React.Component {
         fill: '#fff',
         stroke: '#fff',
         strokeWidth: 0,
-        color: '#808080'
+        color: '#808080',
+        'border-right': '0.5px dotted'
       }
 
         this.state = {
