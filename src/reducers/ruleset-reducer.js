@@ -31,6 +31,7 @@ const initialState = {
     activeRuleset: 0,
     updatedFlag: false,
     uploadedRules: [],
+    ruleType:[{type:'validation'}, {type:'All'}],
     debugData :[{label:initTime, data:{'WELCOME':'Welcome to QBES Editor & Debugger'}}]
 }
 
@@ -44,6 +45,12 @@ function ruleset(state = initialState, action='') {
 
     switch(action.type) {
 
+
+        case ActionTypes.LOAD_RULE_TYPES: {
+            const {ruleType} = action.payload
+            state.ruleType = ruleType
+            return {...state}
+        }
 
         case ActionTypes.ADD_DEBUG: {
             const { debug } = action.payload;

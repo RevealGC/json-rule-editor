@@ -1,5 +1,6 @@
 
 // import ruleset from '../reducers/ruleset-reducer';
+import axios from 'axios';
 import * as ActionTypes from './action-types';
 import { updateState } from './app';
 
@@ -38,6 +39,20 @@ export const updateRulesetIndex = (name) => {
         payload: { name }
     })
 }
+
+export const loadRuleTypes =  ()=> async (dispatch)=>{
+    // make an axios call and get all validation types
+    let url = 'http://localhost/rulesrepo/getruletype'
+    let ruleType = await axios(url)
+    return dispatch({
+        type: ActionTypes.LOAD_RULE_TYPES,
+        payload: {ruleType:ruleType.data}
+    })
+
+
+}
+
+
 
 // Takes an array of rules and is called from rulegrid.js and saves all rules from the db in the redux state
 // the rules are accessed via its property allRulesRedux

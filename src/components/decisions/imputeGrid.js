@@ -142,6 +142,10 @@ class ImputeGrid extends Component {
                 (row) => !this.state.selectedRows.includes(row)
             );
             this.setState({ data: newData });
+            let actionArray = []
+            newData.map(d => actionArray.push({ [d.key]: d.expression }))
+            this.setState({ actionArray })
+            this.props.validateAction(actionArray)
         };
 
         this.updateSelectedRows = (newData) => {

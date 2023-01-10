@@ -9,9 +9,9 @@ const HOSTURL='http://localhost'
 
 export const processEngine = async function(facts, rules) {
 
-  let url = HOSTURL+'/spad/testrule?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+  let url = HOSTURL+'/spad/processRules?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
   try{
-  let result = await axios.post(url, {facts, rules})
+  let result = await axios.post(url, {facts, rules,showNetwork:true, attended:false})   
   let resultSet = result.data
   return resultSet;
   

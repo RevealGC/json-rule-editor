@@ -100,7 +100,7 @@ const newRuleObject = {
 const cellStyle = {
   fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
   fontSize: '14px',
-  fontWeight: 'bold',
+  fontWeight: '400',
     display: 'flex',
   'alignItems': 'center',
   fill: '#fff',

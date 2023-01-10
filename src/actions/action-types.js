@@ -25,6 +25,8 @@ export const UPDATE_DEBUG = 'UPDATE_DEBUG';
 
 export const ADD_ALLRULES_REDUX = 'ADD_ALLRULES_REDUX';
 
+export const LOAD_RULE_TYPES = 'LOAD_RULE_TYPES';
+
 
 
 

@@ -5,7 +5,11 @@ function IconLinks({ links }) {
         <div style={{ display: 'flex', height: 40,  padding: '10px' }} >
             {links.map(e => {
                 return (
-                    <div className="attr-link" onClick={e.onClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                    <div className="attr-link" onClick={e.onClick}
+                    
+                    style={{ display: e.display, height: 40,  padding: '10px' }}
+                    
+                    onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                         <span className={e.className} /><span className="text">{e.label}</span>
                     </div>
                 );

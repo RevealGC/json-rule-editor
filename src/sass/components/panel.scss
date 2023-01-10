@@ -1,10 +1,11 @@
 @use "sass:map";
 
 .panel-wrapper {
-    border: 1px solid #006a4d;
-    border-radius: 10px;
+    border: 1px solid #da5d7c;
+    border-radius: 4px;
     margin-top: 20px;
     padding: 20px;
+    display:block
 }
 
 .panel-box-wrapper {

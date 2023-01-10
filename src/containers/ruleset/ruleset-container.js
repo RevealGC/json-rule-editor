@@ -47,7 +47,7 @@ const columnDefs = [
     { field: 'parent_id',  headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true , hide: true},
     { field: 'reporting_id', headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
     { field: 'status',  filter: 'agTextColumnFilter', sortable: true },
-    { field: 'elapsed_time', headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: true },
+    { field: 'elapsed_time', headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: false },
     { field: 'error_message', headerName: 'Error', filter: 'agTextColumnFilter', sortable: true, hide: true },
     { field: 'valid', headerName: 'Valid Rules', filter: 'agTextColumnFilter',autoHeight:true, valueFormatter: stringifierAggregateRules, sortable: true },
     { field: 'facts', headerName: 'Facts', filter: 'agTextColumnFilter', valueFormatter: stringifierFact, sortable: true },
@@ -138,11 +138,36 @@ class RulesetContainer extends Component {
 
             detailGridOptions: {
                 columnDefs,
+                defaultColDef: {
+                  flex: 1,
+                  minWidth: 250,
+                  filter: true,
+                  sortable: true,
+                  resizable: true,
+                  display:'block',
+                  'alignItems': 'center',
+
+                },
                 masterDetail: true,
                 embedFullWidthRows: true,
                 detailCellRendererParams: {
                     detailGridOptions: {
+
+
+                      defaultColDef: {
+                        flex: 1,
+                        minWidth: 150,
+                        filter: true,
+                        sortable: true,
+                        resizable: true,
+                        display:'block',
+                        'alignItems': 'center',
+
+                      },
+
+
                         columnDefs,
+                        
                         masterDetail: true,
                         embedFullWidthRows: true,
                         onRowSelected: this.debugPanelAttribute.bind(this),
@@ -326,7 +351,7 @@ class RulesetContainer extends Component {
       const { columnDefs, rowData, detailCellRendererParams } = this.state
 
      
-      this.onGridReady()
+      // this.onGridReady()
       let priorRowIndex = -1;
 
     //   onRowSelected={(e) =>
@@ -354,11 +379,21 @@ class RulesetContainer extends Component {
             
                       rowData={rowData}
                       columnDefs={columnDefs}
-                      defaultColDef= {{ flex: 1,resizable: true,  width:200}}
+                 
                       detailCellRendererParams={detailCellRendererParams}
                       animateRows={true}
                       pagination={true}
                       paginationPageSize={50}
+                      defaultColDef={{
+                        flex: 1,
+                        minWidth: 150,
+                        filter: true,
+                        sortable: true,
+                        resizable: true,
+                        display:'block',
+                        'alignItems': 'center',
+
+                      }}
                       onFirstDataRendered={this.onFirstDataRendered.bind(this)}
                   />
               </div>

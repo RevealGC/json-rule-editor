@@ -9,6 +9,7 @@ import EditorToolbar, { modules, formats } from "./EditorToolbar";
 import "../../../node_modules/react-quill/dist/quill.snow.css"; // .  react-quill/dist/quill.snow.css';
 import IconLink from '../menus/IconLink'
 import FormExample from "./GeneralRuleForm";
+import TrackVariablesGrid from "./TrackVariablesGrid"
 
 import {
   processEngine,
@@ -29,9 +30,11 @@ import ApperanceContext from "../../context/apperance-context";
 import { handleDebug } from "../../actions/debug";
 import { handleDecision } from "../../actions/decisions";
 
+
 import SweetAlert from "react-bootstrap-sweetalert";
 
 import ImputeGrid from "./imputeGrid";
+import { loadRuleTypes } from "../../actions/ruleset";
 
 const tabs = [
   { name: "General" },
@@ -255,6 +258,7 @@ class RuleEditor extends Component {
   componentDidMount() {
     this.handleCompileConditionString();
     this.addDebug(this.props.conditions);
+    this.props.loadRuleTypes()
     // this.generateDescription()
   }
   handleTab = (tabName) => {
@@ -419,7 +423,7 @@ class RuleEditor extends Component {
                 border: "2px solid #ccc",
                 "border-radius": "4px",
                 "background-color": "#f8f8f8",
-                "font-size": "16px",
+                "font-size": "14px",
                 resize: "vertical",
               }}
               className="ag-theme-alpine"
@@ -456,39 +460,26 @@ class RuleEditor extends Component {
     this.setState(responseVariables);
   }
 
+saveResponseVariables(rvArray){
+  let responseVariables = rvArray.map(r=>r.rvs)
+  this.setState({responseVariables})
+}
+
   responseVariablesPanel() {
-    const { outcome, action, responseVariables, actionType } = this.state;
-    const { background } = this.context;
+    const { responseVariables} = this.state;
+    const { facts } = this.props.facts 
 
+    let factsKeys = (facts) ? Object.keys(facts) : []
+    let displaySubmit = factsKeys.length == 0 ? 'none' : 'block'
+    
     return (
-      <div>
-        <Panel className="add-field-panel" title="Track Variables">
-          <div className={`attributes-header `} style={{ margin: "20px" }}>
-            <div className="attr-link" onClick={this.addResponseVariables}>
-              <span className="plus-icon" />
-              <span className="text">Add Response Variables</span>
-            </div>
-            <div className="attr-link" onClick={this.deleteRVActions}>
-              <span className="plus-icon" />
-              <span className="text">Delete Response Variable</span>
-            </div>
-          </div>
-
-          {responseVariables &&
-            responseVariables.length > 0 &&
-            responseVariables.map((param, ind) => (
-              <div key={ind} className="add-field-panel">
-                <InputField
-                  onChange={(value) =>
-                    this.handleResponseVariables(value, "pvalue", ind)
-                  }
-                  value={param}
-                  label="Variable"
-                  placeholder="Enter a response variable to track..."
-                />
-              </div>
-            ))}
-        </Panel>
+      <div >
+        <TrackVariablesGrid facts={factsKeys} addResponseVariables={this.addResponseVariables}
+        displaySubmit = {displaySubmit}
+        saveResponseVariables = {this.saveResponseVariables.bind(this)}
+          deleteRVActions={this.deleteRVActions} 
+          responseVariables={responseVariables}
+        />
       </div>
     );
   }
@@ -512,7 +503,8 @@ class RuleEditor extends Component {
   }
 
   onToggleActive(active) {
-    this.setState({ active: !active });
+
+    this.setState({ active: active });
   }
   cancelAlert = () => {
 
@@ -767,8 +759,8 @@ class RuleEditor extends Component {
             Notify
             <Radio value="impute" />
             Impute & Aggregate
-    
-            
+
+
           </RadioGroup>
 
           {/* Add an impute table grid.  It will be passed actions which are links to add delete and validate actions */}
@@ -984,7 +976,7 @@ class RuleEditor extends Component {
                 border: "2px solid #ccc",
                 "border-radius": "4px",
                 "background-color": "#f8f8f8",
-                "font-size": "16px",
+                "font-size": "14px",
                 resize: "vertical",
               }}
               className="ag-theme-alpine"
@@ -1107,9 +1099,11 @@ class RuleEditor extends Component {
     // this.handleUpdateRule();
     // // will reload all rules after deployrule update
     // this.props.reloadRulesFromDB()
+
+    let resultId = result.length > 0 ? result[0].id + '' : ''
     this.setState({
       successAlert: true,
-      updatedAlert: "Rule # " + result[0].id + " was successfully deployed",
+      updatedAlert: "Rule " + resultId + " was successfully deployed",
     });
 
     // alert("Rule # " + result[0].id + " was successfully deployed", '')
@@ -1125,7 +1119,7 @@ class RuleEditor extends Component {
     this.setState({ description: description });
   }
 
-  modules = (id)=>{
+  modules = (id) => {
     return {
       toolbar: {
         container: "#" + id,
@@ -1175,111 +1169,112 @@ class RuleEditor extends Component {
       { label: 'View', className: 'reset-icon', onClick: this.handleShowRuleJSON },
       { label: 'Test', className: 'plus-icon', onClick: this.handleTestRule },
       { label: 'Describe', className: 'reset-icon', onClick: this.handleAIDescribe },
-      
+
     ]
 
-
+    
 
 
     return !displayRuleEditor ? (
       <div>
         <span />
       </div>
-    ) : 
+    ) :
 
       <div style={{
-      
+
         "minWidth": "400px",
         padding: "20px",
         margin: "10px",
       }}>
-        
-    
-      <div
-        
-      >
-        {this.alert()}
 
 
-        <div className={`attributes-header ${background}`} 
-        style={{ display: 'block',  }} >
-          <IconLink links={links} />
-        </div>
+        <div
 
-        <div title={name}>
-          <Tabs
-            tabs={tabs}
-            onConfirm={this.handleTab}
-            activeTab={this.state.activeTab}
-          />
-          <div
-            style={{
-              height: "800px",
-              "minWidth": "800px",
-              padding: "20px",
-              margin: "10px",
-            }}
-          >
-            <div className="tab-page-container">
-              {this.state.activeTab === "General" && (
-                <div>
-                  <Panel title="Enter rule name">
-                    <FormExample  // Points to General Rule Form
+        >
+          {this.alert()}
 
-                      name={this.state.name}
-                      active={this.state.active}
-                      priority={this.state.rulePriority}
-                      validationType={this.state.validationType}
-                      handleChangeRuleName={this.handleChangeRuleName}
-                      handleRulePriority={this.handleRulePriority}
-                      handleValidationType={this.handleValidationType}
-                      handleToggleActive={this.onToggleActive}
+
+          <div className={`attributes-header ${background}`}
+            style={{ display: 'block', }} >
+            <IconLink links={links} />
+          </div>
+
+          <div title={name}>
+            <Tabs
+              tabs={tabs}
+              onConfirm={this.handleTab}
+              activeTab={this.state.activeTab}
+            />
+            <div
+              style={{
+                height: "800px",
+                "minWidth": "800px",
+                padding: "20px",
+                margin: "10px",
+              }}
+            >
+              <div className="tab-page-container">
+                {this.state.activeTab === "General" && (
+                  <div>
+                    <Panel title="Enter rule name">
+                      <FormExample  // Points to General Rule Form
+
+                        name={this.state.name}
+                        active={this.state.active}
+                        priority={this.state.rulePriority}
+                        ruleType={this.props.ruleType}
+                        validationType={this.state.validationType}
+                        handleChangeRuleName={this.handleChangeRuleName}
+                        handleRulePriority={this.handleRulePriority}
+                        handleValidationType={this.handleValidationType}
+                        handleToggleActive={this.onToggleActive}
+                      />
+                    </Panel>
+                    <Panel title="Description">
+                      <EditorToolbar id={"A" + this.state.ruleId} />
+                      <ReactQuill value={this.state.description} onChange={this.handleQuillChange} theme="snow"
+                        // modules={modules}
+                        modules={this.modules("A" + this.state.ruleId)}
+                        formats={formats}
+                      />
+                    </Panel>
+                  </div>
+                )}
+
+                {this.state.activeTab === "Track" && (
+                  <div>{this.responseVariablesPanel()}</div>
+                )}
+
+                {this.state.activeTab === "If-Then" && (
+                  <div> {this.ifThenPanel()} </div>
+                )}
+                {this.state.activeTab === "Condition" && (
+                  <div> {this.conditionPanel()} </div>
+                )}
+
+                {this.state.activeTab === "API" && (
+                  <div>
+                    {" "}
+                    API Active Status{" "}
+                    <ToggleButton
+                      onToggle={this.onToggleAPI}
+                      value={apiChecked}
                     />
-                  </Panel> 
-                  <Panel title="Description">
-                    <EditorToolbar id={"A"+this.state.ruleId} />
-                    <ReactQuill value={this.state.description} onChange={this.handleQuillChange} theme="snow"
-                      // modules={modules}
-                      modules={this.modules("A"+this.state.ruleId)}
-                      formats={formats}
-                    />
-                  </Panel>
-                </div>
-              )}
+                    {this.apiPanel()}
+                  </div>
+                )}
 
-              {this.state.activeTab === "Track" && (
-                <div>{this.responseVariablesPanel()}</div>
-              )}
-
-              {this.state.activeTab === "If-Then" && (
-                <div> {this.ifThenPanel()} </div>
-              )}
-              {this.state.activeTab === "Condition" && (
-                <div> {this.conditionPanel()} </div>
-              )}
-
-              {this.state.activeTab === "API" && (
-                <div>
-                  {" "}
-                  API Active Status{" "}
-                  <ToggleButton
-                    onToggle={this.onToggleAPI}
-                    value={apiChecked}
-                  />
-                  {this.apiPanel()}
-                </div>
-              )}
-
-              {this.state.activeTab === "Action" && (
-                <div> {this.imputeAggregatePanel()}</div>
-              )}
-              {this.state.activeTab === "Settings" && <div></div>}
+                {this.state.activeTab === "Action" && (
+                  <div> {this.imputeAggregatePanel()}</div>
+                )}
+                {this.state.activeTab === "Settings" && <div></div>}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-     
-    </div>;
+
+      </div>;
   }
 }
 RuleEditor.contextType = ApperanceContext;
@@ -1291,6 +1286,7 @@ RuleEditor.defaultProps = {
   outcomes: {},
   handleDebug: () => false,
   handleDecision: () => false,
+  loadRuleTypes: ()=>false
 };
 
 RuleEditor.propTypes = {
@@ -1302,17 +1298,21 @@ RuleEditor.propTypes = {
   handleDebug: PropTypes.func,
   handleDecision: PropTypes.func,
   hello: PropTypes.func,
+  loadRuleTypes: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
   // debugData: state.ruleset.debugData
-  facts: state.ruleset.rulesets[state.ruleset.activeRuleset]
+  facts: state.ruleset.rulesets[state.ruleset.activeRuleset],
+  ruleType: state.ruleset.ruleType
 });
 const mapDispatchToProps = (dispatch) => ({
   handleDebug: (operation, attribute, index) =>
     dispatch(handleDebug(operation, attribute, index)),
   handleDecision: (operation, decision) =>
     dispatch(handleDecision(operation, decision)),
+
+  loadRuleTypes: () => dispatch(loadRuleTypes())
 
 });
 
