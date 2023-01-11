@@ -1208,8 +1208,9 @@ saveResponseVariables(rvArray){
             />
             <div
               style={{
-                height: "800px",
-                "minWidth": "800px",
+                // height: "800px",
+                // "minWidth": "800px",
+                minHeight: 600,
                 padding: "20px",
                 margin: "10px",
               }}

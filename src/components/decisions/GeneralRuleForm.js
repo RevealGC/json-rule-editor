@@ -51,24 +51,24 @@ function FormExample(props) {
 
   return (
     <div>
-      <div style={{ width: 200 }}>
+      <div style={{ width: 400 }}>
         <form >
           <div className="form-field" >
             <div>
-            <label>
+            <label style={{ width: 100, display: 'block' }}>
                 <span >Create Type: </span></label>
-              <input type="text" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
-              <label>
+              <input  style={{ width: '100', display: 'block' }} type="text" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
+              <label style={{ width: 100 }}>
                 <span >Active:</span>  </label>
               <input className={`checkbox`} type="checkbox" checked={props.active} onChange={handleToggle} />
-            
+           
             </div>
             <div>
-            <label><span>Types:</span></label>
-              <select onChange={handleValidationTypeChange} className={`form-field-drpdwn`}> {props.ruleType.map((type) => (<option key={type.type} value={type.type}>{type.type}</option>
+            <select onChange={handleValidationTypeChange} className={`form-field-drpdwn`}> {props.ruleType.map((type) => (<option key={type.type} value={type.type}>{type.type}</option>
               ))}
               </select>
-              <label>
+            
+              <label style={{ width: 100 }}>
                 <span >Priority: </span> </label>
               <select className={`form-field-drpdwn`} value={priority} onChange={handlePriorityChange}>
                 <option value={1}>1</option>
@@ -91,7 +91,7 @@ function FormExample(props) {
       <div style={{ width: 880, 'margin-top': 20 }}>
         <form >
           <div className="form-field">
-            <label>
+          <label style={{ width: 100 }}>
               <span >Name:</span> </label>
             <input type="text" value={name} onChange={handleNameChange} />
           </div>
