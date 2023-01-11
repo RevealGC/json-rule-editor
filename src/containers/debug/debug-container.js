@@ -130,7 +130,7 @@ debugPanelAttribute(data) {
 
         return (
             debugData.map((d, index, debugData) => {
-                let collapsed = (index === 0) ? false : true
+                let collapsed = (index === 0) ? false : 1
                 return (<Panel title={d.label} key={index}>
                     <ReactJson displayObjectSize={false}   key={index +'debug'} displayDataTypes={false} collapsed={collapsed}
                         src={d.data} onClick={this.handleReset} /> </Panel>

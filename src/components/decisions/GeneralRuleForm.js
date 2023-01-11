@@ -19,7 +19,7 @@ function FormExample(props) {
     event.preventDefault();
     setName(event.target.value);
     props.handleChangeRuleName(event.target.value)
-   
+
   };
 
   const handleToggle = (event) => {
@@ -27,8 +27,8 @@ function FormExample(props) {
 
     setActive(event.target.checked)
     props.handleToggleActive(event.target.checked)
-    
-    
+
+
   };
   const handleValidationTypeChange = (event) => {
     event.preventDefault();
@@ -43,79 +43,63 @@ function FormExample(props) {
     event.preventDefault();
     setPriority(event.target.value);
     props.handleRulePriority(event.target.value)
-   
+
   };
 
 
-//   (<div className="form-field">
-//   {label && <label>{label}</label>}
-//   <select onChange={change} className={`form-field-drpdwn ${errorClass} ${readOnlyClass}`} value={fieldValue} disabled={readOnly}>
-//     <option value="-1">Please select...</option>
-//       {options.length > 0 && 
-//           options.map(option => (
-//               <option key={option} value={option}>{option}</option>
-//           ))
-//       }
-//   </select>
-// </div>);
-
-
+ 
 
   return (
     <div>
-    <div style={{width:200}}>
-    <form >
-       <div className="form-field">
-        <label>
-        <span >Active:</span>  </label>
-        <input className={`checkbox`}  type="checkbox" checked={props.active} onChange={handleToggle} />
-      <br></br>
-        <label>
-        <span >Priority: </span> </label>
-        <select className={`form-field-drpdwn`} value={priority} onChange={handlePriorityChange}>
-          <option value={1}>1</option>
-          <option value={2}>2</option>
-          <option value={3}>3</option>
-          <option value={4}>4</option>
-          <option value={5}>5</option>
-          <option value={6}>6</option>
-          <option value={7}>7</option>
-          <option value={8}>8</option>
-          <option value={9}>9</option>
-          <option value={10}>10</option>
-        </select>
-        <label>
-      <span >Type: </span></label>
-      <input type="text" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
-      <label><span>Choose from:</span></label>
-      <select onChange={handleValidationTypeChange} className={`form-field-drpdwn`}> {props.ruleType.map((type) => ( <option key={type.type} value={type.type}>{type.type}</option>
-      ))}
-    </select>
-    </div>
-  </form>
-  </div>
-    <br></br>
-  <div  style={{width:880, 'margin-top':20}}>
-  <form >
-  <div className="form-field">
-      <label>
-      <span >Name:</span> </label>
-        <input type="text" value={name} onChange={handleNameChange} />
+      <div style={{ width: 200 }}>
+        <form >
+          <div className="form-field" >
+            <div>
+            <label>
+                <span >Create Type: </span></label>
+              <input type="text" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
+              <label>
+                <span >Active:</span>  </label>
+              <input className={`checkbox`} type="checkbox" checked={props.active} onChange={handleToggle} />
+            
+            </div>
+            <div>
+            <label><span>Types:</span></label>
+              <select onChange={handleValidationTypeChange} className={`form-field-drpdwn`}> {props.ruleType.map((type) => (<option key={type.type} value={type.type}>{type.type}</option>
+              ))}
+              </select>
+              <label>
+                <span >Priority: </span> </label>
+              <select className={`form-field-drpdwn`} value={priority} onChange={handlePriorityChange}>
+                <option value={1}>1</option>
+                <option value={2}>2</option>
+                <option value={3}>3</option>
+                <option value={4}>4</option>
+                <option value={5}>5</option>
+                <option value={6}>6</option>
+                <option value={7}>7</option>
+                <option value={8}>8</option>
+                <option value={9}>9</option>
+                <option value={10}>10</option>
+              </select>
+           
+            </div>
+          </div>
+        </form>
       </div>
-    </form>
+      <br></br>
+      <div style={{ width: 880, 'margin-top': 20 }}>
+        <form >
+          <div className="form-field">
+            <label>
+              <span >Name:</span> </label>
+            <input type="text" value={name} onChange={handleNameChange} />
+          </div>
+        </form>
+      </div>
     </div>
-    </div>
-    
- ); 
+  );
+  
+
 }
 export default FormExample;
-/** 
-<div>
-<input type="text" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
-<select value={selectedOption} onChange={handleChange}>
-  {props.ruleType.map((type) => (
-    <option key={type} value={type}>{type}</option>
-  ))}
-</select>
-</div>
- */

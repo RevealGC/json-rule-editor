@@ -59,7 +59,25 @@ const columnDefs = [
     { field: 'parent_id',  cellStyle: cellStyle,  headerName: 'Parent Workflow ID', filter: 'agTextColumnFilter', sortable: true , hide: true},
 
     { field: 'reporting_id', cellStyle: cellStyle,  headerName: 'RID', filter: 'agTextColumnFilter', sortable: true },
-    { field: 'status',   cellStyle: cellStyle, filter: 'agTextColumnFilter', sortable: true },
+
+
+    { field: 'item_level', cellStyle: cellStyle,  headerName: 'Level', filter: 'agTextColumnFilter', sortable: true,
+    cellRenderer: function (params, data) {
+      if (params.data.facts)
+          // return   <button onclick={"return myFunction("+params.data.id+")"}>Merge</button> 
+          return params.data.facts.item_level +'('+params.data.facts.level_type +')'
+
+      else return 'N/A'
+  }
+ },
+
+    { field: 'status',   cellStyle: cellStyle, filter: 'agTextColumnFilter', sortable: true, cellRenderer: function (params, data) {
+      if (params.data.status && params.data.status+'' == '200')
+          // return   <button onclick={"return myFunction("+params.data.id+")"}>Merge</button> 
+          return "Success"
+
+      else return 'Failure'
+  } },
     { field: 'elapsed_time', cellStyle: cellStyle,  headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: false },
     { field: 'last_modified_date',hide: true, cellStyle: cellStyle,  headerName: 'Modified', filter: 'agTextColumnFilter' , valueFormatter:formatDateLastModified},
     { field: 'created_date',hide: true, cellStyle: cellStyle,  headerName: 'Created', filter: 'agTextColumnFilter', valueFormatter:formatDateCreated },
