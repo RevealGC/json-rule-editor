@@ -390,7 +390,7 @@ try
 
   async componentDidMount() {
     await this.loadData()
-    this.gridApi.gridOptions.onGridReady = this.onGridReady;
+    if(this.gridApi !== '') this.gridApi.gridOptions.onGridReady = this.onGridReady;
 
 
   }
@@ -631,7 +631,7 @@ try
     gridOptions.columnApi.autoSizeColumns(allColumnIds);
 
     const newRowIndex = this.state.rowData.length;
-    this.gridApi.getRowNode(newRowIndex).setExpanded(true);
+    // this.gridApi.getRowNode(newRowIndex).setExpanded(true);
 
 
 

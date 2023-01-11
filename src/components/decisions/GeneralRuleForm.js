@@ -5,7 +5,7 @@ function FormExample(props) {
   const [name, setName] = useState(props.name || '');
 
   const [selectedOption, setSelectedOption] = useState('');
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(props.validationType || '');
 
   // Declare a state variable called "active" and set its initial value to the "active" prop, or false if the prop is not provided
   const [active, setActive] = useState(props.active);
@@ -55,21 +55,26 @@ function FormExample(props) {
         <form >
           <div className="form-field" >
             <div>
-            <label style={{ width: 100, display: 'block' }}>
-                <span >Create Type: </span></label>
-              <input  style={{ width: '100', display: 'block' }} type="text" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
-              <label style={{ width: 100 }}>
+            <label style={{ width: 100 }}>
                 <span >Active:</span>  </label>
               <input className={`checkbox`} type="checkbox" checked={props.active} onChange={handleToggle} />
+            <label style={{ width: 100, display: 'flex' }}>
+              
+                <span>Rule Type</span></label>
+
+              <input  style={{ width: '100', display: 'block' }} type="text" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
+             
+             
+             
            
             </div>
             <div>
             <select onChange={handleValidationTypeChange} className={`form-field-drpdwn`}> {props.ruleType.map((type) => (<option key={type.type} value={type.type}>{type.type}</option>
               ))}
               </select>
-            
+            {/* PRIORITY */}
               <label style={{ width: 100 }}>
-                <span >Priority: </span> </label>
+                <span >Priority </span> </label>
               <select className={`form-field-drpdwn`} value={priority} onChange={handlePriorityChange}>
                 <option value={1}>1</option>
                 <option value={2}>2</option>
@@ -92,7 +97,7 @@ function FormExample(props) {
         <form >
           <div className="form-field">
           <label style={{ width: 100 }}>
-              <span >Name:</span> </label>
+              <span >Rule Name</span> </label>
             <input type="text" value={name} onChange={handleNameChange} />
           </div>
         </form>
