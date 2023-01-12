@@ -1188,11 +1188,10 @@ class RuleEditor extends Component {
         padding: "20px",
         margin: "10px",
       }}>
+        <Panel title={"Edit Rule #"+this.state.ruleId+": "+this.state.name}>
 
 
-        <div
-
-        >
+        <div>
           {this.alert()}
 
 
@@ -1272,6 +1271,7 @@ class RuleEditor extends Component {
             </div>
           </div>
         </div>
+        </Panel>
 
       </div>;
   }
