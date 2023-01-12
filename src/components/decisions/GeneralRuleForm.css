@@ -1,0 +1,26 @@
+.flex-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .flex-label {
+    width: 80px;
+    text-align: right;
+    padding-right: 10px;
+  }
+  
+  .flex-control {
+    flex-grow: 1;
+  }
+  
+  input.invalid {
+    border: 1px solid red;
+  }
+  
+  .error-message{
+    color: red;
+    font-size: 12px;
+  }
+
+
+  

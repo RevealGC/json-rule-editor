@@ -9,6 +9,7 @@ import EditorToolbar, { modules, formats } from "./EditorToolbar";
 import "../../../node_modules/react-quill/dist/quill.snow.css"; // .  react-quill/dist/quill.snow.css';
 import IconLink from '../menus/IconLink'
 import FormExample from "./GeneralRuleForm";
+import GeneralRuleFormV2 from "./GeneralRuleFormV2"
 import TrackVariablesGrid from "./TrackVariablesGrid"
 
 import {
@@ -460,24 +461,24 @@ class RuleEditor extends Component {
     this.setState(responseVariables);
   }
 
-saveResponseVariables(rvArray){
-  let responseVariables = rvArray.map(r=>r.rvs)
-  this.setState({responseVariables})
-}
+  saveResponseVariables(rvArray) {
+    let responseVariables = rvArray.map(r => r.rvs)
+    this.setState({ responseVariables })
+  }
 
   responseVariablesPanel() {
-    const { responseVariables} = this.state;
-    const { facts } = this.props.facts 
+    const { responseVariables } = this.state;
+    const { facts } = this.props.facts
 
     let factsKeys = (facts) ? Object.keys(facts) : []
     let displaySubmit = factsKeys.length == 0 ? 'none' : 'block'
-    
+
     return (
       <div >
         <TrackVariablesGrid facts={factsKeys} addResponseVariables={this.addResponseVariables}
-        displaySubmit = {displaySubmit}
-        saveResponseVariables = {this.saveResponseVariables.bind(this)}
-          deleteRVActions={this.deleteRVActions} 
+          displaySubmit={displaySubmit}
+          saveResponseVariables={this.saveResponseVariables.bind(this)}
+          deleteRVActions={this.deleteRVActions}
           responseVariables={responseVariables}
         />
       </div>
@@ -719,8 +720,8 @@ saveResponseVariables(rvArray){
         value: () => imputeGrid.current.deleteSelectedRows(),
       },
       {
-        name: "Validate",
-        icon: "plus-icon",
+        name: "Submit",
+        icon: "submit-icon",
         value: () => imputeGrid.current.reCreateActionArray(),
       },
     ];
@@ -1172,7 +1173,7 @@ saveResponseVariables(rvArray){
 
     ]
 
-    
+
 
 
     return !displayRuleEditor ? (
@@ -1211,27 +1212,24 @@ saveResponseVariables(rvArray){
                 // height: "800px",
                 // "minWidth": "800px",
                 minHeight: 600,
-                padding: "20px",
-                margin: "10px",
+
               }}
             >
               <div className="tab-page-container">
                 {this.state.activeTab === "General" && (
                   <div>
-                    <Panel title="Enter rule name">
-                      <FormExample  // Points to General Rule Form
+                    <FormExample  // Points to General Rule Form
+                      name={this.state.name}
+                      active={this.state.active}
+                      priority={this.state.rulePriority}
+                      ruleType={this.props.ruleType}
+                      validationType={this.state.validationType}
+                      handleChangeRuleName={this.handleChangeRuleName}
+                      handleRulePriority={this.handleRulePriority}
+                      handleValidationType={this.handleValidationType}
+                      handleToggleActive={this.onToggleActive}
+                    />
 
-                        name={this.state.name}
-                        active={this.state.active}
-                        priority={this.state.rulePriority}
-                        ruleType={this.props.ruleType}
-                        validationType={this.state.validationType}
-                        handleChangeRuleName={this.handleChangeRuleName}
-                        handleRulePriority={this.handleRulePriority}
-                        handleValidationType={this.handleValidationType}
-                        handleToggleActive={this.onToggleActive}
-                      />
-                    </Panel>
                     <Panel title="Description">
                       <EditorToolbar id={"A" + this.state.ruleId} />
                       <ReactQuill value={this.state.description} onChange={this.handleQuillChange} theme="snow"
@@ -1287,7 +1285,7 @@ RuleEditor.defaultProps = {
   outcomes: {},
   handleDebug: () => false,
   handleDecision: () => false,
-  loadRuleTypes: ()=>false
+  loadRuleTypes: () => false
 };
 
 RuleEditor.propTypes = {

@@ -390,7 +390,7 @@ try
 
   async componentDidMount() {
     await this.loadData()
-    if(this.gridApi !== '') this.gridApi.gridOptions.onGridReady = this.onGridReady;
+    // if(this.gridApi !== '') this.gridApi.gridOptions.onGridReady = this.onGridReady;
 
 
   }

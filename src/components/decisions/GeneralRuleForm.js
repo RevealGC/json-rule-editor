@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-
+import './GeneralRuleForm.css';
+import Panel from "../panel/panel";
 function FormExample(props) {
   // Declare a state variable called "name" and set its initial value to the "name" prop, or an empty string if the prop is not provided
   const [name, setName] = useState(props.name || '');
@@ -50,31 +51,35 @@ function FormExample(props) {
  
 
   return (
-    <div>
-      <div style={{ width: 400 }}>
+    <div >
+      {/* <div style={{  'margin-top': 20 , display:'block'}}> */}
+      <div className="flex-container">
         <form >
-          <div className="form-field" >
-            <div>
-            <label style={{ width: 100 }}>
-                <span >Active:</span>  </label>
-              <input className={`checkbox`} type="checkbox" checked={props.active} onChange={handleToggle} />
-            <label style={{ width: 100, display: 'flex' }}>
-              
-                <span>Rule Type</span></label>
+          <Panel title="Rule Name">
+          <div className="form-field">
+          <label >
+              <span >Rule Name:</span> </label>
+            <input type="text" value={name} onChange={handleNameChange} />
+          </div>
+          </Panel>
 
-              <input  style={{ width: '100', display: 'block' }} type="text" value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
+
+          <Panel title="Configure">
+          <div className="form-field" style={{maxWidth:100 }}>
+              
+              
              
+               <label >
+                Active: </label>
+              <input style={{ 'width': '100%','margin-left':'20px',}} className={`checkbox`} type="checkbox" checked={props.active} onChange={handleToggle}  style={{ height: '30px', width: '30px', 'margin-left': '30px'}}/>
+              
+
+
+
              
-             
-           
-            </div>
-            <div>
-            <select onChange={handleValidationTypeChange} className={`form-field-drpdwn`}> {props.ruleType.map((type) => (<option key={type.type} value={type.type}>{type.type}</option>
-              ))}
-              </select>
-            {/* PRIORITY */}
-              <label style={{ width: 100 }}>
-                <span >Priority </span> </label>
+                {/* PRIORITY */}
+                <label >
+                <span >Priority: </span> </label>
               <select className={`form-field-drpdwn`} value={priority} onChange={handlePriorityChange}>
                 <option value={1}>1</option>
                 <option value={2}>2</option>
@@ -87,24 +92,51 @@ function FormExample(props) {
                 <option value={9}>9</option>
                 <option value={10}>10</option>
               </select>
+              </div>
+              </Panel>
+        </form>
+      </div>
+      <div className="flex-container">
+      <Panel title="Save As...">
+        <form >
+          <div className="form-field" >
+            <div>
+            <label>
+                <span>Rule Type:</span></label>
+
+              <input style={{ 'width': '300px','margin-left':'10px',}}  type="text" value={inputValue} onChange={(event) => {setInputValue(event.target.value)
+                handleValidationTypeChange(event)
+              }} />
+            </div>
+            <div className="form-field" >
+              <span style={{ 'margin-left': '116px', 'margin-top': '-30px' }}/>
+            <select style={{ 'width': '95%','margin-left':'14px', 'margin-top':'-4px'   }} onChange={handleValidationTypeChange} className={`form-field-drpdwn`}> {props.ruleType.map((type) => (<option key={type.type} value={type.type}>{type.type}</option>
+              ))}
+              </select>
+          
            
             </div>
           </div>
         </form>
+       </Panel>
       </div>
-      <br></br>
-      <div style={{ width: 880, 'margin-top': 20 }}>
-        <form >
-          <div className="form-field">
-          <label style={{ width: 100 }}>
-              <span >Rule Name</span> </label>
-            <input type="text" value={name} onChange={handleNameChange} />
-          </div>
-        </form>
-      </div>
+    
+      
     </div>
   );
   
 
 }
 export default FormExample;
+               {/* <GeneralRuleFormV2 
+       name={this.state.name}
+       active={this.state.active}
+       priority={this.state.rulePriority}
+       ruleType={this.props.ruleType}
+      validationTypes={this.state.validationType}
+      onNameChange={this.handleChangeRuleName}
+      onActiveChange={this.onToggleActive}
+      onPriorityChange={this.handleRulePriority}
+     
+      onRuleTypeChange={this.handleValidationType}
+    /> */}

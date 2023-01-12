@@ -76,7 +76,7 @@ const columnDefs = [
           // return   <button onclick={"return myFunction("+params.data.id+")"}>Merge</button> 
           return "Success"
 
-      else return 'Failure'
+      else return 'Incomplete'
   } },
     { field: 'elapsed_time', cellStyle: cellStyle,  headerName: 'Time(ms)', filter: 'agNumberColumnFilter', sortable: true, hide: false },
     { field: 'last_modified_date',hide: true, cellStyle: cellStyle,  headerName: 'Modified', filter: 'agTextColumnFilter' , valueFormatter:formatDateLastModified},
