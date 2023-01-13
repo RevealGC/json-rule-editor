@@ -11,7 +11,7 @@ export const processEngine = async function(facts, rules) {
 
   let url = HOSTURL+'/spad/processRules?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
   try{
-  let result = await axios.post(url, {facts, rules,showNetwork:true, attended:false})   
+  let result = await axios.post(url, {facts, rules ,showNetwork:true, attended:false}) 
   let resultSet = result.data
   return resultSet;
   
@@ -21,7 +21,21 @@ export const processEngine = async function(facts, rules) {
   }
   return;
 };
+export const processEngineValidate = async function(facts, rules,attended, showNetwork) {
 
+  let url = HOSTURL+'/spad/processRules?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+  try{
+  let result = await axios.post(url, {facts, rules,showNetwork,attended})
+  // ,showNetwork:network, attended:attended})   
+  let resultSet = result.data
+  return resultSet;
+  
+  }
+  catch(e){
+      alert(e)
+  }
+  return;
+};
 
 export const updateParsedRules = async function(data){
   console.log("🚀 ~ file: rule-validation.js ~ line 13 ~ updateParsedRules ~ data", data)

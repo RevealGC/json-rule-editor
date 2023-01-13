@@ -8,7 +8,7 @@ import Button from '../button/button';
 import Table from '../table/table';
 import Banner from '../panel/banner';
 import * as Message from '../../constants/messages';
-import { processEngine,validateRuleset } from '../../validations/rule-validation';
+import { processEngine,processEngineValidate, validateRuleset } from '../../validations/rule-validation';
 import Loader from '../loader/loader';
 import { ViewOutcomes } from '../attributes/view-attributes';
 import {handleAttribute} from '../../actions/attributes'
@@ -26,6 +26,8 @@ class ValidateRules extends Component {
              loading: false,
              outcomes: [],
              error: false,
+             attended: false,
+             network: true,
             };
         this.handleAttributeLocal = this.handleAttributeLocal.bind(this);
         this.handleValue = this.handleValue.bind(this);
@@ -77,7 +79,9 @@ class ValidateRules extends Component {
     
 
  
-    let result = await processEngine([facts], decisions)
+    let result = 
+    // await processEngineValidate([facts], decisions, this.state.attended, this.state.network)
+    await processEngineValidate([facts], decisions, this.state.attended, this.state.network)
   
     this.props.handleDebug('ADD', {label:'time', data:{result}}, 0)
     this.setState({loading: false, result,  result: true, error: false, errorMessage: '',});
@@ -91,6 +95,16 @@ return;
             this.setState({loading: false, error: true, errorMessage: e.error, result: true, });
         });
     }
+
+
+    toggleAttended = ()=>{
+        this.setState({attended: !this.state.attended})
+    }
+
+    toggleNetwork= ()=>{
+        this.setState({network: !this.state.network})
+    }
+
 /**
  * 
  * @returns 
@@ -129,11 +143,33 @@ return;
         return (
         <React.Fragment>
              <div className="btn-group">
+                <Panel title="Validate dataset">
+              
+               <div className="form-field" style={{ display:'flex' }}>
                <Button label={'Validate Ruleset'} onConfirm={this.validateRules} classname="primary-btn" type="submit" />
+              <label >
+               Attended: </label>
+             <input style={{ 'width': '40','margin-left':'20px',}}  type="checkbox" checked={this.state.attended} 
+             onChange={this.toggleAttended.bind(this)} 
+             />
+
+
+<label >
+               Network: </label>
+             <input style={{ 'width': '40','margin-left':'20px',}}  type="checkbox" checked={this.state.network} 
+             onChange={this.toggleNetwork.bind(this)} 
+            //  onChange={this.setState({network: !this.state.network})}
+              />
+
+             
            </div>
+           </Panel>
+           </div>
+           <Panel title="Update">
             <Table columns={['Name', 'Value']}>
                      {formElements}
             </Table>
+            </Panel>
            
             <hr/>
                 { loading && <Loader /> }

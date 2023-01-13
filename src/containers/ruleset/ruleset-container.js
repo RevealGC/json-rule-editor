@@ -463,6 +463,7 @@ class RulesetContainer extends Component {
 
 
               {this.state.activeTab === 'Facts' && <Attributes attributes={attributes} 
+              ruleSet = {this.props.ruleSet}
                 handleAttribute={this.props.handleAttribute }/>}
 
               {/* {this.state.activeTab === 'Decisions' && <Decisions decisions={indexedDecisions || []} attributes={attributes}

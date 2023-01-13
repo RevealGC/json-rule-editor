@@ -70,7 +70,8 @@ function ruleset(state = initialState, action='') {
 
             const { ruleset } = action.payload;
             const rulesets = state.rulesets.concat(ruleset);
-             return { ...state, rulesets: cloneDeep(rulesets),  uploadedRules: cloneDeep(rulesets)}
+            const count = rulesets.length === 0 ? 0 : rulesets.length;
+             return { ...state, rulesets: cloneDeep(rulesets), activeRuleset: count-1, uploadedRules: cloneDeep(rulesets)}
         }
 
         case ActionTypes.UPLOAD_DBRULESET: {
