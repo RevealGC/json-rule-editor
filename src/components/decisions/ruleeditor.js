@@ -415,6 +415,10 @@ class RuleEditor extends Component {
         <div> {this.conditionPanel()} </div>
         <div className="add-field-panel ">
           <Panel className="add-field-panel" title="Then Message">
+
+
+
+
             <textarea
               style={{
                 width: "100%",
@@ -973,6 +977,13 @@ class RuleEditor extends Component {
 
 
 <div style={{display:'flex', 'alignItems': 'center'}}>
+
+{/* <EditorSourceCode 
+ onChange={(value) => this.onChangeConditionString(value)}
+code={conditionstring}/> */}
+
+
+
 <div style={{width:'80%'}}>
 {/* Text area */}
             <textarea

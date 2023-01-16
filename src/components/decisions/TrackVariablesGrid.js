@@ -14,7 +14,10 @@ class TrackVariablesGrid extends React.Component {
        
        const rowData = props.responseVariables.map((r, index)=> {return {key:index, rvs:r}}) 
        const cellStyle = {
-        fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
+        // fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
+        fontFamily:
+        "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+    
         fontSize: '14px',
         fontWeight: '400',
           display: 'flex',

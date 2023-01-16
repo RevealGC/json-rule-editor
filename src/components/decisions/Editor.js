@@ -1,31 +1,27 @@
 import React, { useState  } from 'react';
 
 
-import CodeEditor from '@uiw/react-textarea-code-editor';
+import Editor  from "@monaco-editor/react";
 
 
 // import "./index.css";
-function Editor(props) {
-   
+function EditorSourceCode(props) {
+   const c = props.code+'';
 
   const [code, setCode] = useState(
-    props.code
+    c
     // `function add(a, b) {\n  return a + b;\n}`
   );
 
   return (
-    <CodeEditor
+    <Editor
+    height="200px"
+    fontSize="20px"
+    style={{'font-size':'14px'}}
+    defaultLanguage="javascript"
     value={code}
-    language="js"
-    placeholder="Please enter JS code."
-    onChange={(evn) => setCode(evn.target.value)}
-    padding={15}
-    style={{
-      fontSize: 12,
-      backgroundColor: "#f5f5f5",
-      fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
-    }}
+    defaultValue="Hello"
   />
   );
 }
-export default Editor;
+export default EditorSourceCode;
