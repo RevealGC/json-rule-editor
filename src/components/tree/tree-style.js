@@ -20,7 +20,7 @@ const nodeStyleDark = {
 
 const nameStyle = {
       fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-      fontSize: '13px',
+      fontSize: '16px',
       fontWeight: 'bold',
       fill: '#2A3F54',
       stroke: '#2A3F54',
@@ -29,7 +29,7 @@ const nameStyle = {
 
 const nameStyleDark = {
     fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-    fontSize: '13px',
+    fontSize: '16px',
     fontWeight: 'bold',
     fill: '#fff',
     stroke: '#fff',
@@ -38,7 +38,7 @@ const nameStyleDark = {
 
 const attributesStyle = {
     fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-    fontSize: '14px',
+    fontSize: '16px',
     fill: '#2A3F54',
     stroke: '#2A3F54',
     strokeWidth: 0,
@@ -46,7 +46,7 @@ const attributesStyle = {
 
 const attributesStyleDark = {
     fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-    fontSize: '14px',
+    fontSize: '16px',
     fill: '#fff',
     stroke: '#fff',
     strokeWidth: 0,

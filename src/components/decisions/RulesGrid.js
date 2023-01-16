@@ -43,6 +43,10 @@ const groupDisplayType = 'multipleColumns';
 const gridOptions = {
   rowMultiSelectWithClick: true,
   groupDefaultExpanded: 1,
+
+
+
+
   getRowStyle: function (params) {
     return {
 
@@ -99,8 +103,8 @@ const newRuleObject = {
 // };
 const cellStyle = {
   fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-  fontSize: '14px',
-  fontWeight: '450',
+  fontSize: '16px',
+  fontWeight: '400',
     display: 'flex',
   'alignItems': 'center',
   fill: '#fff',
@@ -154,15 +158,15 @@ class RulesGrid extends React.Component {
         {
           field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', hide: true,
 
-          headerName: "Rule Type", 
+          headerName: "Rule Type", cellStyle: cellStyle,
 
-          cellClassRules: {
-            "bold-text": function(params) {
-              // return a boolean value to determine whether to apply the
-              // 'bold-text' class to the cell
-              return true
-            }
-          }
+          // cellClassRules: {
+          //   "bold-text": function(params) {
+          //     // return a boolean value to determine whether to apply the
+          //     // 'bold-text' class to the cell
+          //     return true
+          //   }
+          // }
         },
 
 
@@ -287,14 +291,9 @@ try
    * create a new row add new row of a rule. addRule
    */
   addRowData = () => {
-    let newRowData = this.state.rowData.slice();
-    let newId =
-      this.state.rowData.length === 0
-        ? 0
-        : this.state.rowData[this.state.rowData.length - 1].key + 1;
-
-
-
+    let allRulesRedux = this.props.allRulesRedux.slice()
+    let key = allRulesRedux.length +1
+  
     let newRow = {
       parsed_rule: newRuleObject,
       active: true,
@@ -302,21 +301,11 @@ try
       data: newRuleObject,
       description: 'New Rule',
       name: newRuleObject.event.name,
-      key: newId
-
+      key, showDetail:true
     }
-
-
-
-    newRowData.push(newRow);
-    this.setState({ rowData: newRowData });
-    this.props.addAllRulesRedux(newRowData);
-    // get the index of the newly added row
-    // const newRowIndex = this.state.rowData.length
-    // open the detail of the newly added row
-  
-    // this.gridApi.getRowNode(newRowIndex).setExpanded(true);
-
+    
+    allRulesRedux.push(newRow);
+    this.props.addAllRulesRedux(allRulesRedux);
 
   };
 
@@ -403,7 +392,7 @@ try
     let allRulesRedux = this.props.allRulesRedux
     if (allRulesRedux.length > 0 && init == false) {
       // pull from redux state
-      this.setState({ rowData: allRulesRedux })
+      // this.setState({ rowData: allRulesRedux })
       return;
 
     }
@@ -414,7 +403,7 @@ try
       return { ...row, key: index + 1 }
     })
 
-    this.setState({ rowData, backupRowData: rowData, ruleCounts: ret.data.data.length });
+    // this.setState({ rowData, backupRowData: rowData, ruleCounts: ret.data.data.length });
     this.props.addAllRulesRedux(rowData)
     const allColumnIds = [];
     gridOptions.columnApi.getAllColumns().forEach(column => allColumnIds.push(column.colId));
@@ -562,10 +551,17 @@ try
     if (operation === 'create') {
       // Insert a new row
       gridApi.updateRowData({ add: [rowData], addIndex: 0 });
+      let allRows = this.props.allRulesRedux
+      let newRules = {...allRows, ...rowData}
+        this.props.addAllRulesRedux(newRules)
 
-      let allRows = this.state.rowData
-      allRows.push(rowData);
-      this.setState({ rowData: allRows });
+      // allRows.push(rowData);
+      // this.setState({ rowData: allRows });
+
+    
+      // gridApi.getRowNode(allRows.length).setExpanded(true)
+
+
     } else if (operation === 'read') {
       // Get the row data for a specific row
       const rowNode = gridApi.getRowNode(rowIndex);
@@ -599,7 +595,8 @@ try
       data: newRuleObject,
       description: 'New Rule',
       name: newRuleObject.event.name,
-      id: 0
+      id: 0,
+      isOpen: true
 
     }
 
@@ -609,18 +606,39 @@ try
     // this.performCrudOperations('create', null, data);
   }
 
+ 
   onFirstDataRendered = (params) => {
-    // setTimeout(function () {
-    // params.api.getDisplayedRowAtIndex(1).setExpanded(false);
-
-    // }, 0);
+    setTimeout(function () {
+      // params.api.getDisplayedRowAtIndex(1).setExpanded(true);
+    }, 0);
   }
+
+  // onFirstDataRendered = (params) => {
+  //   // setTimeout(function () {
+
+
+  //     let allRulesRedux = this.props.allRulesRedux
+
+  //   //   let filteredArray = allRulesRedux.filter(function(obj) {
+  //   //     return obj.hasOwnProperty("ruleId");
+  //   //   });
+   
+  //   // params.api.getDisplayedRowAtIndex(this.props.allRulesRedux.length).setExpanded(true);
+
+  //   // }, 100);
+  // }
 
 
 
   onGridReady = function(params) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
+
+      // or setState if using components
+      this.setState({
+        gridApi: params.api,
+        columnApi: params.columnApi
+    });
 
     this.gridColumnApi.autoSizeColumns();
 
@@ -630,8 +648,9 @@ try
     gridOptions.columnApi.getAllColumns().forEach(column => allColumnIds.push(column.colId));
     gridOptions.columnApi.autoSizeColumns(allColumnIds);
 
-    const newRowIndex = this.state.rowData.length;
-    // this.gridApi.getRowNode(newRowIndex).setExpanded(true);
+
+    // const newRowIndex = params.api.
+    // this.gridApi.getRowNode(this.props.allRulesRedux.length).setExpanded(true);
 
 
 
@@ -648,7 +667,7 @@ try
     // console.log("🚀 ~ file: RulesGrid.js:575 ~ RulesGrid ~ distinctValues", distinctValues)
 
 
-    // this.gridApi.getRowNode(1).setExpanded(true);
+    
 
     // get the index of the newly added row
     // const newRowIndex = this.state.rowData.length - 1;
@@ -775,7 +794,8 @@ try
   }
 
   render() {
-    const { rowIndex, rowData } = this.state
+    // const { rowIndex, rowData } = this.state
+    const rowData = this.props.allRulesRedux
     const { background } = this.context;
     const ruleCount = rowData.length;
 

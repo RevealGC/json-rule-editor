@@ -5,6 +5,7 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import IconLink from '../menus/IconLink'
 
 import ApperanceContext from '../../context/apperance-context'   // '../../context/apperance-context';
+import Panel from '../panel/panel';
 
 class TrackVariablesGrid extends React.Component {
     constructor(props) {
@@ -38,7 +39,7 @@ class TrackVariablesGrid extends React.Component {
                     },
                     sortable: true, filter: 'agTextColumnFilter',
                     width: 400,
-                    height: 80,
+                    height: 60,
                     cellStyle
                 }
             ],
@@ -85,8 +86,8 @@ class TrackVariablesGrid extends React.Component {
 
 
         return (
-            <div className="ag-theme-alpine" style={{padding:20,  height: '500px', width: '600px' }}>
-
+            <div className="ag-theme-alpine" style={{padding:40,margin:20,  height: '500px', width: '600px' }}>
+               
 
 <div  className={`attributes-header `}
             style={{ display: 'block', }} >
@@ -106,6 +107,7 @@ class TrackVariablesGrid extends React.Component {
                     suppressMovableColumns={true}
                     suppressFieldDictionary={true}
                 />
+              
             </div>
         );
     }

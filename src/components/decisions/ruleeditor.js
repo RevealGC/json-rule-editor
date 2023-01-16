@@ -424,7 +424,7 @@ class RuleEditor extends Component {
                 border: "2px solid #ccc",
                 "border-radius": "4px",
                 "background-color": "#f8f8f8",
-                "font-size": "14px",
+                "font-size": "16px",
                 resize: "vertical",
               }}
               className="ag-theme-alpine"
@@ -475,12 +475,14 @@ class RuleEditor extends Component {
 
     return (
       <div >
+
         <TrackVariablesGrid facts={factsKeys} addResponseVariables={this.addResponseVariables}
           displaySubmit={displaySubmit}
           saveResponseVariables={this.saveResponseVariables.bind(this)}
           deleteRVActions={this.deleteRVActions}
           responseVariables={responseVariables}
         />
+      
       </div>
     );
   }
@@ -968,6 +970,16 @@ class RuleEditor extends Component {
           style={{ "white-space": "normal", "text-align": "left" }}
         >
           <div>
+
+      {/* <div>
+        <Editor onChange={(value) => this.onChangeConditionString(value)}
+        code={conditionstring}/>
+      </div> */}
+
+
+
+
+
             <textarea
               style={{
                 width: "100%",
@@ -977,8 +989,11 @@ class RuleEditor extends Component {
                 border: "2px solid #ccc",
                 "border-radius": "4px",
                 "background-color": "#f8f8f8",
-                "font-size": "14px",
+                "font-size": "16px",
                 resize: "vertical",
+                fontFamily:
+                "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+            
               }}
               className="ag-theme-alpine"
               onChange={(value) => this.onChangeConditionString(value)}

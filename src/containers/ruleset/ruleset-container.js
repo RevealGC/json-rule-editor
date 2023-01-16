@@ -38,8 +38,8 @@ const HOSTURL = 'http://localhost'
 
 const cellStyle = {
   fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-  fontSize: '13px',
-  fontWeight: '450',
+  fontSize: '16px',
+  fontWeight: '400',
     display: 'flex',
   'alignItems': 'center',
   fill: '#fff',

@@ -2,6 +2,7 @@
     border-bottom: 2px solid #ccc;
     display: flex;
     margin-top: 20px;
+    font-size:18px;
     padding: {
         left: 40px;
     };
@@ -9,7 +10,7 @@
     div {
         cursor: pointer;
         color: $form-label-color;
-        font-family: $tab-font-family;
+        // font-family: $tab-font-family;
         margin-right: 20px;
         padding: {
             bottom: 10px;

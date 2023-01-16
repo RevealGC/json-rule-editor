@@ -7,8 +7,8 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import ApperanceContext from '../../context/apperance-context';
 const cellStyle = {
     fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-    fontSize: '14px',
-    fontWeight: '450',
+    fontSize: '16px',
+    fontWeight: '400',
       display: 'flex',
     'alignItems': 'center',
     fill: '#fff',
