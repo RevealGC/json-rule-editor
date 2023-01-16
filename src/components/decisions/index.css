@@ -8,3 +8,23 @@
   --color-canvas-subtle: #f6f8fa;
   -webkit-text-fill-color: black;
 }
+
+.rule-modal {
+  width: 600px;
+  height: 400px;
+  /* margin: 'auto'; */
+
+  border-radius: 4px; 
+  border-color: rgb(184, 178, 190);
+  border-width: 4px;
+  background-color: rgb(220, 203, 203);
+  margin-left: 400px;
+  margin-top: -100px;
+  opacity: 1;
+
+
+}
+
+.ui.modal {
+  margin-top: 0 !important;
+  }

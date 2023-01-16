@@ -26,6 +26,10 @@ import { handleDebug } from '../../actions/debug';
 
 import { addAllRulesRedux } from '../../actions/ruleset';
 import { truncate } from 'lodash';
+import QuickRuleModal from './QuickRuleModal';
+import 'semantic-ui-css/semantic.min.css';
+
+
 
 const HOSTURL = 'http://localhost'
 
@@ -143,6 +147,7 @@ class RulesGrid extends React.Component {
 
     this.state = {
       selectedCondition: {},
+      showModalRule: false,
       rowIndex: 0,
       allRulesRedux: this.props.allRulesRedux,
       ruleCounts: 0,
@@ -156,9 +161,9 @@ class RulesGrid extends React.Component {
         //Type: GROUP like validation or user ruleset 
 
         {
-          field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', hide: true,
+          field: 'type', valueGetter: this.getValidationType, rowGroup: true,  cellStyle: cellStyle,cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', hide: true,
 
-          headerName: "Rule Type", cellStyle: cellStyle,
+          headerName: "Rule Type", 
 
           // cellClassRules: {
           //   "bold-text": function(params) {
@@ -291,6 +296,9 @@ try
    * create a new row add new row of a rule. addRule
    */
   addRowData = () => {
+
+    this.setState({showModalRule:true})
+
     let allRulesRedux = this.props.allRulesRedux.slice()
     let key = allRulesRedux.length +1
   
@@ -304,8 +312,17 @@ try
       key, showDetail:true
     }
     
-    allRulesRedux.push(newRow);
+    // allRulesRedux.push(newRow);
+    allRulesRedux.unshift(newRow);
     this.props.addAllRulesRedux(allRulesRedux);
+
+    setTimeout(() => {
+      this.gridApi.getRowId(key).setExpanded(true)
+    }, 500);
+
+    // this.gridApi.getRowId(key).setExpanded(true)//getDisplayedRowAtIndex(key).setExpanded(true)
+
+          // gridApi.getRowNode(allRows.length).setExpanded(true)
 
   };
 
@@ -411,8 +428,28 @@ try
 
 
   }
+closeModal(){
+  this.setState({showModalRule:false})
+}
+addModalRule(){
 
-
+  const {showModalRule} = this.state
+  if(showModalRule) 
+  return(<div ><QuickRuleModal 
+    closeModal = {this.closeModal.bind(this)}
+    open={true}
+    onClose= { this.closeModal.bind(this)}
+    ruleName={"hello"} 
+    condition={"RCPT_TOT > 0"}
+    responseVariables = {["RCPT_TOT", "PAY_ANN"]}
+    ruleType={"Impute"} 
+    compute={[{"RCPT_TOT": "RCPT_TOT +100"}]}
+    ruleTypes={["validation", "new Rule"]}
+    priority={"5"} 
+    message={"All good"}/></div>)
+    else
+    return(<div></div>)
+}
 
 
 
@@ -422,13 +459,25 @@ try
     let rule = [params.data.data]
 
     return (<div>
+
+
+
+
+
       <RuleEditor conditions={rule} description={params.data.description}
         reloadRulesFromDB={this.reloadRulesFromDB}
         performCrudOperations={this.performCrudOperations}
         handleCancel={this.handleCancel}
         // facts={this.props.facts} 
 
-        decisionIndex={params.rowIndex} /> </div>)
+        decisionIndex={params.rowIndex} /> 
+        
+        
+        </div>
+        
+        
+        
+        )
 
   }
 
@@ -806,11 +855,16 @@ try
       { label: 'Delete', className: 'reset-icon', onClick: this.deleteSelectedRows },
     ]
 
+
+if(this.state.showModalRule) return(<div>
+   {this.addModalRule()}
+</div>)
+
     return (
       <div   >
         {this.alert()}
 
-
+       
 
         <div className={`attributes-header ${background}`} 
         style={{ display: 'block',  }} >
@@ -846,7 +900,7 @@ try
            
             defaultColDef={{
               flex: 1,
-              minWidth: 150,
+              minWidth: 200,
               filter: true,
               sortable: true,
               resizable: true,
