@@ -9,7 +9,7 @@ import EditorToolbar, { modules, formats } from "./EditorToolbar";
 import "../../../node_modules/react-quill/dist/quill.snow.css"; // .  react-quill/dist/quill.snow.css';
 import IconLink from '../menus/IconLink'
 import FormExample from "./GeneralRuleForm";
-import GeneralRuleFormV2 from "./GeneralRuleFormV2"
+// import Editor from "./Editor";
 import TrackVariablesGrid from "./TrackVariablesGrid"
 
 import {
@@ -971,22 +971,17 @@ class RuleEditor extends Component {
         >
           <div>
 
-      {/* <div>
-        <Editor onChange={(value) => this.onChangeConditionString(value)}
-        code={conditionstring}/>
-      </div> */}
 
-
-
-
-
+<div style={{display:'flex', 'alignItems': 'center'}}>
+<div style={{width:'80%'}}>
+{/* Text area */}
             <textarea
               style={{
                 width: "100%",
                 height: "100px",
                 padding: "10px",
                 "box-sizing": "border-box",
-                border: "2px solid #ccc",
+                border: ".5px dotted #ccc",
                 "border-radius": "4px",
                 "background-color": "#f8f8f8",
                 "font-size": "16px",
@@ -1002,21 +997,12 @@ class RuleEditor extends Component {
               placeholder="Enter the conditions"
               readOnly={false}
             />
-            <div> Syntax: {success ? "Correct" : "Incorrect"}</div>
-            {/* If has error then show the error in the parent.hint */}
+{/* End Text area */}
+</div>
+<div>
 
-            <div>
-              Result:{" "}
-              {JSON.stringify(conditionStringObject.ruleResult)}
-            </div>
-            {/* Show the status can be true or false based on the value       */}
-            Status:{" "}
-            {conditionStringObject.value
-              ? JSON.stringify(conditionStringObject.value)
-              : "false"}
-          </div>
-        </div>
-        <div className="btn-group">
+{/* Validate Button */}
+<div className="btn-group">
           {/* Calling validation */}
           <div
             className={`attributes-header ${background}`}
@@ -1031,6 +1017,33 @@ class RuleEditor extends Component {
             </div>
           </div>
         </div>
+{/* End Valid Button */}
+
+</div>
+</div>
+
+
+
+
+
+
+            <div> Syntax: {success ? "Correct" : "Incorrect"}</div>
+            {/* If has error then show the error in the parent.hint */}
+
+            <div>
+              Result:{" "}
+              {JSON.stringify(conditionStringObject.ruleResult)}
+            </div>
+            {/* Show the status can be true or false based on the value       */}
+            Status:{" "}
+            {conditionStringObject.value
+              ? JSON.stringify(conditionStringObject.value)
+              : "false"}
+          </div>
+        </div>
+
+
+
       </Panel>
     );
   }
@@ -1243,7 +1256,7 @@ class RuleEditor extends Component {
                       handleValidationType={this.handleValidationType}
                       handleToggleActive={this.onToggleActive}
                     />
-
+              <div style={{height:"40px"}}></div>
                     <Panel title="Description">
                       <EditorToolbar id={"A" + this.state.ruleId} />
                       <ReactQuill value={this.state.description} onChange={this.handleQuillChange} theme="snow"
