@@ -23,7 +23,7 @@
         border: 1px dashed #aaa;
         border-radius: 5px;
         color: #73879C;
-        font-size: 18px;
+        font-size: 16px;
         height: 70px;
         line-height: 30px;
         margin-left: 20px;
@@ -68,7 +68,7 @@
     }
 
     .file-drop-msg {
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .btn-group {
@@ -87,7 +87,7 @@
     background-color: $cancel-btn-color;
     border-radius: 5px;
     color: $btn-color;
-    font-size: 16px;
+    font-size: 14px;
     font-family: $form-font-family;
     height: 40px;
     line-height: 40px;
@@ -112,7 +112,7 @@
         flex-direction: row-reverse;
 
         a {
-            font-size: 16px;
+            font-size: 14px;
         }
     }
 
@@ -121,7 +121,7 @@
 
         a {
             color: $btn-color;
-            font-size: 16px;
+            font-size: 14px;
         }
     }
 

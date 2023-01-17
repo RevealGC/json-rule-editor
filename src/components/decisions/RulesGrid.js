@@ -28,7 +28,7 @@ import { addAllRulesRedux } from '../../actions/ruleset';
 import { truncate } from 'lodash';
 import QuickRuleModal from './QuickRuleModal';
 import 'semantic-ui-css/semantic.min.css';
-
+import { loadRuleTypes } from "../../actions/ruleset";
 
 
 const HOSTURL = 'http://localhost'
@@ -46,7 +46,7 @@ const arrayToString = (arr) => {
 const groupDisplayType = 'multipleColumns';
 const gridOptions = {
   rowMultiSelectWithClick: true,
-  groupDefaultExpanded: 1,
+  groupDefaultExpanded: false,
 
 
 
@@ -98,6 +98,19 @@ const newRuleObject = {
     ]
   }
 }
+const breakRuleObject = (ruleObject) => {
+  let ruleName = ruleObject.event.name
+  let condition = ruleObject.conditions.all[0].params.conditionstring
+  let responseVariables = ruleObject.event.params.rvsJSON
+  let compute = ruleObject.event.params.action
+  let message = ruleObject.event.params.message
+  let priority = ruleObject.event.rulePriority
+  let ruleType = ruleObject.event.validationType
+
+
+  return ({ ruleName, condition, responseVariables, compute, message, priority, ruleType })
+
+}
 
 // const cellStyle = {
 //   display: 'flex',
@@ -106,10 +119,10 @@ const newRuleObject = {
 //   'color': 'gray'
 // };
 const cellStyle = {
-  fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
-  fontSize: '16px',
+  fontFamily: '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
+  fontSize: '14px',
   fontWeight: '400',
-    display: 'flex',
+  display: 'flex',
   'alignItems': 'center',
   fill: '#fff',
   stroke: '#fff',
@@ -161,9 +174,9 @@ class RulesGrid extends React.Component {
         //Type: GROUP like validation or user ruleset 
 
         {
-          field: 'type', valueGetter: this.getValidationType, rowGroup: true,  cellStyle: cellStyle,cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', hide: true,
+          field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellStyle: cellStyle, cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', hide: true,
 
-          headerName: "Rule Type", 
+          headerName: "Rule Type",
 
           // cellClassRules: {
           //   "bold-text": function(params) {
@@ -212,7 +225,7 @@ class RulesGrid extends React.Component {
         { headerName: 'RefPer End', cellStyle: cellStyle, field: 'refper_end', sortable: true, filter: 'agTextColumnFilter', hide: true },
         { headerName: 'Parsed Rule', cellStyle: cellStyle, field: 'parsed_rule', sortable: true, filter: 'agTextColumnFilter', hide: true },
 
-        { headerName: 'Priority', field: 'priority', width: 200, sortable: true,  cellStyle: cellStyle,valueGetter: this.getRulePriority, filter: 'agTextColumnFilter', },
+        { headerName: 'Priority', field: 'priority', width: 200, sortable: true, cellStyle: cellStyle, valueGetter: this.getRulePriority, filter: 'agTextColumnFilter', },
 
         { headerName: 'Created By', cellStyle: cellStyle, width: 100, field: 'created_by', sortable: true, filter: 'agTextColumnFilter', hide: true },
         { headerName: 'Modified By', cellStyle: cellStyle, width: 100, field: 'modified_by', sortable: true, filter: 'agTextColumnFilter', hide: true },
@@ -260,33 +273,32 @@ class RulesGrid extends React.Component {
     const rowIndex = event.rowIndex;
     const colId = event.column.colId;
     // you can use these indices to get the row data and column definition from the grid's api
-try
-  {  
-    const rowData = this.gridApi.getDisplayedRowAtIndex(rowIndex).data;
-    const colDef = this.gridApi.getColumnDef(colId)
-    // now you can read the name and value of the cell as follows:
-    const name = colDef.field;
-    // const value = rowData[name];
-    var value = rowData[name]
-    if (name === 'condition') {    // show the condition string.
-      value = rowData.parsed_rule.conditions.all[0].params.conditionstring
-    }
+    try {
+      const rowData = this.gridApi.getDisplayedRowAtIndex(rowIndex).data;
+      const colDef = this.gridApi.getColumnDef(colId)
+      // now you can read the name and value of the cell as follows:
+      const name = colDef.field;
+      // const value = rowData[name];
+      var value = rowData[name]
+      if (name === 'condition') {    // show the condition string.
+        value = rowData.parsed_rule.conditions.all[0].params.conditionstring
+      }
 
-    if (name === 'track') {
-      value = rowData.parsed_rule.event.params.rvs
+      if (name === 'track') {
+        value = rowData.parsed_rule.event.params.rvs
+      }
+      if (name === 'action') {
+        value = JSON.stringify(rowData.parsed_rule.event.params.action)
+      }
+      if (name === 'priority') {
+        value = rowData.parsed_rule.event.rulePriority
+      }
+      value = stripHTML(value)
+      this.props.handleDebug('ADD', { label: 'time', data: { name, ...{ value: value } } }, 0)
     }
-    if (name === 'action') {
-      value = JSON.stringify(rowData.parsed_rule.event.params.action)
-    }
-    if (name === 'priority') {
-      value = rowData.parsed_rule.event.rulePriority
-    }
-    value = stripHTML(value)
-    this.props.handleDebug('ADD', { label: 'time', data: { name, ...{ value: value } } }, 0)
-  }
-  catch(e){
+    catch (e) {
 
-  }
+    }
 
   }
   getRowNodeId = data => {
@@ -297,11 +309,12 @@ try
    */
   addRowData = () => {
 
-    this.setState({showModalRule:true})
+    this.setState({ showModalRule: true })
+
 
     let allRulesRedux = this.props.allRulesRedux.slice()
-    let key = allRulesRedux.length +1
-  
+    let key = allRulesRedux.length + 1
+
     let newRow = {
       parsed_rule: newRuleObject,
       active: true,
@@ -309,20 +322,20 @@ try
       data: newRuleObject,
       description: 'New Rule',
       name: newRuleObject.event.name,
-      key, showDetail:true
+      key, showDetail: true
     }
-    
+
     // allRulesRedux.push(newRow);
     allRulesRedux.unshift(newRow);
     this.props.addAllRulesRedux(allRulesRedux);
 
     setTimeout(() => {
-      this.gridApi.getRowId(key).setExpanded(true)
+      // this.gridApi.getRowId(key).setExpanded(true)
     }, 500);
 
     // this.gridApi.getRowId(key).setExpanded(true)//getDisplayedRowAtIndex(key).setExpanded(true)
 
-          // gridApi.getRowNode(allRows.length).setExpanded(true)
+    // gridApi.getRowNode(allRows.length).setExpanded(true)
 
   };
 
@@ -358,17 +371,17 @@ try
     this.setState({ rowData: this.state.backupRowData });
   };
 
- executeMultipleRules =async ()=>{
+  executeMultipleRules = async () => {
 
-  const { facts } = this.props.facts
+    const { facts } = this.props.facts
     if (!facts) {
       // alert("To Execute Rules, please load and select a Dataset")
-      this.setState({noFactsAlert:true})
-    
+      this.setState({ noFactsAlert: true })
 
-   
+
+
       return;
- }
+    }
     const gridApi = this.gridApi;
     // Get the selected row nodes
     const selectedRowNodes = gridApi.getSelectedNodes();
@@ -377,11 +390,11 @@ try
     const rules = selectedRowData.map(r => r.parsed_rule)
     // now get the facts and call the end point.
 
-   
+
     let result = await processEngine([facts], rules);
-    this.setState({successAlert:true})
+    this.setState({ successAlert: true })
     this.props.handleDebug("ADD", { label: "time", data: { result } }, 0);
-   
+
   }
   reloadRulesFromDB = () => {
     this.setState({ rowData: [] });
@@ -395,7 +408,9 @@ try
 
 
   async componentDidMount() {
+    this.props.loadRuleTypes()
     await this.loadData()
+  
     // if(this.gridApi !== '') this.gridApi.gridOptions.onGridReady = this.onGridReady;
 
 
@@ -428,28 +443,31 @@ try
 
 
   }
-closeModal(){
-  this.setState({showModalRule:false})
-}
-addModalRule(){
+  closeModal() {
+    this.setState({ showModalRule: false })
+  }
+  addModalRule() {
 
-  const {showModalRule} = this.state
-  if(showModalRule) 
-  return(<div ><QuickRuleModal 
-    closeModal = {this.closeModal.bind(this)}
-    open={true}
-    onClose= { this.closeModal.bind(this)}
-    ruleName={"hello"} 
-    condition={"RCPT_TOT > 0"}
-    responseVariables = {["RCPT_TOT", "PAY_ANN"]}
-    ruleType={"Impute"} 
-    compute={[{"RCPT_TOT": "RCPT_TOT +100"}]}
-    ruleTypes={["validation", "new Rule"]}
-    priority={"5"} 
-    message={"All good"}/></div>)
+    const { showModalRule } = this.state
+
+    const { ruleName, condition, responseVariables, compute, message, priority, ruleType } = breakRuleObject(newRuleObject)
+
+    if (showModalRule)
+      return (<div ><QuickRuleModal
+        closeModal={this.closeModal.bind(this)}
+        open={true}
+        onClose={this.closeModal.bind(this)}
+        ruleName={ruleName}
+        condition={condition}
+        responseVariables={responseVariables}
+        ruleType={ruleType}
+        compute={compute}
+        ruleTypes={this.props.ruleType}
+        priority={priority}
+        message={message} /></div>)
     else
-    return(<div></div>)
-}
+      return (<div></div>)
+  }
 
 
 
@@ -470,14 +488,14 @@ addModalRule(){
         handleCancel={this.handleCancel}
         // facts={this.props.facts} 
 
-        decisionIndex={params.rowIndex} /> 
-        
-        
-        </div>
-        
-        
-        
-        )
+        decisionIndex={params.rowIndex} />
+
+
+    </div>
+
+
+
+    )
 
   }
 
@@ -601,13 +619,13 @@ addModalRule(){
       // Insert a new row
       gridApi.updateRowData({ add: [rowData], addIndex: 0 });
       let allRows = this.props.allRulesRedux
-      let newRules = {...allRows, ...rowData}
-        this.props.addAllRulesRedux(newRules)
+      let newRules = { ...allRows, ...rowData }
+      this.props.addAllRulesRedux(newRules)
 
       // allRows.push(rowData);
       // this.setState({ rowData: allRows });
 
-    
+
       // gridApi.getRowNode(allRows.length).setExpanded(true)
 
 
@@ -655,7 +673,7 @@ addModalRule(){
     // this.performCrudOperations('create', null, data);
   }
 
- 
+
   onFirstDataRendered = (params) => {
     setTimeout(function () {
       // params.api.getDisplayedRowAtIndex(1).setExpanded(true);
@@ -671,7 +689,7 @@ addModalRule(){
   //   //   let filteredArray = allRulesRedux.filter(function(obj) {
   //   //     return obj.hasOwnProperty("ruleId");
   //   //   });
-   
+
   //   // params.api.getDisplayedRowAtIndex(this.props.allRulesRedux.length).setExpanded(true);
 
   //   // }, 100);
@@ -679,19 +697,19 @@ addModalRule(){
 
 
 
-  onGridReady = function(params) {
+  onGridReady = function (params) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
 
-      // or setState if using components
-      this.setState({
-        gridApi: params.api,
-        columnApi: params.columnApi
+    // or setState if using components
+    this.setState({
+      gridApi: params.api,
+      columnApi: params.columnApi
     });
 
     this.gridColumnApi.autoSizeColumns();
 
-  
+
 
     const allColumnIds = [];
     gridOptions.columnApi.getAllColumns().forEach(column => allColumnIds.push(column.colId));
@@ -716,7 +734,7 @@ addModalRule(){
     // console.log("🚀 ~ file: RulesGrid.js:575 ~ RulesGrid ~ distinctValues", distinctValues)
 
 
-    
+
 
     // get the index of the newly added row
     // const newRowIndex = this.state.rowData.length - 1;
@@ -767,14 +785,14 @@ addModalRule(){
       {this.state.removeDecisionAlert && this.removeDecisionAlert()}
       {this.state.successAlert && this.successAlert()}
       {this.state.noFactsAlert && this.noFactsAlert()}
-      
+
 
     </div>);
   }
   cancelAlert = () => {
     this.setState({ removeAlert: false, successAlert: false, noFactsAlert: false, removeDecisionAlert: false });
   }
-  noFactsAlert = ()=> {
+  noFactsAlert = () => {
     return (
       <div style={{ width: "fit-content" }}>
         <SweetAlert
@@ -856,26 +874,26 @@ addModalRule(){
     ]
 
 
-if(this.state.showModalRule) return(<div>
-   {this.addModalRule()}
-</div>)
+    if (this.state.showModalRule) return (<div>
+      {this.addModalRule()}
+    </div>)
 
     return (
       <div   >
         {this.alert()}
 
-       
 
-        <div className={`attributes-header ${background}`} 
-        style={{ display: 'block',  }} >
+
+        <div className={`attributes-header ${background}`}
+          style={{ display: 'block', }} >
           <IconLink links={links} />
         </div>
-     
-        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000, margin: '10px',  }}>
+
+        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000, margin: '10px', }}>
           <AgGridReact
 
             onRowClicked={(e) => {
-              if(e.data) this.setState({ selectedCondition: e.data.parsed_rule, rowIndex: e.rowIndex })
+              if (e.data) this.setState({ selectedCondition: e.data.parsed_rule, rowIndex: e.rowIndex })
 
             }
             }
@@ -897,7 +915,7 @@ if(this.state.showModalRule) return(<div>
             gridOptions={gridOptions}
 
             // detailCellRendererParams={this.state.selectedCondition}
-           
+
             defaultColDef={{
               flex: 1,
               minWidth: 200,
@@ -926,10 +944,12 @@ RulesGrid.defaultProps = {
   handleDecisions: () => false,
   updatedFlag: false,
   updateState: () => false,
+  loadRuleTypes: () => false
 }
 
 RulesGrid.propTypes = {
   updateState: PropTypes.func,
+  loadRuleTypes: PropTypes.func
 }
 
 
@@ -938,14 +958,16 @@ const mapStateToProps = (state) => ({
   ruleset: state.ruleset.rulesets[state.ruleset.activeRuleset],
   allRulesRedux: state.ruleset.allRulesRedux, // gets all the rules pulled from the db and not from the ruleset.
   updatedFlag: state.ruleset.updatedFlag,
-  facts: state.ruleset.rulesets[state.ruleset.activeRuleset]
+  facts: state.ruleset.rulesets[state.ruleset.activeRuleset],
+  ruleType: state.ruleset.ruleType
 });
 
 const mapDispatchToProps = (dispatch) => ({
   addAllRulesRedux: (rules) => dispatch(addAllRulesRedux(rules)),
   handleAttribute: (operation, attribute, index) => dispatch(handleAttribute(operation, attribute, index)),
   handleDecisions: (operation, decision) => dispatch(handleDecision(operation, decision)),
-  handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index))
+  handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index)),
+  loadRuleTypes: () => dispatch(loadRuleTypes())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RulesGrid);

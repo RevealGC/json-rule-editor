@@ -12,6 +12,11 @@ const QuickRuleModal = (props) => {
     const [compute, setCompute] = useState(props.compute);
     const [priority, setPriority] = useState(props.priority);
     const [message, setMessage] = useState(props.message);
+    const [ruleTypes, setRuleTypes] = useState(props.ruleTypes);
+
+
+    const [ruleTypeOptions, setRuleTypeOptions] = useState(props.ruleTypes.map((type) => ({ key: type.type, value: type.type, text: type.type })))
+
 
 
     const handleSubmit = (e) => {
@@ -25,7 +30,7 @@ const QuickRuleModal = (props) => {
         style={
         {modal : {
             marginTop: '0px !important',
-            marginLeft: 'auto',
+            marginLeft: '40px',
             marginRight: 'auto'
         }}
           }
@@ -36,7 +41,11 @@ const QuickRuleModal = (props) => {
             <Modal.Header>Create a new rule</Modal.Header>
             <Modal.Content>
                 <Form onSubmit={handleSubmit}>
-        
+
+
+     <div style= {{ display: 'flex',   'alignItems': 'center'}}>
+
+                <div style={{width:"70%" }}>
                     <Form.Field
                         control={Input}
                         label="Rule Name"
@@ -45,6 +54,29 @@ const QuickRuleModal = (props) => {
                         value={ruleName}
                         onChange={(e) => setRuleName(e.target.value)}
                     />
+                    </div>
+                    <div style={{ " width": "80px"}}>
+                      <Form.Field
+                      style={{ }}
+                        control={Select}
+                        label="Priority"
+                        options={[...Array(10).keys()].map((num) => ({ key: num + 1, value: num + 1, text: num + 1 }))}
+                        value={priority}
+                        onChange={(e, { value }) => setPriority(value)}
+                    />
+                    </div>
+                    <div style={{}}>
+                      <Form.Field
+                        control={Select}
+                        label="Rule Type"
+                        options={ruleTypeOptions}
+                        value={ruleType}
+                        onChange={(e, { value }) => setRuleType(value)}
+                    />
+                    </div>
+                 
+                    </div>
+
                     <Form.Field
                         control={Input}
                         label="Condition"
@@ -60,13 +92,7 @@ const QuickRuleModal = (props) => {
                         value={responseVariables.join(',')}
                         onChange={(e) => setResponseVariables(e.target.value.split(','))}
                     />
-                    <Form.Field
-                        control={Select}
-                        label="Rule Type"
-                        options={props.ruleTypes.map((type) => ({ key: type, value: type, text: type }))}
-                        value={ruleType}
-                        onChange={(e, { value }) => setRuleType(value)}
-                    />
+                  
                     <Form.Field
                         control={Input}
                         label="Compute"
@@ -74,13 +100,7 @@ const QuickRuleModal = (props) => {
                         value={compute.map((c) => JSON.stringify(c)).join('\n')}
                         onChange={(e) => setCompute(e.target.value.split('\n').map((c) => JSON.parse(c)))}
                     />
-                    <Form.Field
-                        control={Select}
-                        label="Priority"
-                        options={[...Array(10).keys()].map((num) => ({ key: num + 1, value: num + 1, text: num + 1 }))}
-                        value={priority}
-                        onChange={(e, { value }) => setPriority(value)}
-                    />
+                  
                     <Form.Field
                         control={Input}
                         label="Message"

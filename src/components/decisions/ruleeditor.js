@@ -3,10 +3,14 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Panel from "../panel/panel";
 import axios from "axios";
-
+import { Modal,Button,Icon, Form, Input, TextArea, Select } from 'semantic-ui-react';
+import 'semantic-ui-css/semantic.min.css';
 import ReactQuill from "react-quill";
 import EditorToolbar, { modules, formats } from "./EditorToolbar";
 import "../../../node_modules/react-quill/dist/quill.snow.css"; // .  react-quill/dist/quill.snow.css';
+
+
+
 import IconLink from '../menus/IconLink'
 import FormExample from "./GeneralRuleForm";
 // import Editor from "./Editor";
@@ -16,9 +20,8 @@ import {
   processEngine,
   updateParsedRules,
 } from "../../validations/rule-validation";
-import InputField from "../forms/input-field";
-import SelectField from "../forms/selectmenu-field";
-import Button from "../button/button";
+
+// import Button from "../button/button";
 
 import Tabs from "../../components/tabs/tabs";
 import ReactJson from "react-json-view";
@@ -428,7 +431,7 @@ class RuleEditor extends Component {
                 border: "2px solid #ccc",
                 "border-radius": "4px",
                 "background-color": "#f8f8f8",
-                "font-size": "16px",
+                "font-size": "14px",
                 resize: "vertical",
               }}
               className="ag-theme-alpine"
@@ -995,7 +998,7 @@ code={conditionstring}/> */}
                 border: ".5px dotted #ccc",
                 "border-radius": "4px",
                 "background-color": "#f8f8f8",
-                "font-size": "16px",
+                "font-size": "14px",
                 resize: "vertical",
                 fontFamily:
                 "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
@@ -1266,6 +1269,9 @@ code={conditionstring}/> */}
                       handleRulePriority={this.handleRulePriority}
                       handleValidationType={this.handleValidationType}
                       handleToggleActive={this.onToggleActive}
+                      description= {this.state.description} 
+                      handleChangeDescription={this.handleQuillChange}
+
                     />
               <div style={{height:"40px"}}></div>
                     <Panel title="Description">

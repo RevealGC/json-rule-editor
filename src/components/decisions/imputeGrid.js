@@ -11,7 +11,7 @@ const cellStyle = {
     "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
 
     
-    fontSize: '16px',
+    fontSize: '14px',
     fontWeight: '400',
       display: 'flex',
     'alignItems': 'center',

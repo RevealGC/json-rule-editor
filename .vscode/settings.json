@@ -3,7 +3,7 @@
         "": true
     },
     "search.useIgnoreFiles": false,
-    "workbench.colorTheme": "One Dark Pro",
+    "workbench.colorTheme": "Community Material Theme Ocean",
     "editor.tokenColorCustomizations": {
         "comments": "",
         "textMateRules": []

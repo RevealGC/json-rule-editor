@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import './GeneralRuleForm.css';
+
+import { Modal, Button, Icon, Form, Input, Dropdown, TextArea, Checkbox, Select } from 'semantic-ui-react';
+import 'semantic-ui-css/semantic.min.css';
+
+
 import Panel from "../panel/panel";
+import { toInteger } from 'lodash';
 function FormExample(props) {
   // Declare a state variable called "name" and set its initial value to the "name" prop, or an empty string if the prop is not provided
   const [name, setName] = useState(props.name || '');
@@ -12,9 +18,15 @@ function FormExample(props) {
   const [active, setActive] = useState(props.active);
 
   // Declare a state variable called "priority" and set its initial value to the "priority" prop, or 1 if the prop is not provided
-  const [priority, setPriority] = useState(props.priority || 1);
+  const [priority, setPriority] = useState((props.priority));
 
   const [validationType, setValidationType] = useState(props.validationType || '');
+
+  const [description, setDescription] = useState(props.description || '');
+
+
+  const [ruleTypeOptions, setRuleTypeOptions] = useState(props.ruleType.map((type) => ({ key: type.type, value: type.type, text: type.type })))
+
 
   const handleNameChange = (event) => {
     event.preventDefault();
@@ -24,96 +36,133 @@ function FormExample(props) {
   };
 
   const handleToggle = (event) => {
-    // event.preventDefault();
-
-    setActive(event.target.checked)
-    props.handleToggleActive(event.target.checked)
-
-
-  };
-  const handleValidationTypeChange = (event) => {
     event.preventDefault();
-    setValidationType(event.target.value);
-    setSelectedOption(event.target.value);
-    setInputValue(event.target.value);
-    props.handleValidationType(event.target.value)
+    props.handleToggleActive(!active)
+    setActive(!active)
+
+    // setActive(event.target.checked)
+
 
 
   };
-  const handlePriorityChange = (event) => {
+  const handleValidationTypeChange = (event, { value }) => {
     event.preventDefault();
-    setPriority(event.target.value);
-    props.handleRulePriority(event.target.value)
+    setValidationType(value);
+    setSelectedOption(value);
+    setInputValue(value);
+    props.handleValidationType(value)
+
 
   };
 
+  // (e, { value }) => setPriority(value)
 
+  const handlePriorityChange = (event, { value }) => {
+    event.preventDefault();
+    props.handleRulePriority(value)
+    setPriority(value);
+
+
+  };
+
+const handleChangeDescription = (event) => {
+  event.preventDefault();
+  props.handleChangeDescription(event.target.value)
+  setDescription(event.target.value);
+
+
+};
 
   return (
-  
-      <div style={{  'margin-top': 20 , display:'block'}}>
-        <Panel title="Configure">
-      {/* <div className="flex-container"> */}
-      <div className="flex-container" style={{ display: 'flex', 'alignItems': 'center' }} >
 
+    <div style={{ 'margin-top': 20, display: 'block' }}>
+      <Panel title="Configure">
+        {/* <div className="flex-container"> */}
+        <div className="flex-container" style={{ display: 'flex', 'alignItems': 'center' }} >
 
-        <div className="form-field" style={{ width: 800 }}>
-          <label style={{ width: '200px', }} >
-            <span >Name:</span> </label>
-          <input type="text" value={name} onChange={handleNameChange} />
-        </div>
-        <div className="form-field" style={{ width: 100 }}>
-        <label >
-            Active: </label>
-          <input style={{ 'width': '40px', 'margin-left': '10px', }} type="checkbox" checked={props.active} onChange={handleToggle} />
-        </div>
-        <div className="form-field" style={{ width: 100 }} >
-        
+          <Form.Field style={{ width: '400px', }}
+            control={Input}
+            label="Rule Name"
+            placeholder="Enter a rule name"
 
-        {/* PRIORITY */}
-        <label >
-          <span >Priority: </span> </label>
-        <select className={`form-field-drpdwn`} value={priority} onChange={handlePriorityChange}>
-          <option value={1}>1</option>
-          <option value={2}>2</option>
-          <option value={3}>3</option>
-          <option value={4}>4</option>
-          <option value={5}>5</option>
-          <option value={6}>6</option>
-          <option value={7}>7</option>
-          <option value={8}>8</option>
-          <option value={9}>9</option>
-          <option value={10}>10</option>
-        </select>
-      </div>
+            value={name}
+            onChange={handleNameChange}
+          />
 
-       
-
-      </div>
-      <div className="flex-container" style={{ display: 'flex','margin-top': '40px', 'alignItems': 'center' }}>
-        <div className="form-field" >
-          <div>
-            <label> <span>Save:</span></label>
-            <input style={{ width: '385px', 'margin-left': "10px" }} type="text" value={inputValue} onChange={(event) => {
-              setInputValue(event.target.value)
-              handleValidationTypeChange(event)
-            }} />
+          <div style={{ width: 100 }}>
+            <Form.Field style={{ width: '40px', }}
+              control={Checkbox}
+              label="Active"
+              checked={active}
+              value={active}
+              onChange={handleToggle}
+            />
           </div>
-          <div className="form-field" >
-            <label style={{ width: '200px', }} >
-              <span>Type:</span></label>
-            <span style={{ 'margin-top': '-30px' }} />
-            <select style={{ 'width': '400px', 'margin-left': '10px', 'margin-top': '-4px' }} onChange={handleValidationTypeChange} className={`form-field-drpdwn`}> {props.ruleType.map((type) => (<option key={type.type} value={type.type}>{type.type}</option>
-            ))}
-            </select>
+
+
+          <div style={{ width: 100 }} >
+
+
+            {/* PRIORITY */}
+
+            <Dropdown button
+              className='icon'
+              floating
+              labeled
+              icon='tasks'
+              options={[...Array(10).keys()].map((num) => ({ key: num + 1 + '', value: num + 1 + '', text: num + 1 + '' }))}
+              search
+              text={priority}
+              onChange={handlePriorityChange}
+            />
 
           </div>
         </div>
+        {/* Save and type start and end  */}
+        <div className="flex-container" style={{ display: 'flex', 'margin-top': '20px', 'alignItems': 'center' }}>
+          <div  >
+            <Form.Field style={{ }}
+              control={Input}
+              label="Save As"
+              placeholder="Enter a new type or select from the following"
 
+              value={inputValue}
+              onChange={(event) => {
+                setInputValue(event.target.value)
+                handleValidationTypeChange(event)
+              }}
+            />
+            </div>
+            <div>
+            <Dropdown button
+              className='icon'
+              floating
+            
+              labeled
+              icon='folder open'
+              options={ruleTypeOptions}
+              search
+              // text={props.ruleType}
+              onChange={handleValidationTypeChange}
+            />
+           
+          </div>
+        </div>
 
-      </div>
-
+        {/* Save and type start and end */}
       </Panel>
+      {/* <Panel title="Description">
+      <div className="flex-container" style={{ display: 'flex', padding:'20px', 'margin-top': '20px', 'alignItems': 'center' }}>
+          <div  >
+            <Form.TextArea style={{ display: 'flex',width:"100%", height:'200xpx'}}
+             
+              placeholder="Enter a new description"
+              value={description}
+              onChange={handleChangeDescription}
+            />
+            </div>
+            </div>
+        </Panel>         */}
     </div>
   );
 
