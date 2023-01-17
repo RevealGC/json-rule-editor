@@ -81,9 +81,9 @@ class TrackVariablesGrid extends React.Component {
 
    
         const links = [
-            { label: 'Submit',display: this.props.displaySubmit, className: 'submit-icon', onClick: this.saveResponseVariables },
-            { label: 'Add', display: this.props.displaySubmit,className: 'plus-icon', onClick: this.onAddRow},
-            { label: 'Remove',display: this.props.displaySubmit, className: 'reset-icon', onClick: this.onRemoveSelected },
+            { label: 'Submit',display: this.props.displaySubmit, className: 'save', onClick: this.saveResponseVariables },
+            { label: 'Add', display: this.props.displaySubmit,className: 'paperclip', onClick: this.onAddRow},
+            { label: 'Remove',display: this.props.displaySubmit, className: 'eraser', onClick: this.onRemoveSelected },
            
           ]
 

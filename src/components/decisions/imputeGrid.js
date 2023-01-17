@@ -4,6 +4,8 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
+import IconLink from '../menus/IconLink'
+
 import ApperanceContext from '../../context/apperance-context';
 const cellStyle = {
     // fontFamily : '"Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif',
@@ -173,7 +175,10 @@ class ImputeGrid extends Component {
             return (
                 <div className="ag-theme-alpine" style={{ height: '440px', width: 'auto','margin':'10px','padding':'10px' }}>
 
-                    <div className={`attributes-header `}  >
+
+<IconLink links={this.props.actions} />
+
+                    {/* <div className={`attributes-header `}  >
                     
                         {this.props.actions.map((action) => (
                             <div className="attr-link" onClick={action.value}>
@@ -183,7 +188,7 @@ class ImputeGrid extends Component {
                             </div>
                         ))}
                           
-                    </div>
+                    </div> */}
                     <div  style={{ height: '400px', width: '800px;','margin':'10px'  }}>
                     <AgGridReact
                         columnDefs={this.columnDefs}

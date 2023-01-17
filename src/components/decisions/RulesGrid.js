@@ -867,10 +867,10 @@ class RulesGrid extends React.Component {
     const ruleCount = rowData.length;
 
     const links = [
-      { label: 'Add', className: 'plus-icon', onClick: this.addRowData },
-      { label: 'Execute', className: 'submit-icon', onClick: this.executeMultipleRules },
-      { label: 'Refresh', className: 'submit-icon', onClick: this.reloadRulesFromDB },
-      { label: 'Delete', className: 'reset-icon', onClick: this.deleteSelectedRows },
+      { label: 'Add', className: 'add square',  onClick: this.addRowData },
+      { label: 'Execute', className: 'paper plane', onClick: this.executeMultipleRules },
+      { label: 'Refresh', className: 'refresh', onClick: this.reloadRulesFromDB },
+      { label: 'Delete', className: 'remove', onClick: this.deleteSelectedRows },
     ]
 
 

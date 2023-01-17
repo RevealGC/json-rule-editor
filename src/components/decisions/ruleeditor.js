@@ -720,18 +720,27 @@ class RuleEditor extends Component {
     const actions = [
       {
         name: "Add",
+        label: "Add",
         icon: "plus-icon",
+        className: 'add square',
         value: () => imputeGrid.current.addRow(),
+        onClick: () => imputeGrid.current.addRow(),
       },
       {
         name: "Delete",
+        label: "Delete",
         icon: "reset-icon",
+        className: 'remove',
         value: () => imputeGrid.current.deleteSelectedRows(),
+        onClick:() => imputeGrid.current.deleteSelectedRows(),
       },
       {
         name: "Submit",
+        label: "Submit",
         icon: "submit-icon",
+        className: 'save',
         value: () => imputeGrid.current.reCreateActionArray(),
+        onClick:() => imputeGrid.current.reCreateActionArray(),
       },
     ];
 
@@ -1208,10 +1217,10 @@ code={conditionstring}/> */}
 
 
     const links = [
-      { label: 'Submit', className: 'submit-icon', onClick: this.handleDeployRule },
-      { label: 'View', className: 'reset-icon', onClick: this.handleShowRuleJSON },
-      { label: 'Test', className: 'plus-icon', onClick: this.handleTestRule },
-      { label: 'Describe', className: 'reset-icon', onClick: this.handleAIDescribe },
+      { label: 'Submit', className: 'save', onClick: this.handleDeployRule },
+      { label: 'View', className: 'street view', onClick: this.handleShowRuleJSON },
+      { label: 'Validate', className: 'list', onClick: this.handleTestRule },
+      { label: 'Describe', className: 'info', onClick: this.handleAIDescribe },
 
     ]
 
