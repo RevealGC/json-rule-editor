@@ -91,13 +91,13 @@ class NavigationPanel extends Component {
                 <div className="menu-bar">
                     <a href="" onClick={(e) => { e.preventDefault(); this.props.updateState(sideNav) }}> <span className="close-icon fa fa-reorder" ></span></a>
                 </div>
-                {!closedState && <div className="links-section">
+                {!closedState && <div>
 
 
 {/* Put the new drop down here */}
 
 
-<MultiselectRID loadRuleSet={this.loadRuleSet} />
+<MultiselectRID loadRuleSet={this.loadRuleSet} inputValue={this.state.dbSearchText}/>
 
 
                     {/* <div><Search

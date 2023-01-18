@@ -106,9 +106,10 @@ const breakRuleObject = (ruleObject) => {
   let message = ruleObject.event.params.message
   let priority = ruleObject.event.rulePriority
   let ruleType = ruleObject.event.validationType
+  let ruleId = ruleObject.event.ruleId
 
 
-  return ({ ruleName, condition, responseVariables, compute, message, priority, ruleType })
+  return ({ ruleName, condition, responseVariables, compute, message, priority, ruleType, ruleId })
 
 }
 
@@ -128,7 +129,8 @@ const cellStyle = {
   stroke: '#fff',
   strokeWidth: 0,
   color: '#505050',
-  'border-right': '0.5px dotted'
+  padding:'10px',
+  // 'border-right': '0.5px dotted'
 }
 
 
@@ -169,24 +171,12 @@ class RulesGrid extends React.Component {
       submitAlert: false, removeAlert: false, successAlert: false, removeDecisionAlert: false, noFactsAlert: false,
 
       columnDefs: [
-
-
         //Type: GROUP like validation or user ruleset 
-
         {
           field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellStyle: cellStyle, cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', hide: true,
-
           headerName: "Rule Type",
-
-          // cellClassRules: {
-          //   "bold-text": function(params) {
-          //     // return a boolean value to determine whether to apply the
-          //     // 'bold-text' class to the cell
-          //     return true
-          //   }
-          // }
+          cellClass: 'bold-text center-text'
         },
-
 
 
 
@@ -202,7 +192,9 @@ class RulesGrid extends React.Component {
         { headerName: 'Name', field: 'name', valueGetter: this.getRuleName, cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', },
 
         // DESCRIPTION
-        { headerName: 'Description', width: 800, field: 'description', autoHeight: true, editable: true, wrapText: true, sortable: true, filter: 'agTextColumnFilter', cellEditor: 'agTextCellEditor', cellEditorPopup: true, valueGetter: this.truncateDescription, cellStyle: cellStyle },
+        { headerName: 'Description', width: 800, field: 'description', 
+        // autoHeight: true, editable: true, wrapText: true, sortable: true,
+         filter: 'agTextColumnFilter', cellEditor: 'agTextCellEditor', cellEditorPopup: true, valueGetter: this.truncateDescription, cellStyle: cellStyle },
 
 
         { headerName: 'Rule Condition', cellStyle: cellStyle, field: 'condition', valueGetter: this.getConditionString, width: 400, sortable: true, filter: 'agTextColumnFilter' },
@@ -307,9 +299,16 @@ class RulesGrid extends React.Component {
   /**
    * create a new row add new row of a rule. addRule
    */
+
+  quickAddRowData = () =>{
+    this.setState({ showModalRule: true })
+    this.addRowData()
+  }
+
+
   addRowData = () => {
 
-    this.setState({ showModalRule: true })
+    
 
 
     let allRulesRedux = this.props.allRulesRedux.slice()
@@ -450,10 +449,13 @@ class RulesGrid extends React.Component {
 
     const { showModalRule } = this.state
 
-    const { ruleName, condition, responseVariables, compute, message, priority, ruleType } = breakRuleObject(newRuleObject)
+    const { ruleName, condition, responseVariables, compute, message, priority, ruleType, ruleId } = breakRuleObject(newRuleObject)
 
     if (showModalRule)
       return (<div ><QuickRuleModal
+
+        handleDebug={this.props.handleDebug}
+      
         closeModal={this.closeModal.bind(this)}
         open={true}
         onClose={this.closeModal.bind(this)}
@@ -464,6 +466,8 @@ class RulesGrid extends React.Component {
         compute={compute}
         ruleTypes={this.props.ruleType}
         priority={priority}
+        ruleId ={ruleId}
+        facts={this.props.facts.facts}
         message={message} /></div>)
     else
       return (<div></div>)
@@ -868,6 +872,7 @@ class RulesGrid extends React.Component {
 
     const links = [
       { label: 'Add', className: 'add square',  onClick: this.addRowData },
+      { label: 'Quick Add', className: 'fast forward',  onClick: this.quickAddRowData },
       { label: 'Execute', className: 'paper plane', onClick: this.executeMultipleRules },
       { label: 'Refresh', className: 'refresh', onClick: this.reloadRulesFromDB },
       { label: 'Delete', className: 'remove', onClick: this.deleteSelectedRows },
@@ -889,7 +894,7 @@ class RulesGrid extends React.Component {
           <IconLink links={links} />
         </div>
 
-        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000, margin: '10px', }}>
+        <div className="ag-theme-alpine" id="myGrid" style={{ height: 1000,  }}>
           <AgGridReact
 
             onRowClicked={(e) => {

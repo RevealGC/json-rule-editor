@@ -178,18 +178,7 @@ class ImputeGrid extends Component {
 
 <IconLink links={this.props.actions} />
 
-                    {/* <div className={`attributes-header `}  >
-                    
-                        {this.props.actions.map((action) => (
-                            <div className="attr-link" onClick={action.value}>
-                                <span className={action.icon} /><span className="text">
-                                    {action.name}
-                                </span>
-                            </div>
-                        ))}
-                          
-                    </div> */}
-                    <div  style={{ height: '400px', width: '800px;','margin':'10px'  }}>
+                    <div  style={{ height: '400px',  width: '800px;'  }}>
                     <AgGridReact
                         columnDefs={this.columnDefs}
                         rowData={this.state.data}

@@ -719,27 +719,27 @@ class RuleEditor extends Component {
     const imputeGrid = React.createRef();
     const actions = [
       {
-        name: "Add",
+        // name: "Add",
         label: "Add",
-        icon: "plus-icon",
+        // icon: "plus-icon",
         className: 'add square',
-        value: () => imputeGrid.current.addRow(),
+        // value: () => imputeGrid.current.addRow(),
         onClick: () => imputeGrid.current.addRow(),
       },
       {
-        name: "Delete",
+        // name: "Delete",
         label: "Delete",
-        icon: "reset-icon",
+        // icon: "reset-icon",
         className: 'remove',
-        value: () => imputeGrid.current.deleteSelectedRows(),
+        // value: () => imputeGrid.current.deleteSelectedRows(),
         onClick:() => imputeGrid.current.deleteSelectedRows(),
       },
       {
-        name: "Submit",
+        // name: "Submit",
         label: "Submit",
-        icon: "submit-icon",
+        // icon: "submit-icon",
         className: 'save',
-        value: () => imputeGrid.current.reCreateActionArray(),
+        // value: () => imputeGrid.current.reCreateActionArray(),
         onClick:() => imputeGrid.current.reCreateActionArray(),
       },
     ];
@@ -1027,7 +1027,13 @@ code={conditionstring}/> */}
 {/* Validate Button */}
 <div className="btn-group">
           {/* Calling validation */}
-          <div
+
+
+          <IconLink links = {[
+            {label:'Validate', className: 'tasks',onClick: this.handleCompileConditionString}
+          ]
+        }/>
+          {/* <div
             className={`attributes-header ${background}`}
             style={{ margin: "20px;" }}
           >
@@ -1038,7 +1044,7 @@ code={conditionstring}/> */}
               <span className="plus-icon" />
               <span className="text">Validate</span>
             </div>
-          </div>
+          </div> */}
         </div>
 {/* End Valid Button */}
 

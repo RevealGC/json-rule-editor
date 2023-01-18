@@ -142,7 +142,7 @@ const handleChangeDescription = (event) => {
               icon='folder open'
               options={ruleTypeOptions}
               search
-              // text={props.ruleType}
+              // text={inputValue}
               onChange={handleValidationTypeChange}
             />
            
