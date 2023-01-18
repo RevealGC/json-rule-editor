@@ -1,0 +1,81 @@
+{
+  "condition": {
+    "event": {
+      "ruleId": 172,
+      "active": true,
+      "name": "Creating a new rule. Change its name....",
+      "actionType": "impute",
+      "validationType": "new",
+      "rulePriority": "5",
+      "params": {
+        "rvs": "[\"PAY_ANN\"]",
+        "action": [
+          {
+            "RCPT_TOT": "RCPT_TOT"
+          }
+        ],
+        "message": "Enter the message you want to display... . Some initial conditions have been pre-defined.",
+        "rvsJSON": [
+          "PAY_ANN"
+        ],
+        "apiSource": {},
+        "actionType": "impute",
+        "apiChecked": false
+      },
+      "type": "172"
+    },
+    "index": -1,
+    "conditions": {
+      "all": [
+        {
+          "fact": "checkCondition",
+          "path": "$.value",
+          "operator": "equal",
+          "value": true,
+          "params": {
+            "conditionstring": "RCPT_TOT > 0"
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+
+{
+  "event": {
+    "name": "VALIDATE_PAY_ANN_BIGGER_THAN",
+    "type": "63",
+    "active": true,
+    "params": {
+      "rvs": "[\"PAY_ANN\"]",
+      "action": [],
+      "message": "PAY_ANN must be greater than $10,000",
+      "rvsJSON": [
+        "PAY_ANN"
+      ],
+      "apiSource": {},
+      "actionType": "impute",
+      "apiChecked": false
+    },
+    "ruleId": 63,
+    "actionType": "impute",
+    "rulePriority": "7",
+    "validationType": "validation"
+  },
+  "index": -1,
+  "conditions": {
+    "all": [
+      {
+        "fact": "checkCondition",
+        "path": "$.value",
+        "value": true,
+        "params": {
+          "conditionstring": "PAY_ANN > 10000"
+        },
+        "operator": "equal"
+      }
+    ]
+  }
+}

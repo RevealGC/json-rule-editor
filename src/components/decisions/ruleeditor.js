@@ -592,7 +592,7 @@ class RuleEditor extends Component {
       ".  It has a rule priority of " +
       rulePriority +
       " on a scale of 1-10." +
-      this.generateApiDescription();
+      this.generateApiDescription()+ " This rule was modified at "+new Date();
 
     this.setState({ description });
 
