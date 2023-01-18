@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import './index.css'
+
+// Action Request sent
+// [{"RCPT_TOT":"RCPT_TOT"},{"PAY_ANN":"RCPT_TOT*4"}]
+
 import { Modal, Button, Icon,Checkbox, Form,Table,  Input, TextArea, Label, Dropdown, Select } from 'semantic-ui-react';
 import 'semantic-ui-css/semantic.min.css';
 import axios from 'axios';
@@ -94,12 +98,12 @@ const QuickRuleModal = (props) => {
 
       // function to convert string of equations to JSON object
 const stringToJSON = (str) => {
-    let arr = str.split("; ");
-    let json = {};
+    let arr = str.split(";");
+    let json = [];
     for (let i = 0; i < arr.length; i++) {
       const equation = arr[i];
-      const [key, val] = equation.split(" = ");
-      json[key] = val;
+      const [key, val] = equation.split("=");
+      json.push({[key]:val.replace(" eq ","=")});
     }
     return json;
   }
@@ -126,7 +130,7 @@ const stringToJSON = (str) => {
             message,
             compute: stringToJSON(computeString) 
         }
-        let action = JSON.stringify([stringToJSON(computeString)])
+        let action = JSON.stringify(stringToJSON(computeString))
         // fire calls to validate both the condition is a string and comnpute Object
         // NK Work to be done
         let urlForCondition =  HOSTURL +
@@ -147,7 +151,7 @@ const stringToJSON = (str) => {
         setActionTestResult(result.data)
 
         // Show the result modal window
-        setCurrentModal("result")
+        if(parseSuccess) setCurrentModal("result")
 
 
         props.handleDebug('ADD', { label: 'time', data: { rule,  conditionResult, actionTestResult, facts} }, 0)
@@ -277,9 +281,9 @@ const stringToJSON = (str) => {
                             <Icon name='tasks' /> Validate
                         </Button>
 
-                        <Button onClick={() => props.closeModal()}>
+                        {/* <Button onClick={() => props.closeModal()}>
                             <Icon name='save' /> Save
-                        </Button>
+                        </Button> */}
                     </Modal.Actions>
 
 
@@ -307,11 +311,16 @@ const stringToJSON = (str) => {
             <label>Status</label>
             <Checkbox
               checked={parseSuccess}
-              onChange={(e) => setParseSuccess(e.target.checked)}
+            //   onChange={(e) => setParseSuccess(e.target.checked)}
               label={parseSuccess ? 'Success' : 'Failed'}
               color={parseSuccess ? 'green' : 'red'}
             />
           </Form.Field>
+          {parseSuccess && <span className='message'>{conditionResult.message}<br></br>
+          {conditionResult.ruleResult}
+           </span>}
+          {!parseSuccess && <span className='error-message'>{conditionResult.message}<br></br>{ruleNameError}</span>}
+
           <Table>
             <Table.Header>
               <Table.Row>
