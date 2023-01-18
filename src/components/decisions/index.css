@@ -6,7 +6,7 @@
 [data-color-mode*="light"],
 [data-color-mode*="light"] body {
   --color-canvas-subtle: #f6f8fa;
-  -webkit-text-fill-color: black;
+  -webkit-text-fill-color: rgb(116, 108, 108);
 }
 
 .rule-modal {
@@ -20,7 +20,7 @@
   background-color: rgb(220, 203, 203);
   margin-left: 400px;
   margin-top: -100px;
-  opacity: 1;
+  opacity: 0.8;
 
 
 }

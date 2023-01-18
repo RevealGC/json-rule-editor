@@ -100,7 +100,7 @@ const newRuleObject = {
 }
 const breakRuleObject = (ruleObject) => {
   let ruleName = ruleObject.event.name
-  let condition = ruleObject.conditions.all[0].params.conditionstring
+  let conditionstring = ruleObject.conditions.all[0].params.conditionstring
   let responseVariables = ruleObject.event.params.rvsJSON
   let compute = ruleObject.event.params.action
   let message = ruleObject.event.params.message
@@ -109,7 +109,7 @@ const breakRuleObject = (ruleObject) => {
   let ruleId = ruleObject.event.ruleId
 
 
-  return ({ ruleName, condition, responseVariables, compute, message, priority, ruleType, ruleId })
+  return ({ ruleName, conditionstring, responseVariables, compute, message, priority, ruleType, ruleId })
 
 }
 
@@ -449,7 +449,7 @@ class RulesGrid extends React.Component {
 
     const { showModalRule } = this.state
 
-    const { ruleName, condition, responseVariables, compute, message, priority, ruleType, ruleId } = breakRuleObject(newRuleObject)
+    const { ruleName, conditionstring, responseVariables, compute, message, priority, ruleType, ruleId } = breakRuleObject(newRuleObject)
 
     if (showModalRule)
       return (<div ><QuickRuleModal
@@ -460,7 +460,7 @@ class RulesGrid extends React.Component {
         open={true}
         onClose={this.closeModal.bind(this)}
         ruleName={ruleName}
-        condition={condition}
+        conditionstring={conditionstring}
         responseVariables={responseVariables}
         ruleType={ruleType}
         compute={compute}
