@@ -9,10 +9,10 @@ import Panel from "../panel/panel";
 import { toInteger } from 'lodash';
 function GeneralRuleForm(props) {
   // Declare a state variable called "name" and set its initial value to the "name" prop, or an empty string if the prop is not provided
-  const [name, setName] = useState(props.name || '');
+  const [name, setName] = useState(props.name || ''); // ruleName
 
-  const [selectedOption, setSelectedOption] = useState('');
-  const [inputValue, setInputValue] = useState(props.validationType || '');
+  // const [selectedOption, setSelectedOption] = useState('');
+  const [inputValue, setInputValue] = useState(props.validationType || ''); // what the user has enetered for the ValidationTyoe 
 
   // Declare a state variable called "active" and set its initial value to the "active" prop, or false if the prop is not provided
   const [active, setActive] = useState(props.active);
@@ -20,47 +20,36 @@ function GeneralRuleForm(props) {
   // Declare a state variable called "priority" and set its initial value to the "priority" prop, or 1 if the prop is not provided
   const [priority, setPriority] = useState((props.priority));
 
-  const [validationType, setValidationType] = useState(props.validationType || '');
+  // const [validationType, setValidationType] = useState(props.validationType || '');
 
   const [description, setDescription] = useState(props.description || '');
 
-
+  // ruleTypeOptions are used to populate the ruleType options
   const [ruleTypeOptions, setRuleTypeOptions] = useState(props.ruleType.map((type) => ({ key: type.type, value: type.type, text: type.type })))
 
-
+  // Rule name change
   const handleNameChange = (event) => {
     event.preventDefault();
     setName(event.target.value);
     props.handleChangeRuleName(event.target.value)
 
   };
-
+  // Toggle for active or not
   const handleToggle = (event) => {
     event.preventDefault();
     props.handleToggleActive(!active)
     setActive(!active)
-
-    // setActive(event.target.checked)
-
-
-
   };
-  const handleValidationTypeChange  = (event, { value }) => {
+
+  // Change the rule type 
+  const handleValidationTypeChange = (event, { value }) => {
     event.preventDefault();
     let val = value
-    console.log("🚀 ~ file: GeneralRuleForm.js:51 ~ handleValidationTypeChange ~ val", val)
-    
-    // setValidationType(event.target.value);
-    // setSelectedOption(event.target.value);
-  
     props.handleValidationType(val)
     setInputValue(val);
-
-
   };
 
-  // (e, { value }) => setPriority(value)
-
+  // Change the priority
   const handlePriorityChange = (event, { value }) => {
     event.preventDefault();
     props.handleRulePriority(value)
@@ -68,14 +57,14 @@ function GeneralRuleForm(props) {
 
 
   };
+  // Change description
+  const handleChangeDescription = (event) => {
+    event.preventDefault();
+    props.handleChangeDescription(event.target.value)
+    setDescription(event.target.value);
 
-const handleChangeDescription = (event) => {
-  event.preventDefault();
-  props.handleChangeDescription(event.target.value)
-  setDescription(event.target.value);
 
-
-};
+  };
 
 
   return (
@@ -110,7 +99,7 @@ const handleChangeDescription = (event) => {
 
             {/* PRIORITY */}
 
-            <Dropdown 
+            <Dropdown
               className='icon'
               search
               selection
@@ -124,31 +113,31 @@ const handleChangeDescription = (event) => {
           </div>
         </div>
         {/* Save and type start and end  */}
-        <div className="flex-container" style={{ display: 'flex', 'margin-top': '20px', 'alignItems': 'center', width:'200px' }}>
+        <div className="flex-container" style={{ display: 'flex', 'margin-top': '20px', 'alignItems': 'center', width: '200px' }}>
           <div  >
-            <Form.Field style={{ }}
+            <Form.Field style={{}}
               control={Input}
               label="Save As"
               placeholder="Enter a new type or select from the following"
               value={inputValue}
-              onChange={ handleValidationTypeChange }
+              onChange={handleValidationTypeChange}
             />
-            </div>
+          </div>
 
-            <Dropdown
-      className="icon"
-  
-      options={ruleTypeOptions}
-      placeholder="Select an option"
-      search
-      selection
-      value={inputValue}
-      text = {inputValue}
-      onChange={handleValidationTypeChange}
-      selectOnBlur={false}
-      selectOnNavigation={false}
-    />
-         
+          <Dropdown
+            className="icon"
+
+            options={ruleTypeOptions}
+            placeholder="Select an option"
+            search
+            selection
+            value={inputValue}
+            text={inputValue}
+            onChange={handleValidationTypeChange}
+            selectOnBlur={false}
+            selectOnNavigation={false}
+          />
+
         </div>
       </Panel>
     </div>
