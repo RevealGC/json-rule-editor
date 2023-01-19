@@ -7,7 +7,7 @@ import 'semantic-ui-css/semantic.min.css';
 
 import Panel from "../panel/panel";
 import { toInteger } from 'lodash';
-function FormExample(props) {
+function GeneralRuleForm(props) {
   // Declare a state variable called "name" and set its initial value to the "name" prop, or an empty string if the prop is not provided
   const [name, setName] = useState(props.name || '');
 
@@ -45,12 +45,16 @@ function FormExample(props) {
 
 
   };
-  const handleValidationTypeChange = (event, { value }) => {
+  const handleValidationTypeChange  = (event, { value }) => {
     event.preventDefault();
-    setValidationType(value);
-    setSelectedOption(value);
-    setInputValue(value);
-    props.handleValidationType(value)
+    let val = value
+    console.log("🚀 ~ file: GeneralRuleForm.js:51 ~ handleValidationTypeChange ~ val", val)
+    
+    // setValidationType(event.target.value);
+    // setSelectedOption(event.target.value);
+  
+    props.handleValidationType(val)
+    setInputValue(val);
 
 
   };
@@ -72,6 +76,7 @@ const handleChangeDescription = (event) => {
 
 
 };
+
 
   return (
 
@@ -105,13 +110,13 @@ const handleChangeDescription = (event) => {
 
             {/* PRIORITY */}
 
-            <Dropdown button
+            <Dropdown 
               className='icon'
-              floating
-              labeled
-              icon='tasks'
-              options={[...Array(10).keys()].map((num) => ({ key: num + 1 + '', value: num + 1 + '', text: num + 1 + '' }))}
               search
+              selection
+              // icon='tasks'
+              options={[...Array(10).keys()].map((num) => ({ key: num + 1 + '', value: num + 1 + '', text: num + 1 + '' }))}
+              value={priority}
               text={priority}
               onChange={handlePriorityChange}
             />
@@ -119,54 +124,37 @@ const handleChangeDescription = (event) => {
           </div>
         </div>
         {/* Save and type start and end  */}
-        <div className="flex-container" style={{ display: 'flex', 'margin-top': '20px', 'alignItems': 'center' }}>
+        <div className="flex-container" style={{ display: 'flex', 'margin-top': '20px', 'alignItems': 'center', width:'200px' }}>
           <div  >
             <Form.Field style={{ }}
               control={Input}
               label="Save As"
               placeholder="Enter a new type or select from the following"
-
               value={inputValue}
-              onChange={(event) => {
-                setInputValue(event.target.value)
-                handleValidationTypeChange(event)
-              }}
+              onChange={ handleValidationTypeChange }
             />
             </div>
-            <div>
-            <Dropdown button
-              className='icon'
-              floating
-            
-              labeled
-              icon='folder open'
-              options={ruleTypeOptions}
-              search
-              // text={inputValue}
-              onChange={handleValidationTypeChange}
-            />
-           
-          </div>
-        </div>
 
-        {/* Save and type start and end */}
+            <Dropdown
+      className="icon"
+  
+      options={ruleTypeOptions}
+      placeholder="Select an option"
+      search
+      selection
+      value={inputValue}
+      text = {inputValue}
+      onChange={handleValidationTypeChange}
+      selectOnBlur={false}
+      selectOnNavigation={false}
+    />
+         
+        </div>
       </Panel>
-      {/* <Panel title="Description">
-      <div className="flex-container" style={{ display: 'flex', padding:'20px', 'margin-top': '20px', 'alignItems': 'center' }}>
-          <div  >
-            <Form.TextArea style={{ display: 'flex',width:"100%", height:'200xpx'}}
-             
-              placeholder="Enter a new description"
-              value={description}
-              onChange={handleChangeDescription}
-            />
-            </div>
-            </div>
-        </Panel>         */}
     </div>
   );
 
 
 }
-export default FormExample;
+export default GeneralRuleForm;
 

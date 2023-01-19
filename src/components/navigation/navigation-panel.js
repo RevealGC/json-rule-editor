@@ -97,7 +97,9 @@ class NavigationPanel extends Component {
 {/* Put the new drop down here */}
 
 
-<MultiselectRID loadRuleSet={this.loadRuleSet} inputValue={this.state.dbSearchText}/>
+<MultiselectRID loadRuleSet={this.loadRuleSet} 
+// inputValue={this.state.dbSearchText}
+/>
 
 
                     {/* <div><Search

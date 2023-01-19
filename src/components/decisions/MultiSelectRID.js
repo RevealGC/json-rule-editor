@@ -17,7 +17,7 @@ function MultiselectRID(props) {
   
 //   const HOSTURL='http://localhost/reporting_unit/findRID?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
   useEffect(() => {
-    if (debouncedValue !== '' || debouncedValue.length > 3) {
+    if ((debouncedValue !== undefined) && debouncedValue !== '' && debouncedValue.length > 3) {
         const RIDSURL=`http://localhost/reporting_unit/findRID/${debouncedValue}?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false`
         axios.get(RIDSURL)
       .then(response => {
@@ -39,9 +39,9 @@ function MultiselectRID(props) {
     setInputValue(event.target.value);
   };
 
+  // Call navigation-panels loadRuleSet function
   const loadRuleSetForRid = async (event) =>{
     event.preventDefault(); 
-    // 
     await props.loadRuleSet(inputValue)
   }
 
@@ -62,14 +62,15 @@ function MultiselectRID(props) {
 
 
   const handleSearchTextChange = (event, { value }) => {
-          
-            setInputValue(value)
-            setDebouncedValue(value)
+      event.preventDefault(); 
+            setInputValue(event.target.value)
+            setDebouncedValue(event.target.value)  
   }
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedValue(inputValue);
+   
     }, 500);
 
     return () => {
@@ -77,18 +78,21 @@ function MultiselectRID(props) {
     };
   }, [inputValue]);
 
+/**
+ * 
+ * Will return a drop down. 
+ * Drop down input text field will be the inputValue which is set by the onChangeEvent of the drop down
+ * the onChange event will call handleSearchText. 
+ * Handle searchTextChange will set the input value to the input field
+ * 
+ * Use effect should kick in with input value change and will load the optionsList 
+ * 
+ * 
+ */
+
+
   return (
-    <div style={{height:400,width:'100%',}}>
-{/* Need an input field, followed by a dropdown of rids coming from the axios call */}
-            <div>
-            <Form.Field style={{ width:'300px'}}
-              control={Input}
-              label="Search"
-              placeholder="Search datasets..."
-              value={inputValue}
-              onChange={handleSearchTextChange}
-            />
-            </div>
+    <div style={{width:'300px',}}>
     <Dropdown button
     style={{width:'300px', height:'40px'}}
     className='icon'
@@ -100,26 +104,10 @@ function MultiselectRID(props) {
     search
     text={inputValue}
     onChange={handleOptionClick}
+      onSearchChange={handleSearchTextChange}
   />
 </div>
 );
 }
 export default MultiselectRID;
-
-    // <div className="form-field">
-    //     <label>Search</label><it>Example: 8771348140</it>
-    //   <input type="text" onChange={handleInputChange} value={inputValue} placeholder="Search for dataset..."/>
-      
-    //   {dropdownOpen && (<select multiple={false} onChange={handleChange}>
-    //     {options.map((option) => (
-    //       <option key={option.reporting_id} value={option.reporting_id} 
-    //       onClick={() => handleOptionClick(option)}>
-    //         {option.value}
-    //       </option>
-    //     ))}
-    //   </select>)}
-    
-    // </div>
-  
-
 

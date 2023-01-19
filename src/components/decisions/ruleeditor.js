@@ -12,7 +12,7 @@ import "../../../node_modules/react-quill/dist/quill.snow.css"; // .  react-quil
 
 
 import IconLink from '../menus/IconLink'
-import FormExample from "./GeneralRuleForm";
+import GeneralRuleForm from "./GeneralRuleForm";
 // import Editor from "./Editor";
 import TrackVariablesGrid from "./TrackVariablesGrid"
 
@@ -1274,7 +1274,7 @@ code={conditionstring}/> */}
               <div className="tab-page-container">
                 {this.state.activeTab === "General" && (
                   <div>
-                    <FormExample  // Points to General Rule Form
+                    <GeneralRuleForm  // Points to General Rule Form
                       name={this.state.name}
                       active={this.state.active}
                       priority={this.state.rulePriority}
