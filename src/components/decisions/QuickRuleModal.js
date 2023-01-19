@@ -273,11 +273,12 @@ const QuickRuleModal = (props) => {
         <Modal className="rule-modal"
             style={
                 {
-                    modal: {
+                    height:'700px',
+                    // modal: {
                         marginTop: '0px !important',
                         marginLeft: '40px',
                         marginRight: 'auto'
-                    }
+                    // }
                 }
             }
 
@@ -285,9 +286,9 @@ const QuickRuleModal = (props) => {
             open={props.open} onClose={props.onClose}>
 
 
-            <>
+            {/* <>
             <Loader active style={{ visibility: loading ? 'visible' : 'hidden' }} />
-            </>
+            </> */}
 
 
             {currentModal === "create" && (
@@ -337,7 +338,7 @@ const QuickRuleModal = (props) => {
 
 
                             <Form.Field
-                                control={Input}
+                                control={TextArea}
                                 label="Rule Name"
                                 placeholder="Enter a rule name"
                                 maxLength={80}
@@ -348,10 +349,9 @@ const QuickRuleModal = (props) => {
 
 
                             <Form.Field
-                                control={Input}
+                                control={TextArea}
                                 label="Condition"
                                 placeholder="Enter a condition"
-                                maxLength={400}
                                 value={conditionstring}
                                 onChange={(e) => setConditionstring(e.target.value)}
                             />
