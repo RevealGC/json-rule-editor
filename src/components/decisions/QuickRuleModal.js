@@ -327,7 +327,7 @@ const QuickRuleModal = (props) => {
                                         text={priority}
                                         onChange={(e, { value }) => setPriority(value)}
                                     />
-                                    <Label as='a' color='red' tag>
+                                    <Label as='a' color='gray' tag>
                                         Priority
                                     </Label>
                                 </div>
@@ -335,47 +335,60 @@ const QuickRuleModal = (props) => {
                             </div>
 
 
-
+                            <Label as='a' color='gray' ribbon>
+                                        1. Name the rule
+                                    </Label>
 
                             <Form.Field
                                 control={TextArea}
-                                label="Rule Name"
+                                // label="Rule Name"
                                 placeholder="Enter a rule name"
                                 maxLength={80}
                                 value={ruleName}
                                 onChange={(e) => setRuleName(e.target.value)}
                             />
+ 
 
-
-
+ <Label as='a' color='gray' ribbon>
+                                        2. Condition
+                                    </Label>
                             <Form.Field
                                 control={TextArea}
-                                label="Condition"
+                                // label="Condition"
                                 placeholder="Enter a condition"
                                 value={conditionstring}
                                 onChange={(e) => setConditionstring(e.target.value)}
                             />
                             {ruleNameError && <span className='error-message'>{ruleNameError}</span>}
+<div></div>
+                            <Label as='a' color='gray' ribbon>
+                                        3. Track 
+                                    </Label>
+
                             <Form.Field
                                 control={Input}
-                                label="Response Variables"
+                                // label="Response Variables"
                                 placeholder="Enter response variables, separated by commas"
                                 value={responseVariables.join(';')}
                                 onChange={(e) => setResponseVariables(e.target.value.split(';'))}
                             />
-
+  <Label as='a' color='gray' ribbon>
+                                        4. Actions
+                                    </Label>
                             <Form.Field
                                 control={TextArea}
-                                label="Compute"
+                                // label="Compute"
                                 placeholder="Enter compute expressions, one per line"
                                 value={computeString}
                                 // onChange={handleComputeChange}
                                 onChange={(e) => setComputeString(e.target.value)}
                             />
-
+  <Label as='a' color='gray' ribbon>
+                                        5. Message
+                                    </Label>
                             <Form.Field
                                 control={Input}
-                                label="Message"
+                                // label="Message"
                                 placeholder="Enter a message"
                                 maxLength={400}
                                 value={message}
