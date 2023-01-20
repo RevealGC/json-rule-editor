@@ -25,10 +25,16 @@ import IconLink from '../menus/IconLink'
 import { handleDebug } from '../../actions/debug';
 
 import { addAllRulesRedux } from '../../actions/ruleset';
+import { handleRule } from "../../actions/rules";
+
+
+
 import { truncate } from 'lodash';
 import QuickRuleModal from './QuickRuleModal';
 import 'semantic-ui-css/semantic.min.css';
 import { loadRuleTypes } from "../../actions/ruleset";
+
+
 
 
 const HOSTURL = 'http://localhost'
@@ -302,7 +308,7 @@ class RulesGrid extends React.Component {
 
   quickAddRowData = () =>{
     this.setState({ showModalRule: true })
-    this.addRowData()
+    // this.addRowData()
   }
 
 
@@ -455,6 +461,7 @@ class RulesGrid extends React.Component {
       return (<div ><QuickRuleModal
 
         handleDebug={this.props.handleDebug}
+        handleRule={this.props.handleRule}
       
         closeModal={this.closeModal.bind(this)}
         open={true}
@@ -758,7 +765,7 @@ class RulesGrid extends React.Component {
 
 
   handleCancel = () => {
-    this.alert("REACHED RGRID at579")
+    // this.alert("REACHED RGRID at579")
     // this.setState({ displayNewRow: !this.state.displayNewRow });
   }
 
@@ -972,6 +979,7 @@ const mapDispatchToProps = (dispatch) => ({
   handleAttribute: (operation, attribute, index) => dispatch(handleAttribute(operation, attribute, index)),
   handleDecisions: (operation, decision) => dispatch(handleDecision(operation, decision)),
   handleDebug: (operation, attribute, index) => dispatch(handleDebug(operation, attribute, index)),
+  handleRule: (operation, rules) => dispatch(handleRule(operation, rules)),
   loadRuleTypes: () => dispatch(loadRuleTypes())
 });
 

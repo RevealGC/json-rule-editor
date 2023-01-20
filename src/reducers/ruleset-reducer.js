@@ -96,6 +96,16 @@ function ruleset(state = initialState, action='') {
              return { ...state, allRulesRedux: rules}
         }
 
+// Done: payload is an object of type rules. It adds the new rule in front and generates the key for the rule so it can be rendered. 
+        case ActionTypes.ADD_RULE:{
+            const rules = action.payload;
+            let  allRulesRedux = state.allRulesRedux
+            rules.key = allRulesRedux.length + 1
+            allRulesRedux.unshift(rules)
+            return {...state, ...allRulesRedux}
+        }
+
+
 
 
         case ActionTypes.UPDATE_RULESET_INDEX: {

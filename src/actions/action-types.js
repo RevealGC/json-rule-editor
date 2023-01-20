@@ -23,7 +23,20 @@ export const REMOVE_DEBUG = 'REMOVE_DEBUG';
 export const UPDATE_DEBUG = 'UPDATE_DEBUG';
 
 
+
+/**
+ * USING ALL RULES REDUX.  ADD_DECISION,etc. related to the DECISION
+ * has been replaced with the RULE enumerated types below.
+ */
 export const ADD_ALLRULES_REDUX = 'ADD_ALLRULES_REDUX';
+export const ADD_RULE = 'ADD_RULE';
+export const REMOVE_RULE = 'REMOVE_RULE';
+export const REMOVE_RULES = 'REMOVE_RULES';
+export const UPDATE_RULE = 'UPDATE_RULE';
+export const RESET_RULE = 'RESET_RULE';
+
+
+
 
 export const LOAD_RULE_TYPES = 'LOAD_RULE_TYPES';
 

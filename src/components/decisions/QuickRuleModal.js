@@ -16,6 +16,10 @@ import {
 const HOSTURL = "http://localhost";
 
 const QuickRuleModal = (props) => {
+
+    const handleRule = props.handleRule
+
+
     const [ruleName, setRuleName] = useState(props.ruleName);
     const [conditionstring, setConditionstring] = useState(props.conditionstring);
     const [loading, setLoading] = useState(true);
@@ -74,10 +78,16 @@ const QuickRuleModal = (props) => {
             name: ruleName,
             id: ruleId,
           };
-          
+         
+          // write to the db
           let result = await updateParsedRules(data);
+          // handleRule is a prop that was passed rom RulesGrid. It will add/delete/update any rule given the index.
+
+          handleRule("ADD",result[0])
           let resultId = result.length > 0 ? result[0].id + '' : ''
           alert( "Rule " + resultId + " was successfully deployed");
+
+          props.closeModal()
 
 
         }
@@ -136,56 +146,7 @@ const QuickRuleModal = (props) => {
 
 
 
-    // The result modal window will show the following items:
-    // I would like to create a modal content window using symantic react with the following 4 fields. Suggest the react code for the modal window.
-    // 1) Rule Name: ruleName(state variable)
-    // 2) Status: parseSuccess (is a state variable and is to be shown in green. if true then show a green check mark else display a red cross )
-    // 3) Action: actionTestResult (is a state variable and an array. The array object has key, value and expression as properties of the objects.  I would like to display that in a table with the 3 column table populated with actionTestResult.)
-    // 4) Describe: aiDescribe (is a state variable and a string.  It should be displayed in a symantic textarea)
 
-
-    //     actionTestResult is a state variable which manages the 
-    //actionTestResult is an array  [
-    //     {
-    //       "key": "RCPT_TOT",
-    //       "value": "",
-    //       "expression": "RCPT_TOT"
-    //     }
-    //   ]
-    //  
-
-    /**
-     * and conditionResult: {
-      "parseSuccess": true,
-      "message": "RCPT_TOT > 0",
-      "value": false,
-      "condition": {
-        "conditions": {
-          "all": [
-            {
-              "fact": "checkCondition",
-              "path": "$.value",
-              "operator": "equal",
-              "value": true,
-              "params": {
-                "conditionstring": "RCPT_TOT > 0"
-              }
-            }
-          ]
-        }
-      },
-      "ruleResult": "",
-      "facts": [
-        {}
-      ]
-    }
-    
-    
-    
-    
-    
-    
-     */
 
 
     const equations = props.compute.map(obj => {

@@ -1,5 +1,6 @@
 
 // import ruleset from '../reducers/ruleset-reducer';
+// Manages rulesets. To manage rules go to the action for rules.js
 import axios from 'axios';
 import * as ActionTypes from './action-types';
 import { updateState } from './app';
