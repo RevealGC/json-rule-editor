@@ -39,12 +39,11 @@ export const handleRule = (action, editRule={}) => (dispatch) => {
             return dispatch(updateRule(rule, ruleIndex)); 
         }
         case 'REMOVERULE': {
-            const { ruleIndex } = editRule;
-            return dispatch(removeRule(ruleIndex));
+            return dispatch(removeRule(rule));
         }
         case 'REMOVERULES': {
-            const { outcome } = editRule;
-            return dispatch(removeRules(outcome));
+            
+            return dispatch(removeRules(rule));
         }
         case 'RESET': {
             return dispatch(reset());

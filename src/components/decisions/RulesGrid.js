@@ -840,6 +840,7 @@ class RulesGrid extends React.Component {
     // Get the data for the selected rows
     const selectedRowData = selectedRowNodes.map(node => node.data);
     const rids = selectedRowData.map(r => r.id)
+    const keysArray = selectedRowData.map(r => r.key)
 
 
     try {
@@ -860,6 +861,9 @@ class RulesGrid extends React.Component {
     // Delete the selected rows
     gridApi.updateRowData({ remove: selectedRowData });
     this.setState({ successAlert: false, removeDecisionAlert: false })
+
+    this.props.handleRule("REMOVERULES", keysArray)
+    
 
   }
   deleteSelectedRows = () => {
@@ -956,7 +960,8 @@ RulesGrid.defaultProps = {
   handleDecisions: () => false,
   updatedFlag: false,
   updateState: () => false,
-  loadRuleTypes: () => false
+  loadRuleTypes: () => false,
+  handleRule: () => false  // is being used to add, delete and update rules. Add is called from QuickRuleModal, delete from this RulesGrid and Update from the ruleeditor
 }
 
 RulesGrid.propTypes = {

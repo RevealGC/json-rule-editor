@@ -3,6 +3,11 @@ import * as ActionTypes from '../actions/action-types';
  import { findIndex } from 'lodash/array';
 
      
+ const removeElements = (keysArray, rules) =>{
+    let filteredArray = rules.filter(item => !keysArray.includes(item.key));
+    return filteredArray;
+}
+
 
 const dateTime = () =>{
     // Create a date object with the current time
@@ -102,9 +107,21 @@ function ruleset(state = initialState, action='') {
             let  allRulesRedux = state.allRulesRedux
             rules.key = allRulesRedux.length + 1
             allRulesRedux.unshift(rules)
-            return {...state, ...allRulesRedux}
+            return {...state,  updatedFlag: true, ...allRulesRedux}
         }
 
+        case ActionTypes.REMOVE_RULE:{
+            const key = action.payload;
+            let  allRulesRedux = state.allRulesRedux
+            allRulesRedux.splice(key, 1)
+            return {...state,  updatedFlag: true, ...allRulesRedux}
+        }
+
+
+        case ActionTypes.REMOVE_RULES:{
+            const keysArray = action.payload.outcome; // array of all the keys to remove
+            return {...state,  updatedFlag: true, ...{allRulesRedux: removeElements(keysArray, state.allRulesRedux)}}
+        }
 
 
 
