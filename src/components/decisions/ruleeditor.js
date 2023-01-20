@@ -1123,11 +1123,11 @@ code={conditionstring}/> */}
       <div style={{ width: "fit-content" }}>
         <SweetAlert
           success
-          title={"Rule has been deployed successfully!! "}
+          title={'Rule '+this.state.updatedAlert+' has been saved. '}
           onConfirm={this.cancelAlert.bind(this)}
           onCancel={this.cancelAlert.bind(this)}
         >
-          {this.state.updatedAlert}
+          {/* {this.state.updatedAlert} */}
         </SweetAlert>
       </div>
     );
@@ -1149,7 +1149,7 @@ code={conditionstring}/> */}
       name: this.state.name,
       id: Number(r.event.ruleId),
     };
-    let result = await updateParsedRules(data);
+    let result = await updateParsedRules(data); // writes to the database
 
 
 
@@ -1161,7 +1161,7 @@ code={conditionstring}/> */}
     let resultId = result.length > 0 ? result[0].id + '' : ''
     this.setState({
       successAlert: true,
-      updatedAlert: "Rule " + resultId + " was successfully deployed",
+      updatedAlert: resultId //"Rule " + resultId + " was successfully deployed",
     });
 
     // alert("Rule # " + result[0].id + " was successfully deployed", '')

@@ -1,5 +1,6 @@
 import * as ActionTypes from './action-types';
-
+const HOSTURL = "http://localhost"
+import axios from 'axios';
 export const removeRule = (ruleIndex) => {
     const payload = { ruleIndex };
 
@@ -28,9 +29,23 @@ export const reset = () => {
     return ({type: ActionTypes.RESET_RULE});
 }
 
-export const handleRule = (action, editRule={}) => (dispatch) => {
+
+
+
+export const handleRule = (action, editRule={}) => async (dispatch) => {
     const rule = editRule;
     switch(action) {
+
+        case 'FETCH_FROMDB_ALLRULES_REDUX':{
+
+                let url = HOSTURL + '/rulesrepo?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+                let ret = await axios.get(url)
+                let rowData = ret.data.data
+                rowData = rowData.map((row, index) => {
+                  return { ...row, key: index + 1 }
+                })
+                dispatch({ type: ActionTypes.ADD_ALLRULES_REDUX, payload: rowData});
+        }
         case 'ADD': {
             return dispatch(addRule(rule));
         }

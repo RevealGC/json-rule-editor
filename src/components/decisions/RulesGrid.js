@@ -403,8 +403,8 @@ class RulesGrid extends React.Component {
   }
   reloadRulesFromDB = () => {
     this.setState({ rowData: [] });
-    this.props.addAllRulesRedux([])
-    this.loadData(true)
+    this.props.handleRule("FETCH_FROMDB_ALLRULES_REDUX", {})//    addAllRulesRedux([])
+    // this.loadData(true)
   };
 
 
@@ -414,7 +414,11 @@ class RulesGrid extends React.Component {
 
   async componentDidMount() {
     this.props.loadRuleTypes()
-    await this.loadData()
+    // Load data is now a props function with handleRule called and loaded from the app.
+    // handleRule is being called from the app with 2 arguments:
+    // props.handleRule('FETCH_FROMDB_ALLRULES_REDUX', filters(tbd))
+    // await this.loadData()
+    // this.props.handleRule("FETCH_FROMDB_ALLRULES_REDUX", {})
   
     // if(this.gridApi !== '') this.gridApi.gridOptions.onGridReady = this.onGridReady;
 
@@ -650,13 +654,13 @@ class RulesGrid extends React.Component {
 
       gridApi.updateRowData({ update: [{ index: rowData.key, data: rowData }] });
 
-      const allRowData = this.state.rowData
+      // const allRowData = this.state.rowData
 
-      let out = []
-      allRowData.forEach(row => { out.push(row) })
-      out[rowData.key - 1] = rowData
-      this.setState({ rowData: out });
-      this.props.addAllRulesRedux(out)
+      // let out = []
+      // allRowData.forEach(row => { out.push(row) })
+      // out[rowData.key - 1] = rowData
+      // this.setState({ rowData: out });
+      // this.props.addAllRulesRedux(out)
 
     } else if (operation === 'delete') {
       // Delete an existing row

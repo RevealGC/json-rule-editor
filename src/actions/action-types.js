@@ -29,6 +29,10 @@ export const UPDATE_DEBUG = 'UPDATE_DEBUG';
  * has been replaced with the RULE enumerated types below.
  */
 export const ADD_ALLRULES_REDUX = 'ADD_ALLRULES_REDUX';
+
+export const FETCH_FROMDB_ALLRULES_REDUX = 'FETCH_FROMDB_ALLRULES_REDUX';
+
+
 export const ADD_RULE = 'ADD_RULE';
 export const REMOVE_RULE = 'REMOVE_RULE';
 export const REMOVE_RULES = 'REMOVE_RULES';

@@ -29,6 +29,10 @@ const dateTime = () =>{
     // Return the string
     return timeString;
   }
+
+
+
+
 var initTime = dateTime()
 const initialState = {
     rulesets: [],
@@ -50,6 +54,7 @@ function ruleset(state = initialState, action='') {
 
     switch(action.type) {
 
+     
 
         case ActionTypes.LOAD_RULE_TYPES: {
             const {ruleType} = action.payload

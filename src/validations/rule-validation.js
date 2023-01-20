@@ -38,7 +38,6 @@ export const processEngineValidate = async function(facts, rules,attended, showN
 };
 
 export const updateParsedRules = async function(data){
-  console.log("🚀 ~ file: rule-validation.js ~ line 13 ~ updateParsedRules ~ data", data)
   let url = HOSTURL+'/rulesrepo/save/parsedrule/'+data.id+'?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
   try{
     let result = await axios.put(url, {data})
