@@ -179,19 +179,19 @@ class RulesGrid extends React.Component {
       columnDefs: [
         //Type: GROUP like validation or user ruleset 
         {
-          field: 'type', valueGetter: this.getValidationType, rowGroup: true, 
+          field: 'type', valueGetter: this.getValidationType, rowGroup: true, pinned: "left",
           cellStyle: cellStyle, 
           // cellRenderer: 'agGroupCellRenderer',
            sortable: true, filter: 'agTextColumnFilter', hide: true,
           headerName: "Rule Type",
-          cellClass: 'bold-text center-text'
+          // cellClass: 'bold-text center-text'
         },
-        { headerName: '#', field: 'key', checkboxSelection: true, cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer',hide:false, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
+        { headerName: '#', field: 'key', checkboxSelection: true, cellRenderer: 'agGroupCellRenderer',cellStyle: cellStyle, sortable: true, hide:true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
 
 
 
-        { headerName: 'Rule ID', field: 'id', checkboxSelection: false,valueGetter: this.getRuleId, cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
+        { headerName: 'Rule ID', field: 'id', checkboxSelection: true,cellRenderer: 'agGroupCellRenderer',valueGetter: this.getRuleId, cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
 
       

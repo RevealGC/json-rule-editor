@@ -458,18 +458,24 @@ class RulesetContainer extends Component {
           <Tabs tabs={tabs} onConfirm={this.handleTab} activeTab={this.state.activeTab} />
           <div className="tab-page-container" style={{'margin':'20px'}}>
 
-      {this.state.activeTab === 'Rules' && <RulesGrid facts={attributes}/>}
+      {this.state.activeTab === 'Rules' && <div><div>Rules: {this.props.countOfRules}</div><RulesGrid facts={attributes}/></div>}
 
 
 
-              {this.state.activeTab === 'Facts' && <Attributes attributes={attributes} 
+              {
+              this.state.activeTab === 'Facts' && 
+              <div>
+                <div>Facts: {attributes ? attributes.length : 0}</div>
+              <Attributes attributes={attributes} 
               ruleSet = {this.props.ruleSet}
-                handleAttribute={this.props.handleAttribute }/>}
+                handleAttribute={this.props.handleAttribute }/>
+                </div>
+                }
 
               {/* {this.state.activeTab === 'Decisions' && <Decisions decisions={indexedDecisions || []} attributes={attributes}
               handleDecisions={this.props.handleDecisions} outcomes={outcomes}/>} */}
 
-              {this.state.activeTab === 'Validate' && <ValidateRules attributes={attributes} decisions={decisions} />}
+              {this.state.activeTab === 'Validate' && <ValidateRules attributes={this.props.ruleset.attributes}  decisions={decisions} />}
               {this.state.activeTab === 'Generate' && <Banner message={message} ruleset={this.props.ruleset} onConfirm={this.generateFile}/> }
               {this.state.activeTab === 'Spad' && rowData.length > 0 &&
                         <div>
@@ -508,6 +514,8 @@ RulesetContainer.defaultProps = {
 const mapStateToProps = (state) => ({
   ruleset: state.ruleset.rulesets[state.ruleset.activeRuleset],
   updatedFlag: state.ruleset.updatedFlag,
+  countOfRules: state.ruleset.allRulesRedux.length,
+
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -13,6 +13,7 @@ import Loader from '../loader/loader';
 import { ViewOutcomes } from '../attributes/view-attributes';
 import {handleAttribute} from '../../actions/attributes'
 import { handleDebug } from '../../actions/debug';
+import NameValueTable from '../../components/decisions/NameValueTable'
 
 
 class ValidateRules extends Component {
@@ -117,7 +118,8 @@ return;
         const { attributes } = this.props;
         const options = attributes.map(att => att.name);
 
-        const formElements = conditions.map((condition, index) =>
+        const formElements = //conditions
+        attributes.map((condition, index) =>
             (<tr key={condition.name + index || 'item'+index}>
                 <td><SelectField options={options} onChange={(e) => this.handleAttributeLocal(e, index)}
                      value={condition.name} readOnly/></td>
@@ -184,6 +186,7 @@ return;
         <Panel>
             <form>
                 <div>
+                    <NameValueTable nameValuePairs={this.props.attributes}/>
                     {this.attributeItems()}
                 </div>
             </form>

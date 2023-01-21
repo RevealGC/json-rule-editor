@@ -46,7 +46,7 @@ class NavigationPanel extends Component {
         this.props.setActiveRulesetIndex(name);
         history.push('./ruleset');
         // close the left panel.
-        this.props.updateState("closed")
+        // this.props.updateState("closed")
 
     }
     handleSearch(e) {
