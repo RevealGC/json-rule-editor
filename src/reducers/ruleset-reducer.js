@@ -55,6 +55,14 @@ function ruleset(state = initialState, action='') {
     switch(action.type) {
 
      
+        case ActionTypes.ADD_ALLRULES_REDUX: {
+
+            const rowData= action.payload;
+
+            return {...state, updatedFlag: true, allRulesRedux:rowData}
+      
+            //  return { ...state, allRulesRedux: cloneDeep(rules)}
+        }
 
         case ActionTypes.LOAD_RULE_TYPES: {
             const {ruleType} = action.payload
@@ -99,12 +107,6 @@ function ruleset(state = initialState, action='') {
         }
 
 
-        case ActionTypes.ADD_ALLRULES_REDUX: {
-
-            const rules = action.payload;
-      
-             return { ...state, allRulesRedux: cloneDeep(rules)}
-        }
 
 // Done: payload is an object of type rules. It adds the new rule in front and generates the key for the rule so it can be rendered. 
         case ActionTypes.ADD_RULE:{

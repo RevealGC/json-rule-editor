@@ -19,7 +19,7 @@ const debugTabs = [{name: 'Debug'}, {name: 'Scratch Pad'}]
 
 import Button from "../../components/button/button"
 
-
+import { handleRule } from "../../actions/rules";
 
 import { SplitPane } from "react-collapse-pane";
 import DebugContainer from  '../debug/debug-container' 
@@ -103,6 +103,7 @@ class ApplicationContainer extends Component {
 
     componentDidMount() {
         document.body.className = this.state.theme.background;
+        this.props.handleRule("FETCH_FROMDB_ALLRULES_REDUX", {})
 
         // will load all the rules from the db into the redux into allRulesRedux
         // this.props.fetchAllRulesRedux()
@@ -210,6 +211,7 @@ const mapDispatchToProps = (dispatch) => ({
     updateState: (val) => dispatch(updateState(val)),
     setsearchRIDText: (val) => dispatch(setsearchRIDText(val)),
     resetDebug: () => dispatch(handleDebug("RESET", {}, 0)),
+    handleRule: (operation, rules) => dispatch(handleRule(operation, rules)),
 
     
 

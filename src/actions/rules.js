@@ -42,8 +42,9 @@ export const handleRule = (action, editRule={}) => async (dispatch) => {
                 let ret = await axios.get(url)
                 let rowData = ret.data.data
                 rowData = rowData.map((row, index) => {
-                  return { ...row, key: index + 1 }
+                 return { ...row, key: index +1 }
                 })
+             
                 dispatch({ type: ActionTypes.ADD_ALLRULES_REDUX, payload: rowData});
         }
         case 'ADD': {

@@ -180,7 +180,7 @@ class RulesGrid extends React.Component {
         //Type: GROUP like validation or user ruleset 
         {
           field: 'type', valueGetter: this.getValidationType, rowGroup: true, 
-          // cellStyle: cellStyle, 
+          cellStyle: cellStyle, 
           // cellRenderer: 'agGroupCellRenderer',
            sortable: true, filter: 'agTextColumnFilter', hide: true,
           headerName: "Rule Type",
