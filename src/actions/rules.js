@@ -45,7 +45,7 @@ export const handleRule = (action, editRule={}) => async (dispatch) => {
                  return { ...row, key: index +1 }
                 })
              
-                dispatch({ type: ActionTypes.ADD_ALLRULES_REDUX, payload: rowData});
+               return dispatch({ type: ActionTypes.ADD_ALLRULES_REDUX, payload: rowData});
         }
         case 'ADD': {
             return dispatch(addRule(rule));
