@@ -103,7 +103,7 @@ function ruleset(state = initialState, action='') {
 
             const rules = action.payload;
       
-             return { ...state, ...{allRulesRedux: rules}}
+             return { ...state, allRulesRedux: cloneDeep(rules)}
         }
 
 // Done: payload is an object of type rules. It adds the new rule in front and generates the key for the rule so it can be rendered. 

@@ -384,9 +384,10 @@ class RulesGrid extends React.Component {
 
 
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.setState({ rowData: [] });
     this.props.loadRuleTypes()
-    this.props.handleRule("FETCH_FROMDB_ALLRULES_REDUX", {})
+    // this.props.handleRule("FETCH_FROMDB_ALLRULES_REDUX",{})
   }
 
 
@@ -849,7 +850,7 @@ class RulesGrid extends React.Component {
             onCellClicked={this.onCellClicked}
 
             columnDefs={this.state.columnDefs}
-            rowData={rowData}
+            rowData={this.props.allRulesRedux}
             animateRows={true}
             masterDetail={true}
 
