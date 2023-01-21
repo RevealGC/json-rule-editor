@@ -179,19 +179,22 @@ class RulesGrid extends React.Component {
       columnDefs: [
         //Type: GROUP like validation or user ruleset 
         {
-          field: 'type', valueGetter: this.getValidationType, rowGroup: true, cellStyle: cellStyle, cellRenderer: 'agGroupCellRenderer', sortable: true, filter: 'agTextColumnFilter', hide: true,
+          field: 'type', valueGetter: this.getValidationType, rowGroup: true, 
+          // cellStyle: cellStyle, 
+          // cellRenderer: 'agGroupCellRenderer',
+           sortable: true, filter: 'agTextColumnFilter', hide: true,
           headerName: "Rule Type",
           cellClass: 'bold-text center-text'
         },
+        { headerName: '#', field: 'key', checkboxSelection: true, cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer',hide:false, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
 
 
 
-        { headerName: '#', field: 'key', checkboxSelection: true, cellStyle: cellStyle, sortable: true, cellRenderer: 'agGroupCellRenderer', filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
+        { headerName: 'Rule ID', field: 'id', checkboxSelection: false,valueGetter: this.getRuleId, cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
 
-
-        { headerName: 'Rule ID', field: 'id', valueGetter: this.getRuleId, cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
+      
 
         { headerName: 'Active', field: 'active', sortable: true, filter: 'agTextColumnFilter', hide: true, cellStyle: cellStyle },
 
@@ -251,7 +254,6 @@ class RulesGrid extends React.Component {
     this.createNewRow = this.createNewRow.bind(this)
     this.performCrudOperations = this.performCrudOperations.bind(this)
     this.getRowId = this.getRowId.bind(this)
-    this.loadData = this.loadData.bind(this)
     this.addAllRulesRedux = this.props.addAllRulesRedux.bind(this)
     this.removeDecisions = this.removeDecisions.bind(this);
     this.onCellClicked = this.onCellClicked.bind(this)
@@ -314,9 +316,6 @@ class RulesGrid extends React.Component {
 
   addRowData = () => {
 
-    
-
-
     let allRulesRedux = this.props.allRulesRedux.slice()
     let key = allRulesRedux.length + 1
 
@@ -330,51 +329,25 @@ class RulesGrid extends React.Component {
       key, showDetail: true
     }
 
+
+    
+
     // allRulesRedux.push(newRow);
     allRulesRedux.unshift(newRow);
     this.props.addAllRulesRedux(allRulesRedux);
 
-    setTimeout(() => {
-      // this.gridApi.getRowId(key).setExpanded(true)
-    }, 500);
-
+  
     // this.gridApi.getRowId(key).setExpanded(true)//getDisplayedRowAtIndex(key).setExpanded(true)
 
     // gridApi.getRowNode(allRows.length).setExpanded(true)
 
   };
 
-  removeRowData = () => {
-    let selectedRow = this.gridApi.getSelectedRows()[0];
-    let newRowData = this.state.rowData.filter(row => {
-      return row !== selectedRow;
-    });
-    this.setState({ rowData: newRowData });
-  };
 
-  updateEvenRowData = () => {
-    let newRowData = this.state.rowData.map((row, index) => {
-      if (index % 2 === 0) {
-        return { ...row, athlete: "Even Row" };
-      }
-      return row;
-    });
-    this.setState({ rowData: newRowData });
-  };
 
-  updateOddRowData = () => {
-    let newRowData = this.state.rowData.map((row, index) => {
-      if (index % 2 !== 0) {
-        return { ...row, athlete: "Odd Row" };
-      }
-      return row;
-    });
-    this.setState({ rowData: newRowData });
-  };
 
-  resetRowData = () => {
-    this.setState({ rowData: this.state.backupRowData });
-  };
+ 
+
 
   executeMultipleRules = async () => {
 
@@ -404,7 +377,6 @@ class RulesGrid extends React.Component {
   reloadRulesFromDB = () => {
     this.setState({ rowData: [] });
     this.props.handleRule("FETCH_FROMDB_ALLRULES_REDUX", {})//    addAllRulesRedux([])
-    // this.loadData(true)
   };
 
 
@@ -414,44 +386,12 @@ class RulesGrid extends React.Component {
 
   async componentDidMount() {
     this.props.loadRuleTypes()
-    // Load data is now a props function with handleRule called and loaded from the app.
-    // handleRule is being called from the app with 2 arguments:
-    // props.handleRule('FETCH_FROMDB_ALLRULES_REDUX', filters(tbd))
-    // await this.loadData()
-    // this.props.handleRule("FETCH_FROMDB_ALLRULES_REDUX", {})
-  
-    // if(this.gridApi !== '') this.gridApi.gridOptions.onGridReady = this.onGridReady;
-
-
+    this.props.handleRule("FETCH_FROMDB_ALLRULES_REDUX", {})
   }
 
 
 
-  async loadData(init = false) {
-
-
-    let allRulesRedux = this.props.allRulesRedux
-    if (allRulesRedux.length > 0 && init == false) {
-      // pull from redux state
-      // this.setState({ rowData: allRulesRedux })
-      return;
-
-    }
-    let url = HOSTURL + '/rulesrepo?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
-    let ret = await axios.get(url)
-    let rowData = ret.data.data
-    rowData = rowData.map((row, index) => {
-      return { ...row, key: index + 1 }
-    })
-
-    // this.setState({ rowData, backupRowData: rowData, ruleCounts: ret.data.data.length });
-    this.props.addAllRulesRedux(rowData)
-    const allColumnIds = [];
-    gridOptions.columnApi.getAllColumns().forEach(column => allColumnIds.push(column.colId));
-    gridOptions.columnApi.autoSizeColumns(allColumnIds);
-
-
-  }
+ 
   closeModal() {
     this.setState({ showModalRule: false })
   }
@@ -695,20 +635,6 @@ class RulesGrid extends React.Component {
     }, 0);
   }
 
-  // onFirstDataRendered = (params) => {
-  //   // setTimeout(function () {
-
-
-  //     let allRulesRedux = this.props.allRulesRedux
-
-  //   //   let filteredArray = allRulesRedux.filter(function(obj) {
-  //   //     return obj.hasOwnProperty("ruleId");
-  //   //   });
-
-  //   // params.api.getDisplayedRowAtIndex(this.props.allRulesRedux.length).setExpanded(true);
-
-  //   // }, 100);
-  // }
 
 
 
@@ -726,9 +652,9 @@ class RulesGrid extends React.Component {
 
 
 
-    const allColumnIds = [];
-    gridOptions.columnApi.getAllColumns().forEach(column => allColumnIds.push(column.colId));
-    gridOptions.columnApi.autoSizeColumns(allColumnIds);
+    // const allColumnIds = [];
+    // gridOptions.columnApi.getAllColumns().forEach(column => allColumnIds.push(column.colId));
+    // gridOptions.columnApi.autoSizeColumns(allColumnIds);
 
 
     // const newRowIndex = params.api.
@@ -758,7 +684,6 @@ class RulesGrid extends React.Component {
 
     // this.gridApi.sizeColumnsToFit();
 
-    // await this.loadData()
     // params.api.columnModel.autoSizeAllColumns()
 
 

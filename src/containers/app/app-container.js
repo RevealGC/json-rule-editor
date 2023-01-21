@@ -7,7 +7,6 @@ import AppRoutes from '../../routes/app-routes';
 import PropTypes from 'prop-types';
 import { updateRulesetIndex } from '../../actions/ruleset';
 import { handleDebug} from '../../actions/debug'
-import { handleRule } from '../../actions/rules';
 import { setsearchRIDText, updateState } from '../../actions/app';
 import { createHashHistory } from 'history';
 import ApperanceContext from '../../context/apperance-context';
@@ -106,7 +105,7 @@ class ApplicationContainer extends Component {
         document.body.className = this.state.theme.background;
 
         // will load all the rules from the db into the redux into allRulesRedux
-        this.props.fetchAllRulesRedux()
+        // this.props.fetchAllRulesRedux()
        
         // props.handleRule('FETCH_FROMDB_ALLRULES_REDUX') // 2nd argument can be a filter
         // Can call the FETCH_DATA from here
@@ -178,7 +177,6 @@ ApplicationContainer.defaultProps = {
     setsearchRIDText: () => false,
     resetDebug: ()=>false,
     handleRule: ()=>false,
-    fetchAllRulesRedux: ()=>false,
 };
 
 ApplicationContainer.propTypes = {
@@ -212,7 +210,6 @@ const mapDispatchToProps = (dispatch) => ({
     updateState: (val) => dispatch(updateState(val)),
     setsearchRIDText: (val) => dispatch(setsearchRIDText(val)),
     resetDebug: () => dispatch(handleDebug("RESET", {}, 0)),
-    fetchAllRulesRedux: () => dispatch(handleRule("FETCH_FROMDB_ALLRULES_REDUX", {}))
 
     
 
