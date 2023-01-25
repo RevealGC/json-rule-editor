@@ -577,7 +577,7 @@ class RuleEditor extends Component {
 
     // If:
     let description =
-      "Rule " +
+      "Express this: Rule " +
       name +
       ": If " +
       conditionstring +

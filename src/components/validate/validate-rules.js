@@ -13,7 +13,22 @@ import Loader from '../loader/loader';
 import { ViewOutcomes } from '../attributes/view-attributes';
 import {handleAttribute} from '../../actions/attributes'
 import { handleDebug } from '../../actions/debug';
-import NameValueTable from '../../components/decisions/NameValueTable'
+
+
+
+/**
+ * Will take in facts, rules, attended, network, addOnFacts to pass to the backend for processing one or many rules.
+ * Facts is an object of name value pairs.  Rules is array of  objects of event, condition and index.  Additional params to axios include
+ * showNetwork , attended and addOnFacts(should be passed as an object).
+ * 
+ * The axios post call wraps the facts in an array. Decison or rules should be an array.
+ * 
+ * 
+ * ValidateRules call will pass similar object as below to processEngine
+ * 
+ {"facts":[{"reporting_id":"3010008883",....."}],"rules":[{"event":{"ruleId":228,"active":true,"name":"Creating a new rule. Change its name....","actionType":"impute","validationType":"new","rulePriority":"5","params":{"action":[{"RCPT_TOT ":" RCPT_TOT"}],"message":"Enter the message you want to display... . Some initial conditions have been pre-defined.","rvsJSON":["PAY_ANN"],"apiSource":{},"actionType":"impute","apiChecked":false,"rvs":"[\"PAY_ANN\"]"},"type":"228"},"index":-1,"conditions":{"all":[{"fact":"checkCondition","path":"$.value","operator":"equal","value":true,"params":{"conditionstring":"RCPT_TOT > 0"}}]}}],"showNetwork":true,"attended":false}
+ */
+
 
 
 class ValidateRules extends Component {
@@ -186,7 +201,7 @@ return;
         <Panel>
             <form>
                 <div>
-                    <NameValueTable nameValuePairs={this.props.attributes}/>
+                 
                     {this.attributeItems()}
                 </div>
             </form>

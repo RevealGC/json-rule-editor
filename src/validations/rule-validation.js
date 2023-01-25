@@ -7,11 +7,13 @@ import { handleDebug } from '../actions/debug'
 const HOSTURL='http://localhost'
 // const HOSTURL = 'process.env.HOSTURL
 
-export const processEngine = async function(facts, rules) {
+
+
+export const processEngine = async function(facts, rules, showNetwork=true, attended=false, addOnFacts={}) {
 
   let url = HOSTURL+'/spad/processRules?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
   try{
-  let result = await axios.post(url, {facts, rules ,showNetwork:true, attended:false}) 
+  let result = await axios.post(url, {facts, rules ,showNetwork, attended,addOnFacts}) 
   let resultSet = result.data
   return resultSet;
   
@@ -21,11 +23,11 @@ export const processEngine = async function(facts, rules) {
   }
   return;
 };
-export const processEngineValidate = async function(facts, rules,attended, showNetwork) {
+export const processEngineValidate = async function(facts, rules,attended, showNetwork, addOnFacts={}) {
 
   let url = HOSTURL+'/spad/processRules?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
   try{
-  let result = await axios.post(url, {facts, rules,showNetwork,attended})
+  let result = await axios.post(url, {facts, rules,showNetwork,attended, addOnFacts})
   // ,showNetwork:network, attended:attended})   
   let resultSet = result.data
   return resultSet;

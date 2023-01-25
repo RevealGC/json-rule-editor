@@ -181,17 +181,19 @@ class RulesGrid extends React.Component {
         {
           field: 'type', valueGetter: this.getValidationType, rowGroup: true, pinned: "left",
           cellStyle: cellStyle, 
-          // cellRenderer: 'agGroupCellRenderer',
+          cellRenderer: 'agGroupCellRenderer',
            sortable: true, filter: 'agTextColumnFilter', hide: true,
           headerName: "Rule Type",
-          // cellClass: 'bold-text center-text'
+          cellClass: 'bold-text center-text'
         },
-        { headerName: '#', field: 'key', checkboxSelection: true, cellRenderer: 'agGroupCellRenderer',cellStyle: cellStyle, sortable: true, hide:true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
+        { headerName: '#', field: 'key', checkboxSelection: true, cellRenderer: 'agGroupCellRenderer',cellStyle: cellStyle, sortable: true, hide:false, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
 
 
 
-        { headerName: 'Rule ID', field: 'id', checkboxSelection: true,cellRenderer: 'agGroupCellRenderer',valueGetter: this.getRuleId, cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
+        { headerName: 'Rule ID', field: 'id', ccellRenderer: 'agGroupCellRenderer',
+        valueGetter: this.getRuleId,
+         cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
 
       
@@ -529,7 +531,7 @@ class RulesGrid extends React.Component {
 
   getRuleId(params) {
     try {
-      let ret = params.data.id
+      let ret = params.data.id || 'New'
       return ret
     } catch (error) {
       return ''
@@ -868,6 +870,8 @@ class RulesGrid extends React.Component {
               filter: true,
               sortable: true,
               resizable: true,
+              display: 'flex',
+              'align-items': 'center'
             }}
             embedFullWidthRows={false}
             rowSelection={'multiple'}

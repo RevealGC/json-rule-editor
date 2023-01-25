@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './index.css'
+import NameValueTable from './NameValueTable'
+import ReactJson from 'react-json-view'
 
 // Action Request sent
 // [{"RCPT_TOT":"RCPT_TOT"},{"PAY_ANN":"RCPT_TOT*4"}]
@@ -9,11 +11,17 @@ import 'semantic-ui-css/semantic.min.css';
 import axios from 'axios';
 import { green } from '@mui/material/colors';
 import { MarkAsUnread } from '@mui/icons-material';
-import {
-    processEngine,
-    updateParsedRules,
-  } from "../../validations/rule-validation";
+// import {
+//     processEngine,
+//     updateParsedRules,
+// } from "../../validations/rule-validation";
+
+import { processEngine, processEngineValidate, updateParsedRules, validateRuleset } from '../../validations/rule-validation';
+
 const HOSTURL = "http://localhost";
+
+
+
 
 const QuickRuleModal = (props) => {
 
@@ -47,29 +55,146 @@ const QuickRuleModal = (props) => {
 
     const [ruleId, setRuleId] = useState(0);
 
-    const saveRuleToDbAndRedux = async function(e){
-        e.preventDefault()
+
+
+
+    const ridOptions = [
+        { key: '1', text: '1', value: '1' },
+        { key: '2', text: '2', value: '2' },
+        { key: '3', text: '3', value: '3' },
+        { key: '4', text: '4', value: '4' }
+    ];
+
+
+    // testRuleResult
+    const [testRuleResult, setTestRuleResult] = useState('....');
+
+    const [network, setNetwork] = useState(false);
+    const [attended, setAttended] = useState(true);
+    const [selectedRid, setSelectedRid] = useState([]);
+    const [addOnFacts, setAddOnFacts] = useState('');
+    const [nameValuePairs, setNameValuePairs] = useState([{ name: 'Workflow', value: "Please wait..." }]);
+
+
+
+    const convertRuleTestToTable = (obj) => {
+        const { workflowId, rules, facts, deltaFacts } = obj;
+        const valid = rules.valid;
+        const invalid = rules.invalid;
+        let deltaFactValues = []
+
+
+        const messages = valid.map((item) => item.message);
+        const invalidMessage = invalid.map((item) => item.message);
+        // const computedRVs = [];
+
+
+
+        let computedRVS = valid.map(v =>v.computedRVS)
+
+        let allRvs = ''
+        computedRVS.map(cv => allRvs += JSON.stringify(cv))
+
+
+        // if (rules.computedRVS)
+        //     Object.keys(rules.computedRVS).forEach((key) => {
+        //         computedRVs.push(rules.computedRVS[key]);
+        //     });
+        const factValues = (facts) ? facts.map((item) => item.value) : [];
+
+        if (deltaFacts)
+            deltaFactValues = JSON.stringify(deltaFacts)// .map((item) => item.value);
+
+
+        setNameValuePairs([{ name: 'Workflow', value: workflowId },
+        { name: 'Status', value: valid.length > 0 },
+        { name: 'Messages', value: messages },
+        { name: 'Computed', value: allRvs },
+        // { name: 'Delta Facts', value: deltaFactValues }
+        ])
+
+
+        
+    };
+
+
+
+    const handleChangeConditionString = (e) => {
+        setConditionstring(e.target.value)
+        // await callAITrackVariablesFromConditions()
+
+    }
+
+    const handleNetworkChange = (e, { checked }) => {
+        setNetwork(checked);
+    };
+
+    const handleAttendedChange = (e, { checked }) => {
+        setAttended(checked);
+    };
+
+    const handleRidChange = (e, { value }) => {
+        setSelectedRid(value);
+    };
+
+    const handleAddOnFactsChange = (e, { value }) => {
+        setAddOnFacts(value);
+    };
+
+
+    const cleanupString = (str) => { return str.replace(/[^\x20-\x7E]/g, "").trim(); }
+
+
+
+
+    const testRule = async () => {
+        // collect the network, attended, additionalfacts, and array of rids. And call the process rule function.   
+        let facts = (stringToAddOnFacts(addOnFacts))
+
+        facts.reporting_id = "3010008883"
+
+        let rule = [getRule()]
+        let result = await processEngineValidate([facts], rule, attended, network)
+
+        setTestRuleResult(JSON.stringify(result))
+        convertRuleTestToTable(result)
+        
+
+    }
+
+
+    const getRule = () => {
         let action = stringToJSON(computeString)
         let event = {
-            ruleId,active:true,name:ruleName,actionType:'impute',validationType:ruleType,
-            rulePriority:priority, params:{rvs: JSON.stringify[responseVariables], rvsJSON:responseVariables,
-            action,message,apiSource:{}, actionType:"impute", apiChecked:false},
-            type:ruleId}
+            ruleId, active: true, name: ruleName, actionType: 'impute', validationType: ruleType,
+            rulePriority: priority, params: {
+                rvs: JSON.stringify[responseVariables], rvsJSON: responseVariables,
+                action, message, apiSource: {}, actionType: "impute", apiChecked: false
+            },
+            type: ruleId
+        }
 
-           let conditions = {
+        let conditions = {
             "all": [
-              {
-                "fact": "checkCondition",
-                "path": "$.value",
-                "operator": "equal",
-                "value": true,
-                "params": {conditionstring }
-              }
+                {
+                    "fact": "checkCondition",
+                    "path": "$.value",
+                    "operator": "equal",
+                    "value": true,
+                    "params": { conditionstring }
+                }
             ]
-          };
+        };
 
-          let r = { index: -1, event,conditions }
-          let data = {
+        let r = { index: -1, event, conditions }
+        return r
+
+    }
+
+    const saveRuleToDbAndRedux = async function (e) {
+        e.preventDefault()
+        let r = getRule()
+        let data = {
             parsed_rule: r,
             active: true,
             type: ruleType,
@@ -77,21 +202,21 @@ const QuickRuleModal = (props) => {
             description: aiDescribe,
             name: ruleName,
             id: ruleId,
-          };
-         
-          // write to the db
-          let result = await updateParsedRules(data);
-          // handleRule is a prop that was passed rom RulesGrid. It will add/delete/update any rule given the index.
+        };
 
-          handleRule("ADD",result[0])
-          let resultId = result.length > 0 ? result[0].id + '' : ''
-          alert( "Rule " + resultId + " was successfully deployed");
+        // write to the db
+        let result = await updateParsedRules(data);
+        // handleRule is a prop that was passed rom RulesGrid. It will add/delete/update any rule given the index.
 
-          props.closeModal()
+        handleRule("ADD", result[0])
+        let resultId = result.length > 0 ? result[0].id + '' : ''
+        alert("Rule " + resultId + " was successfully deployed");
+
+        props.closeModal()
 
 
-        }
-   
+    }
+
 
 
 
@@ -109,7 +234,7 @@ const QuickRuleModal = (props) => {
 
         // If:
         let description =
-            "Rule " +
+            "Express this: Rule " +
             ruleName +
             ". If " +
             conditionstring +
@@ -119,15 +244,16 @@ const QuickRuleModal = (props) => {
             JSON.stringify(responseVariables) +
             ". Also perform the following actions, if the rule is successful:" +
             computeString +
-            ". "+
+            ". " +
             "It has a priority of " +
             priority +
             " on a scale of 1-10." +
-            generateApiDescription()+ " This rule was created at "+new Date();
+            generateApiDescription() + " This rule was created at " + new Date();
 
 
         return description;
     },
+
 
 
 
@@ -141,13 +267,22 @@ const QuickRuleModal = (props) => {
             let valueFromAI = await axios.post(url, { conditionstring: str });
 
             // update the value of the state parameter.
-            setAiDescribe(valueFromAI.data);
+            setAiDescribe(valueFromAI.data.trim());
         };
 
 
 
+    const callAITrackVariablesFromConditions = async () => {
+        let url =
+            HOSTURL +
+            "/openai/aicomplete?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false";
 
+        // now call axios post and once you get the value
+        let valueFromAI = await axios.post(url, { conditionstring: 'Find the variables in the string and return it as a semicolon and new line delimited  expressions:   ' + conditionstring });
 
+        // update the value of the variables to track
+        setAddOnFacts(valueFromAI.data.trim().replace("let", ''))
+    };
 
     const equations = props.compute.map(obj => {
         const key = Object.keys(obj)[0];
@@ -155,14 +290,33 @@ const QuickRuleModal = (props) => {
     }).join('; ');
 
 
-    // function to convert string of equations to JSON object
+
+    const stringToAddOnFacts = (str) => {
+        let arr = str.split(";");
+        let json = {};
+        for (let i = 0; i < arr.length; i++) {
+            const equation = arr[i];
+            const [key, val] = equation.split("=");
+
+            if(key)
+            json = { ...json, ...{ [cleanupString(key)]: cleanupString(val) } }
+
+        }
+        return json;
+    }
+
+
+
+    // function to convert string of equations to JSON array
     const stringToJSON = (str) => {
         let arr = str.split(";");
         let json = [];
         for (let i = 0; i < arr.length; i++) {
             const equation = arr[i];
             const [key, val] = equation.split("=");
-            json.push({ [key]: val.replace(" eq ", "=") });
+
+            if(key)
+            json.push({ [cleanupString(key)]: cleanupString(val.replace(" eq ", "=")) });
         }
         return json;
     }
@@ -182,7 +336,6 @@ const QuickRuleModal = (props) => {
     const validateQuickAdd = async (e) => {
         e.preventDefault();
 
-        setLoading(true);
 
         let rule = {
             ruleId: props.ruleId,
@@ -214,15 +367,14 @@ const QuickRuleModal = (props) => {
         result = await axios.post(urlForCompute, { facts: [facts], action })
         setActionTestResult(result.data)
 
-    
 
         // Show the result modal window
-        if (parseSuccess) setCurrentModal("result")
-    // call describe
-    await callAIDescribe()
+        if (result.data) setCurrentModal("result")
+       
+         // call describe
+       await  callAIDescribe()
 
         props.handleDebug('ADD', { label: 'time', data: { rule, conditionResult, actionTestResult, facts } }, 0)
-        setLoading(false);
     };
 
     const handleComputeChange = (e) => {
@@ -234,11 +386,11 @@ const QuickRuleModal = (props) => {
         <Modal className="rule-modal"
             style={
                 {
-                    height:'700px',
+                    height: '700px',
                     // modal: {
-                        marginTop: '0px !important',
-                        marginLeft: '40px',
-                        marginRight: 'auto'
+                    marginTop: '0px !important',
+                    marginLeft: '40px',
+                    marginRight: 'auto'
                     // }
                 }
             }
@@ -297,8 +449,8 @@ const QuickRuleModal = (props) => {
 
 
                             <Label as='a' color='gray' ribbon>
-                                        1. Name the rule
-                                    </Label>
+                                1. Name the rule
+                            </Label>
 
                             <Form.Field
                                 control={TextArea}
@@ -308,23 +460,23 @@ const QuickRuleModal = (props) => {
                                 value={ruleName}
                                 onChange={(e) => setRuleName(e.target.value)}
                             />
- 
 
- <Label as='a' color='gray' ribbon>
-                                        2. Condition
-                                    </Label>
+
+                            <Label as='a' color='gray' ribbon>
+                                2. Condition
+                            </Label>
                             <Form.Field
                                 control={TextArea}
                                 // label="Condition"
                                 placeholder="Enter a condition"
                                 value={conditionstring}
-                                onChange={(e) => setConditionstring(e.target.value)}
+                                onChange={handleChangeConditionString}
                             />
                             {ruleNameError && <span className='error-message'>{ruleNameError}</span>}
-<div></div>
+                            <div></div>
                             <Label as='a' color='gray' ribbon>
-                                        3. Track 
-                                    </Label>
+                                3. Track
+                            </Label>
 
                             <Form.Field
                                 control={Input}
@@ -333,9 +485,9 @@ const QuickRuleModal = (props) => {
                                 value={responseVariables.join(';')}
                                 onChange={(e) => setResponseVariables(e.target.value.split(';'))}
                             />
-  <Label as='a' color='gray' ribbon>
-                                        4. Actions
-                                    </Label>
+                            <Label as='a' color='gray' ribbon>
+                                4. Actions
+                            </Label>
                             <Form.Field
                                 control={TextArea}
                                 // label="Compute"
@@ -344,9 +496,9 @@ const QuickRuleModal = (props) => {
                                 // onChange={handleComputeChange}
                                 onChange={(e) => setComputeString(e.target.value)}
                             />
-  <Label as='a' color='gray' ribbon>
-                                        5. Message
-                                    </Label>
+                            <Label as='a' color='gray' ribbon>
+                                5. Message
+                            </Label>
                             <Form.Field
                                 control={Input}
                                 // label="Message"
@@ -378,70 +530,179 @@ const QuickRuleModal = (props) => {
                     </Modal.Content >
                 </>
             )}
-            {currentModal === "result" && (
+            {currentModal === "result" &&
+                (
 
-                <>
-                    <Modal.Content>
-                        <Form>
-                            <Form.Field>
-                                <label>Rule Name</label>
-                                <Input
-                                    value={ruleName}
-                                    onChange={(e) => setRuleName(e.target.value)}
-                                />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Status</label>
-                                <Checkbox
-                                    checked={parseSuccess}
-                                    //   onChange={(e) => setParseSuccess(e.target.checked)}
-                                    label={parseSuccess ? 'Success' : 'Failed'}
-                                    color={parseSuccess ? 'green' : 'red'}
-                                />
-                            </Form.Field>
-                            {parseSuccess && <span className='message'>{conditionResult.message}<br></br>
-                                {conditionResult.ruleResult}
-                            </span>}
-                            {!parseSuccess && <span className='error-message'>{conditionResult.message}<br></br>{ruleNameError}</span>}
+                    <>
+                        <Modal.Header>Validate</Modal.Header>
+                        <Modal.Content>
+                            <Form>
+                                <Form.Field>
+                                    <label>Rule Name</label>
+                                    <Input
+                                        value={ruleName}
+                                        onChange={(e) => setRuleName(e.target.value)}
+                                    />
+                                </Form.Field>
+                                <Form.Field>
+                                    <label>Status</label>
+                                    <Checkbox
+                                        checked={parseSuccess}
+                                        //   onChange={(e) => setParseSuccess(e.target.checked)}
+                                        label={parseSuccess ? 'Success' : 'Failed'}
+                                        color={parseSuccess ? 'green' : 'red'}
+                                    />
+                                </Form.Field>
+                                {parseSuccess && <span className='message'>{conditionResult.message}<br></br>
+                                    {conditionResult.ruleResult}
+                                </span>}
+                                {!parseSuccess && <span className='error-message'>{conditionResult.message}<br></br>{ruleNameError}</span>}
 
-                            <Table>
-                                <Table.Header>
-                                    <Table.Row>
-                                        <Table.HeaderCell>Key</Table.HeaderCell>
-                                        <Table.HeaderCell>Value</Table.HeaderCell>
-                                        <Table.HeaderCell>Expression</Table.HeaderCell>
-                                    </Table.Row>
-                                </Table.Header>
-                                <Table.Body>
-                                    {actionTestResult.map((result) => (
-                                        <Table.Row key={result.key}>
-                                            <Table.Cell>{result.key}</Table.Cell>
-                                            <Table.Cell>{result.value}</Table.Cell>
-                                            <Table.Cell>{result.expression}</Table.Cell>
+                                <Table>
+                                    <Table.Header>
+                                        <Table.Row>
+                                            <Table.HeaderCell>Key</Table.HeaderCell>
+                                            <Table.HeaderCell>Value</Table.HeaderCell>
+                                            <Table.HeaderCell>Expression</Table.HeaderCell>
                                         </Table.Row>
-                                    ))}
-                                </Table.Body>
-                            </Table>
+                                    </Table.Header>
+                                    <Table.Body>
+                                        {actionTestResult.map((result) => (
+                                            <Table.Row key={result.key}>
+                                                <Table.Cell>{result.key}</Table.Cell>
+                                                <Table.Cell>{result.value}</Table.Cell>
+                                                <Table.Cell>{result.expression}</Table.Cell>
+                                            </Table.Row>
+                                        ))}
+                                    </Table.Body>
+                                </Table>
+                                <Form.Field>
+                                    <label>Describe</label>
+                                    <TextArea style={{ height: '200px' }}
+                                        value={aiDescribe}
+                                        onChange={(e) => setAiDescribe(e.target.value)}
+                                    />
+                                </Form.Field>
+                            </Form>
+                        </Modal.Content>
+                        <Modal.Actions>
+                            <Button onClick={() => setCurrentModal("create")}>Back</Button>
+                            <Button primary disabled={!parseSuccess} onClick={async () => {
+                                setCurrentModal("submitrule");
+                                await callAITrackVariablesFromConditions()
+                            }
+
+                            }>
+                                Test
+                            </Button>
+                            <Button primary disabled={!parseSuccess} onClick={saveRuleToDbAndRedux}>
+                                Submit
+                            </Button>
+                        </Modal.Actions>
+                    </>
+
+
+                )
+            }
+            {currentModal === "submitrule" &&
+                <>
+                    <Modal.Header>Test Rule</Modal.Header>
+                    <Modal.Content>
+                        <div>
+                            <Checkbox
+                                label="Attended"
+                                checked={attended}
+                                onChange={handleAttendedChange}
+                            />
+
+                            <Checkbox
+                                label="Network"
+                                checked={network}
+                                onChange={handleNetworkChange}
+                            />
+                            <div>
+                            <Label as='a' color='gray' ribbon>
+                             Condition
+                            </Label>
                             <Form.Field>
-                                <label>Describe</label>
-                                <TextArea
-                                    value={aiDescribe}
-                                    onChange={(e) => setAiDescribe(e.target.value)}
+
+                                <TextArea style={{ height: '60px', width: '100%' }}
+                                    value={conditionstring}
+
                                 />
                             </Form.Field>
-                        </Form>
+                            </div>
+
+
+
+                            <Label as='a' color='gray' ribbon>
+                                Select Data Sets
+                            </Label>
+                            <Dropdown
+                                label="Select RID"
+                                placeholder="Select RID"
+                                fluid
+                                multiple
+                                selection
+                                options={ridOptions}
+                                onChange={handleRidChange}
+                                value={selectedRid}
+                            />
+
+                            <Label as='a' color='gray' ribbon>
+                                Simulated Facts
+                            </Label>
+                            <Form.Field>
+
+                                <TextArea style={{ height: '100px', width: '100%' }}
+                                    value={addOnFacts}
+                                    onChange={handleAddOnFactsChange}
+                                />
+                            </Form.Field>
+
+
+                            <Label as='a' color='gray' ribbon>
+                                Test Result
+                            </Label>
+                            {/* <Form.Field>
+
+                                <TextArea style={{ height: '100px', width: '100%' }}
+                                    value={testRuleResult}
+                                    // onChange={handleAddOnFactsChange}
+                                />
+                            </Form.Field> */}
+                            <NameValueTable nameValuePairs={nameValuePairs}/>
+                            {/* <ReactJson displayObjectSize={false} key={'resultdebug'} displayDataTypes={false} collapsed={false}
+                                src={nameValuePairs} /> */}
+
+                            {/* <Form.Field
+                                control={TextArea}
+                                // label="Rule Name"
+                                placeholder="Enter additional facts..."
+                               
+                                value={addOnFacts}
+                                onChange={handleAddOnFactsChange}
+                            /> */}
+
+
+
+
+                        </div>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button onClick={() => setCurrentModal("create")}>Back</Button>
+                        <Button onClick={() => setCurrentModal("result")}>Back</Button>
+                        <Button onClick={() => setCurrentModal("create")}>Home</Button>
+                        <Button primary disabled={!parseSuccess} onClick={testRule}>Test</Button>
                         <Button primary disabled={!parseSuccess} onClick={saveRuleToDbAndRedux}>
                             Submit
                         </Button>
                     </Modal.Actions>
-
                 </>
 
+            }
 
-            )}
+
+
         </Modal >
     );
 };

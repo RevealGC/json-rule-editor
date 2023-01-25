@@ -51,12 +51,12 @@ function MultiselectRID(props) {
     text: option.value
   
   }))
-   console.log("🚀 ~ file: MultiSelectRID.js:50 ~ MultiselectRID ~ optionsList", optionsList)
+ 
    
   const handleOptionClick = (event, { value }) => {
     event.preventDefault(); 
     props.loadRuleSet(value);
-    setInputValue(value);
+    // setInputValue(value);
    
   };
 

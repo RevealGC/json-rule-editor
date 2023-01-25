@@ -16,29 +16,46 @@ const nameValuePairs = [
   // ...
 ];
 
+
+
+
 <NameValueTable nameValuePairs={nameValuePairs} />
 
 
  * @param {*} param0 
  * @returns 
  */
+
+
+
+
 const NameValueTable = ({ nameValuePairs }) => {
   const [pairs, setPairs] = useState(nameValuePairs);
 
   const handleValueChange = (event) => {
-    setPairs(event.data);
+    setPairs(event.target.value);
   };
 
   const columnDefs = [
     { headerName: "Name", field: "name", editable: false },
-    { headerName: "Value", field: "value", editable: true },
+    { headerName: "Value", field: "value", editable: false },
   ];
 
   return (
-    <div className="ag-theme-balham" style={{ height: '300px', width: '600px' }}>
+    <div className="ag-theme-balham" style={{ height: '300px', width: '100%' }}>
       <AgGridReact
         columnDefs={columnDefs}
-        rowData={pairs}
+        rowData={nameValuePairs}
+
+        defaultColDef={{
+          flex: 1,
+          minWidth: 200,
+          filter: true,
+          sortable: true,
+          resizable: true,
+          display: 'flex',
+          'align-items': 'center'
+        }}
         onCellValueChanged={handleValueChange}
       />
     </div>

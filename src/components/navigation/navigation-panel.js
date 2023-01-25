@@ -9,7 +9,7 @@ import FooterLinks from '../footer/footer';
 import footerLinks from '../../data-objects/footer-links.json';
 import AppearanceContext from '../../context/apperance-context';
 import axios from 'axios'
-import MultiselectRID from "../decisions/MultiSelectRID"
+import SingleSelectRID from "../decisions/SingleSelectRID"
 
 // const Dotenv = require('dotenv-webpack');
 const HOSTURL = 'http://localhost'
@@ -97,7 +97,7 @@ class NavigationPanel extends Component {
 {/* Put the new drop down here */}
 
 
-<MultiselectRID loadRuleSet={this.loadRuleSet} 
+<SingleSelectRID loadRuleSet={this.loadRuleSet} 
 // inputValue={this.state.dbSearchText}
 />
 
