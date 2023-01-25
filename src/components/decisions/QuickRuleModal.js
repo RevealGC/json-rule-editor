@@ -78,7 +78,7 @@ const QuickRuleModal = (props) => {
 
 
     const convertRuleTestToTable = (obj) => {
-        const { workflowId, rules, facts, deltaFacts } = obj;
+        const { workflowId, rules, facts, elapsedTime, deltaFacts } = obj;
         const valid = rules.valid;
         const invalid = rules.invalid;
         let deltaFactValues = []
@@ -107,10 +107,12 @@ const QuickRuleModal = (props) => {
 
 
         setNameValuePairs([{ name: 'Workflow', value: workflowId },
+        { name: 'Time(ms)', value: elapsedTime},
         { name: 'Status', value: valid.length > 0 },
         { name: 'Messages', value: messages },
         { name: 'Computed', value: allRvs },
-        // { name: 'Delta Facts', value: deltaFactValues }
+        {name: 'Facts', value: JSON.stringify(combineAllFacts())},
+        { name: 'Delta Facts', value: deltaFactValues }
         ])
 
 
@@ -145,16 +147,25 @@ const QuickRuleModal = (props) => {
     const cleanupString = (str) => { return str.replace(/[^\x20-\x7E]/g, "").trim(); }
 
 
+    const combineAllFacts  = () =>{
+       return( {...{"reporting_id" : "3010008883"},...facts, ...stringToAddOnFacts(addOnFacts)})
+    }
 
 
     const testRule = async () => {
         // collect the network, attended, additionalfacts, and array of rids. And call the process rule function.   
-        let facts = (stringToAddOnFacts(addOnFacts))
+        // let facts = {}
+        // facts.reporting_id = "3010008883" // In case no facts are given
 
-        facts.reporting_id = "3010008883"
+        // // If there are any addy on facts, get the addon and append to facts
+        // facts = {...facts, ...(stringToAddOnFacts(addOnFacts))}
+
+        let allFacts = combineAllFacts()
+
+        // if no facts are given, some rid should be provided.  Ensure rule is tested with some facts available
 
         let rule = [getRule()]
-        let result = await processEngineValidate([facts], rule, attended, network)
+        let result = await processEngineValidate([allFacts], rule, attended, network)
 
         setTestRuleResult(JSON.stringify(result))
         convertRuleTestToTable(result)
@@ -165,6 +176,8 @@ const QuickRuleModal = (props) => {
 
     const getRule = () => {
         let action = stringToJSON(computeString)
+        let ruleId = props.ruleId
+
         let event = {
             ruleId, active: true, name: ruleName, actionType: 'impute', validationType: ruleType,
             rulePriority: priority, params: {
@@ -201,7 +214,7 @@ const QuickRuleModal = (props) => {
             data: r,
             description: aiDescribe,
             name: ruleName,
-            id: ruleId,
+            id: props.ruleId,
         };
 
         // write to the db
@@ -406,7 +419,7 @@ const QuickRuleModal = (props) => {
 
             {currentModal === "create" && (
                 <>
-                    <Modal.Header>Add Rule</Modal.Header>
+                    <Modal.Header>{props.ruleId == 0 ? 'Add New Rule': 'Edit Rule:' +props.ruleId}</Modal.Header>
                     <Modal.Content>
                         <Form onSubmit={handleSubmit}>
                             <div style={{ display: 'flex', padding: '20px' }}>
@@ -448,7 +461,7 @@ const QuickRuleModal = (props) => {
                             </div>
 
 
-                            <Label as='a' color='gray' ribbon>
+                            <Label as='a' color='gray' >
                                 1. Name the rule
                             </Label>
 
@@ -462,7 +475,7 @@ const QuickRuleModal = (props) => {
                             />
 
 
-                            <Label as='a' color='gray' ribbon>
+                            <Label as='a' color='gray' >
                                 2. Condition
                             </Label>
                             <Form.Field
@@ -474,7 +487,7 @@ const QuickRuleModal = (props) => {
                             />
                             {ruleNameError && <span className='error-message'>{ruleNameError}</span>}
                             <div></div>
-                            <Label as='a' color='gray' ribbon>
+                            <Label as='a' color='gray' >
                                 3. Track
                             </Label>
 
@@ -485,7 +498,7 @@ const QuickRuleModal = (props) => {
                                 value={responseVariables.join(';')}
                                 onChange={(e) => setResponseVariables(e.target.value.split(';'))}
                             />
-                            <Label as='a' color='gray' ribbon>
+                            <Label as='a' color='gray' >
                                 4. Actions
                             </Label>
                             <Form.Field
@@ -496,7 +509,7 @@ const QuickRuleModal = (props) => {
                                 // onChange={handleComputeChange}
                                 onChange={(e) => setComputeString(e.target.value)}
                             />
-                            <Label as='a' color='gray' ribbon>
+                            <Label as='a' color='gray' >
                                 5. Message
                             </Label>
                             <Form.Field
@@ -534,7 +547,8 @@ const QuickRuleModal = (props) => {
                 (
 
                     <>
-                        <Modal.Header>Validate</Modal.Header>
+                 
+                        <Modal.Header>{props.ruleId == 0 ? 'Validate New Rule': 'Validate Rule: ' +props.ruleId}</Modal.Header>
                         <Modal.Content>
                             <Form>
                                 <Form.Field>
@@ -606,7 +620,8 @@ const QuickRuleModal = (props) => {
             }
             {currentModal === "submitrule" &&
                 <>
-                    <Modal.Header>Test Rule</Modal.Header>
+                    <Modal.Header>{props.ruleId == 0 ? 'Test New Rule': 'Test Rule: ' +props.ruleId}</Modal.Header>
+                     
                     <Modal.Content>
                         <div>
                             <Checkbox
@@ -621,7 +636,7 @@ const QuickRuleModal = (props) => {
                                 onChange={handleNetworkChange}
                             />
                             <div>
-                            <Label as='a' color='gray' ribbon>
+                            <Label as='a' color='gray' >
                              Condition
                             </Label>
                             <Form.Field>
@@ -635,21 +650,24 @@ const QuickRuleModal = (props) => {
 
 
 
-                            <Label as='a' color='gray' ribbon>
-                                Select Data Sets
+                            <Label as='a' color='gray' >
+                                Dataset
                             </Label>
+
+
+                            
                             <Dropdown
                                 label="Select RID"
                                 placeholder="Select RID"
                                 fluid
-                                multiple
+                                // multiple
                                 selection
-                                options={ridOptions}
+                                options={[{key:1, text: props.factsName, value: props.factsName}]}
                                 onChange={handleRidChange}
-                                value={selectedRid}
+                                value={props.factsName}//{selectedRid}
                             />
 
-                            <Label as='a' color='gray' ribbon>
+                            <Label as='a' color='gray' >
                                 Simulated Facts
                             </Label>
                             <Form.Field>
@@ -661,7 +679,7 @@ const QuickRuleModal = (props) => {
                             </Form.Field>
 
 
-                            <Label as='a' color='gray' ribbon>
+                            <Label as='a' color='gray' >
                                 Test Result
                             </Label>
                             {/* <Form.Field>

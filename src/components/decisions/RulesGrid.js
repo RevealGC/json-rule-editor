@@ -169,6 +169,7 @@ class RulesGrid extends React.Component {
     this.state = {
       selectedCondition: {},
       showModalRule: false,
+      selectedRule: newRuleObject,
       rowIndex: 0,
       allRulesRedux: this.props.allRulesRedux,
       ruleCounts: 0,
@@ -191,7 +192,7 @@ class RulesGrid extends React.Component {
 
 
 
-        { headerName: 'Rule ID', field: 'id', ccellRenderer: 'agGroupCellRenderer',
+        { headerName: 'Rule ID', field: 'id', cellRenderer: 'agGroupCellRenderer',
         valueGetter: this.getRuleId,
          cellStyle: cellStyle, sortable: true, filter: 'agTextColumnFilter', comparator: (a, b) => { return a - b } },
 
@@ -278,12 +279,27 @@ class RulesGrid extends React.Component {
     try {
       const rowData = this.gridApi.getDisplayedRowAtIndex(rowIndex).data;
       const colDef = this.gridApi.getColumnDef(colId)
+
+      // OPen the quick rule modal window.
+      if(rowData.parsed_rule)
+      this.setState({selectedRule: rowData.parsed_rule, showModalRule: true })
+
       // now you can read the name and value of the cell as follows:
       const name = colDef.field;
       // const value = rowData[name];
       var value = rowData[name]
       if (name === 'condition') {    // show the condition string.
         value = rowData.parsed_rule.conditions.all[0].params.conditionstring
+
+        // call the QuickRoleModel
+        
+
+
+
+
+
+
+
       }
 
       if (name === 'track') {
@@ -311,7 +327,7 @@ class RulesGrid extends React.Component {
    */
 
   quickAddRowData = () =>{
-    this.setState({ showModalRule: true })
+    this.setState({ showModalRule: true, selectedRule: newRuleObject })
     // this.addRowData()
   }
 
@@ -402,7 +418,7 @@ class RulesGrid extends React.Component {
 
     const { showModalRule } = this.state
 
-    const { ruleName, conditionstring, responseVariables, compute, message, priority, ruleType, ruleId } = breakRuleObject(newRuleObject)
+    const { ruleName, conditionstring, responseVariables, compute, message, priority, ruleType, ruleId } = breakRuleObject(this.state.selectedRule)
 
     if (showModalRule)
       return (<div ><QuickRuleModal
@@ -422,6 +438,7 @@ class RulesGrid extends React.Component {
         priority={priority}
         ruleId ={ruleId}
         facts={this.props.facts.facts}
+        factsName = {this.props.facts.name}
         message={message} /></div>)
     else
       return (<div></div>)
