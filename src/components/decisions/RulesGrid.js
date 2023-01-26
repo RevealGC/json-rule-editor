@@ -438,11 +438,11 @@ class RulesGrid extends React.Component {
         "name": freeTextResultJSON.name,
         "actionType": "impute",
         "validationType": "new",
-        "rulePriority": freeTextResultJSON.priority || "5",
+        "rulePriority": freeTextResultJSON.rulePriority,
         "params": {
           "rvs": "['PAY_ANN']",
           rvsJSON: ['PAY_ANN'],
-          "action": freeTextResultJSON.compute,
+          "action": freeTextResultJSON.action,
           "message": freeTextResultJSON.message,
           "actionType": "impute"
         },

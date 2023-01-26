@@ -110,8 +110,27 @@ const FreeTextModal = (props) => {
         // get the rule conditions, form it, close this modal window while opening the quickmodalrule window
         // get the props from RulesGrid ie handleAddFreeTextRule
 
-        props.handleAddFreeTextRule(freeTextResultJSON)
-        alert("Ready to start the process of adding Rule to modal window")
+        // {
+        //     "ruleName": "IF the flag for hazardous materials is reported and the NAICS is in 484",
+        //     "condition": "substr(RECORD_NAICS_NUM, 1,3)== 484 and RCPT_MOTR_HAZRD_STAT == 1 and RCPT_MOTR_HAZRD_PCT == 0",
+        //     "compute": [
+        //       "RCPT_MOTR_HAZRD_STAT = 2",
+        //       "PAY_ANN =4"
+        //     ],
+        //     "priority": 5,
+        //     "message": "Hazardous Material rule fired"
+        //   }
+
+        let action = freeTextResultJSON.compute ? freeTextResultJSON.compute.map(c => stringToJSON(c)[0]) : []
+        let condition = freeTextResultJSON.condition ? freeTextResultJSON.condition : ''
+        let name =  freeTextResultJSON.name||freeTextResultJSON.ruleName ||'Rule Name'
+        let rulePriority = freeTextResultJSON.rulePriority || freeTextResultJSON.priority || '5'
+        let message = freeTextResultJSON.message || 'Rule was validated.'
+
+        let nro = {name, rulePriority, condition, action, message }
+
+        props.handleAddFreeTextRule(nro)
+        // alert("Ready to start the process of adding Rule to modal window")
 
     }
 
@@ -184,7 +203,7 @@ const FreeTextModal = (props) => {
         let json = [];
         for (let i = 0; i < arr.length; i++) {
             const equation = arr[i];
-            const [key, val] = equation.split("=");
+            const [key, val] = equation.split(/(?<=^[^\=]+)\=/) //split("=");
 
             if (key)
                 json.push({ [cleanupString(key)]: cleanupString(val.replace(" eq ", "=")) });
@@ -206,7 +225,8 @@ const FreeTextModal = (props) => {
     const validateFreeText = async (e) => {
         e.preventDefault();
 
-        let aiAction = 'What is the name, condition, compute as an array and message of the following rule and return it as a json: ' + freeText
+       let aiActionString =  'What is the name, condition, compute as an array and message of the following rule and return it as a json: ' 
+         let aiAction = aiActionString+ freeText
         let result = await callAIDescribe(aiAction)
         setFreeTextResultJSON(result)
         let strResult = JSON.stringify(result)
