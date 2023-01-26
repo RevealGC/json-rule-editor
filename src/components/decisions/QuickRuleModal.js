@@ -326,9 +326,9 @@ const QuickRuleModal = (props) => {
         let json = [];
         for (let i = 0; i < arr.length; i++) {
             const equation = arr[i];
-            const [key, val] = equation.split("=");
+            const [key, val] = equation.split(/(?<=^[^\=]+)\=/) //split("=");
 
-            if(key)
+     
             json.push({ [cleanupString(key)]: cleanupString(val.replace(" eq ", "=")) });
         }
         return json;

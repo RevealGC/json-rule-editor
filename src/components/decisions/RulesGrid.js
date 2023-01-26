@@ -34,7 +34,7 @@ import QuickRuleModal from './QuickRuleModal';
 import 'semantic-ui-css/semantic.min.css';
 import { loadRuleTypes } from "../../actions/ruleset";
 
-
+import FreeTextModal from './FreeTextModal';
 
 
 const HOSTURL = 'http://localhost'
@@ -169,6 +169,8 @@ class RulesGrid extends React.Component {
     this.state = {
       selectedCondition: {},
       showModalRule: false,
+      freeTextShowModal: false,
+
       selectedRule: newRuleObject,
       rowIndex: 0,
       allRulesRedux: this.props.allRulesRedux,
@@ -332,6 +334,12 @@ class RulesGrid extends React.Component {
   }
 
 
+
+  quickAddFreeText = () =>{
+    this.setState({ freeTextShowModal: true })
+    // this.addRowData()
+  }
+
   addRowData = () => {
 
     let allRulesRedux = this.props.allRulesRedux.slice()
@@ -408,11 +416,61 @@ class RulesGrid extends React.Component {
     // this.props.handleRule("FETCH_FROMDB_ALLRULES_REDUX",{})
   }
 
+  // {
+  //   "name": "DEMO RULE: PAY_ANN for MA is less than VA",
+  //   "condition": "agg(“PAY_ANN”, “state eq ‘MA’ “) < agg(“PAY_ANN”, “state eq ‘VA’ “)",
+  //   "compute": [
+  //     "hms = getTime(\"hms\")",
+  //     "today=getTime()"
+  //   ],
+  //   "message": "MAs PAY_ANN is less than the aggregates for VA"
+  // }
 
+
+
+  handleAddFreeTextRule(freeTextResultJSON){
+
+    let nro = {
+
+      "event": {
+        "ruleId": "0",
+        "active": true,
+        "name": freeTextResultJSON.name,
+        "actionType": "impute",
+        "validationType": "new",
+        "rulePriority": freeTextResultJSON.priority || "5",
+        "params": {
+          "rvs": "['PAY_ANN']",
+          rvsJSON: ['PAY_ANN'],
+          "action": freeTextResultJSON.compute,
+          "message": freeTextResultJSON.message,
+          "actionType": "impute"
+        },
+        "type": "0"
+      },
+      "index": -1,
+      "conditions": {
+        "all": [
+          {
+            "fact": "checkCondition",
+            "path": "$.value",
+            "operator": "equal",
+            "value": true,
+            "params": {
+              "conditionstring": freeTextResultJSON.condition
+            }
+          }
+        ]
+      }
+    }
+
+    this.setState({selectedRule:nro, showModalRule:true,freeTextShowModal:false })
+
+  }
 
  
   closeModal() {
-    this.setState({ showModalRule: false })
+    this.setState({ showModalRule: false, freeTextShowModal:false })
   }
   addModalRule() {
 
@@ -833,6 +891,9 @@ class RulesGrid extends React.Component {
     const links = [
       { label: 'Add', className: 'add square',  onClick: this.addRowData },
       { label: 'Quick Add', className: 'fast forward',  onClick: this.quickAddRowData },
+
+      { label: 'Free Text', className: 'fast forward',  onClick: this.quickAddFreeText },
+
       { label: 'Execute', className: 'paper plane', onClick: this.executeMultipleRules },
       { label: 'Refresh', className: 'refresh', onClick: this.reloadRulesFromDB },
       { label: 'Delete', className: 'remove', onClick: this.deleteSelectedRows },
@@ -842,6 +903,17 @@ class RulesGrid extends React.Component {
     if (this.state.showModalRule) return (<div>
       {this.addModalRule()}
     </div>)
+
+if (this.state.freeTextShowModal) return (<div>
+  <FreeTextModal  open = {true} 
+  handleRule={this.props.handleRule} 
+  closeModal={this.closeModal.bind(this)} 
+   onClose={this.closeModal.bind(this)}
+   ruleId={"0"}
+   handleAddFreeTextRule = {this.handleAddFreeTextRule.bind(this)}
+  />
+</div>)
+
 
     return (
       <div   >
