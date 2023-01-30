@@ -55,7 +55,6 @@ function GeneralRuleForm(props) {
     props.handleRulePriority(value)
     setPriority(value);
 
-
   };
   // Change description
   const handleChangeDescription = (event) => {

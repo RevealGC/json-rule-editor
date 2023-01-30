@@ -23,9 +23,9 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 import axios from 'axios'
 import InputField from '../../components/forms/input-field';
-const tabs = [{ name: 'Debug' }, {name: 'Rules'}];
+const tabs = [{ name: 'Debug' }, {name: 'Rules'}, {name:'Workflow'}];
 import RulesGrid from   '../../components/decisions/RulesGrid'  //'../../components/decisions/RulesGrid' 
-
+import ExpandingIframe from './ExpandingIframe';
 
 // const Dotenv = require('dotenv-webpack');
 const HOSTURL = 'http://localhost'
@@ -165,6 +165,7 @@ debugPanelAttribute(data) {
 
 
                         {this.state.activeTab === 'Rules' && <RulesGrid />}
+                        {this.state.activeTab == 'Workflow' && <ExpandingIframe src="http://localhost:1880"/>}
                 
                 </div></div>)
     }
