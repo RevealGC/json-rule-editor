@@ -4,7 +4,8 @@ const ExpandingIframe = ({ src }) => {
   const [frameHeight, setFrameHeight] = React.useState(0);
 
   const handleResize = () => {
-    setFrameHeight(800)//document.querySelector('.container').clientHeight);
+    setFrameHeight( '800')// document.querySelector('.expanding-iframe').clientHeight);
+    // setFrameWidth( document.querySelector('.expanding-iframe').clientWidth);
   };
 
   React.useEffect(() => {

@@ -18,7 +18,7 @@ import RuleErrorBoundary from '../../components/error/ruleset-error';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { AgGridReact } from 'ag-grid-react';
 import RulesGrid from '../../components/decisions/RulesGrid';
-
+import ExpandingIframe from  "../../containers/debug/ExpandingIframe"
 import 'ag-grid-enterprise';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -155,7 +155,10 @@ function stringifierFact(params) {
 
 
 
-const tabs = [{name: 'Facts'},{name: 'Rules'},  {name: 'Validate'},  { name: 'Spad' }, {name: 'Generate'}];
+const tabs = [{name: 'Facts'},{name: 'Rules'},  {name: 'Validate'}, 
+{ name: 'Workflow UI' },
+
+{ name: 'Spad' }, {name: 'Generate'}];
 
 
 
@@ -477,14 +480,13 @@ class RulesetContainer extends Component {
 
               {this.state.activeTab === 'Validate' && <ValidateRules attributes={this.props.ruleset.attributes}  decisions={decisions} />}
               {this.state.activeTab === 'Generate' && <Banner message={message} ruleset={this.props.ruleset} onConfirm={this.generateFile}/> }
-              {this.state.activeTab === 'Spad' && rowData.length > 0 &&
-                        <div>
-                            {this.spadTables()}
-                          
+              {this.state.activeTab === 'Spad' && rowData.length > 0 && <div> {this.spadTables()} </div> }
+              {this.state.activeTab === 'Workflow UI'  && <div> 
 
-                        </div>
+              <ExpandingIframe src="http://localhost:1880/ui"/>}
 
-                    }
+              </div> }
+
 
 
 
