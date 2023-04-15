@@ -4,7 +4,7 @@ import { handleDebug } from '../actions/debug'
 
 
 // const Dotenv = require('dotenv-webpack');
-const HOSTURL='http://localhost'
+const HOSTURL='http://cto-tasks002-ite.ite.edl.census.gov:8002'
 // const HOSTURL = 'process.env.HOSTURL
 
 

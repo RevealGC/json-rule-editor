@@ -47,7 +47,7 @@ const tabs = [
   { name: "Track" },
   { name: "API" },
 ];
-const HOSTURL = "http://localhost";
+const HOSTURL = "http://cto-tasks002-ite.ite.edl.census.gov:8002";
 
 const newRuleObject = {
   event: {

@@ -12,7 +12,7 @@ import axios from 'axios'
 import SingleSelectRID from "../decisions/SingleSelectRID"
 
 // const Dotenv = require('dotenv-webpack');
-const HOSTURL = 'http://localhost'
+const HOSTURL = 'http://cto-tasks002-ite.ite.edl.census.gov:8002'
 // const HOSTURL = 'process.env.HOSTURL
 
 import Search from '../search/dbSearch'
@@ -56,7 +56,7 @@ class NavigationPanel extends Component {
 
     }
     async loadRuleSet(rid) {
-        // now call axios to get data from  http://localhost/rulesrepo/factsandrules/8771348140?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo
+        // now call axios to get data from  http://cto-tasks002-ite.ite.edl.census.gov:8002/rulesrepo/factsandrules/8771348140?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo
         let url = HOSTURL + '/rulesrepo/factsandrules/' + rid + '?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo'
         try {
             let result = await axios.get(url)

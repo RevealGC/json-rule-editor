@@ -1,5 +1,5 @@
 import * as ActionTypes from './action-types';
-const HOSTURL = "http://localhost"
+const HOSTURL = "http://cto-tasks002-ite.ite.edl.census.gov:8002"
 import axios from 'axios';
 export const removeRule = (ruleIndex) => {
     const payload = { ruleIndex };

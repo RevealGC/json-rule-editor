@@ -43,7 +43,7 @@ export const updateRulesetIndex = (name) => {
 
 export const loadRuleTypes =  ()=> async (dispatch)=>{
     // make an axios call and get all validation types
-    let url = 'http://localhost/rulesrepo/getruletype'
+    let url = 'http://cto-tasks002-ite.ite.edl.census.gov:8002/rulesrepo/getruletype'
     let ruleType = await axios(url)
     return dispatch({
         type: ActionTypes.LOAD_RULE_TYPES,

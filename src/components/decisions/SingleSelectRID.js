@@ -15,10 +15,10 @@ function MultiselectRID(props) {
 
 
   
-//   const HOSTURL='http://localhost/reporting_unit/findRID?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
+//   const HOSTURL='http://cto-tasks002-ite.ite.edl.census.gov:8002/reporting_unit/findRID?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false'
   useEffect(() => {
     if ((debouncedValue !== undefined) && debouncedValue !== '' && debouncedValue.length > 3) {
-        const RIDSURL=`http://localhost/reporting_unit/findRID/${debouncedValue}?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false`
+        const RIDSURL=`http://cto-tasks002-ite.ite.edl.census.gov:8002/reporting_unit/findRID/${debouncedValue}?X-API-KEY=x5nDCpvGTkvHniq8wJ9m&X-JBID=kapoo&DEBUG=false`
         axios.get(RIDSURL)
       .then(response => {
         setOptions(response.data);

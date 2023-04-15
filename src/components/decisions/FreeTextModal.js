@@ -20,7 +20,7 @@ import axios from 'axios';
 
 // import { processEngine, processEngineValidate, updateParsedRules, validateRuleset } from '../../validations/rule-validation';
 
-const HOSTURL = "http://localhost";
+const HOSTURL = "http://cto-tasks002-ite.ite.edl.census.gov:8002";
 
 
 // {props.open} onClose={props.onClose}props.handleRule,   props.closeModal()>

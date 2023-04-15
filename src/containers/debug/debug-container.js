@@ -28,7 +28,7 @@ import RulesGrid from   '../../components/decisions/RulesGrid'  //'../../compone
 import ExpandingIframe from './ExpandingIframe';
 
 // const Dotenv = require('dotenv-webpack');
-const HOSTURL = 'http://localhost'
+const HOSTURL = 'http://cto-tasks002-ite.ite.edl.census.gov:8002'
 // const HOSTURL = 'process.env.HOSTURL
 
 
@@ -165,7 +165,7 @@ debugPanelAttribute(data) {
 
 
                         {this.state.activeTab === 'Rules' && <RulesGrid />}
-                        {this.state.activeTab == 'Workflow' && <ExpandingIframe src="http://localhost:1880"/>}
+                        {this.state.activeTab == 'Workflow' && <ExpandingIframe src="http://cto-tasks002-ite.ite.edl.census.gov:8002:1880"/>}
                 
                 </div></div>)
     }

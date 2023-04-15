@@ -26,7 +26,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import axios from 'axios'
 // import { Tabs } from '@mui/material';
 
-const HOSTURL = 'http://localhost'
+const HOSTURL = 'http://cto-tasks002-ite.ite.edl.census.gov:8002'
 // const HOSTURL = 'process.env.HOSTURL
 
 
@@ -483,7 +483,7 @@ class RulesetContainer extends Component {
               {this.state.activeTab === 'Spad' && rowData.length > 0 && <div> {this.spadTables()} </div> }
               {this.state.activeTab === 'Workflow UI'  && <div> 
 
-              <ExpandingIframe src="http://localhost:1880/ui"/>}
+              <ExpandingIframe src="http://cto-tasks002-ite.ite.edl.census.gov:8002:1880/ui"/>}
 
               </div> }
 

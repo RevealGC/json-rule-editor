@@ -37,7 +37,7 @@ import { loadRuleTypes } from "../../actions/ruleset";
 import FreeTextModal from './FreeTextModal';
 
 
-const HOSTURL = 'http://localhost'
+const HOSTURL = 'http://cto-tasks002-ite.ite.edl.census.gov:8002'
 
 const arrayToString = (arr) => {
   return arr.reduce((acc, obj) => {
